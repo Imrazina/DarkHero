@@ -19,12 +19,12 @@ public class SubtitleManager : MonoBehaviour
     private IEnumerator TypeSubtitle(string text, float duration, float typingSpeed)
     {
         subtitleText.gameObject.SetActive(true);
-        subtitleText.text = ""; // Очищаем текст перед началом печати
+        subtitleText.text = "";
 
         foreach (char letter in text.ToCharArray())
         {
             subtitleText.text += letter;
-            yield return new WaitForSeconds(typingSpeed); // Задержка между буквами
+            yield return new WaitForSeconds(typingSpeed);
         }
 
         yield return new WaitForSeconds(duration);

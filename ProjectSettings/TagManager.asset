@@ -6,11 +6,14 @@ TagManager:
   tags:
   - Ground
   - Normal
+  - AttackHitbox
+  - Enemy
+  - dialog
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Ground
   - Water
   - UI
   - 

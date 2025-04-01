@@ -1,0 +1,45 @@
+{
+  "dialogues": [
+    {
+      "id": "1",
+      "name": "Panda",
+      "text": "Hey, Samurai! What do you want?",
+      "avatar": "ImagePanda",
+      "choices": [
+        {
+          "text": "Do you have anything for sale?",
+          "nextId": "2"  
+        },
+        {
+          "text": "Tell me about this place.",
+          "nextId": "3"  
+        },
+        {
+          "text": "I must go now.",
+          "nextId": "4"  
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Panda",
+      "text": "Of course! I have the best bamboo in town.",
+      "avatar": "ImagePanda",
+      "choices": []
+    },
+    {
+      "id": "3",
+      "name": "Panda",
+      "text": "This is the ancient marketplace of the East.",
+      "avatar": "ImagePanda",
+      "choices": []
+    },
+    {
+      "id": "4",
+      "name": "Panda",
+      "text": "Safe travels, Samurai!",
+      "avatar": "ImagePanda",
+      "choices": []
+    }
+  ]
+}

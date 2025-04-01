@@ -11,7 +11,7 @@ public class WorldSwitcher : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E) && FindObjectOfType<PlayerInventory>().hasRune)
+        if (Input.GetKeyDown(KeyCode.T) && FindObjectOfType<PlayerInventory>().hasRune)
         {
             SwitchWorld();
         }
@@ -20,15 +20,12 @@ public class WorldSwitcher : MonoBehaviour
     void SwitchWorld()
     {
         isInSpiritWorld = !isInSpiritWorld;
-
-        // 1. Сохраняем позицию игрока перед сменой мира
+        
         Vector3 playerPosition = player.position;
-
-        // 2. Переключаем миры
+        
         normalWorld.SetActive(!isInSpiritWorld);
         spiritWorld.SetActive(isInSpiritWorld);
-
-        // 3. Восстанавливаем позицию игрока
+        
         player.position = playerPosition;
         FindObjectOfType<SubtitleManager>().ShowSubtitle(isInSpiritWorld ? "WORLD OF SPIRITS" : "WORLD OF PEOPLE", 3f);
     }

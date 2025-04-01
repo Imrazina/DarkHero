@@ -9,7 +9,6 @@ public class ScreenFade : MonoBehaviour
 
     private void Awake()
     {
-        // Сразу делаем экран полностью черным
         fadeImage.color = new Color(0f, 0f, 0f, 1f);
     }
 

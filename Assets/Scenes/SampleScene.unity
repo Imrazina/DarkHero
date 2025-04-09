@@ -364,7 +364,6 @@ GameObject:
   - component: {fileID: 64506864}
   - component: {fileID: 64506865}
   - component: {fileID: 64506866}
-  - component: {fileID: 64506867}
   m_Layer: 6
   m_Name: Samurai
   m_TagString: Player
@@ -433,6 +432,8 @@ MonoBehaviour:
   dashSpeed: 12
   dashTime: 0.15
   jumpForce: 8
+  maxHealth: 30
+  isDead: 0
 --- !u!114 &64506865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -461,20 +462,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hitbox: {fileID: 2140846422}
   isAttacking: 0
---- !u!114 &64506867
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 64506860}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 586e1879bfc064634ae1268cbfe80f06, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 100
-  currentHealth: 0
 --- !u!1 &81352820
 GameObject:
   m_ObjectHideFlags: 0
@@ -4136,7 +4123,7 @@ GameObject:
   - component: {fileID: 426407677}
   - component: {fileID: 426407676}
   - component: {fileID: 426407675}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Platform
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -4183,7 +4170,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 4
   m_Sprite: {fileID: 1028802073, guid: 8bec8cd3026dcf94b83bef84652480f5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -4900,7 +4887,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.03, y: 0.96, z: -10}
+  m_LocalPosition: {x: 18.35, y: 0.96, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9842,7 +9829,7 @@ Transform:
   m_GameObject: {fileID: 1245024865}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.63, y: -6.06, z: 0.009516478}
+  m_LocalPosition: {x: 23.65, y: -4.62, z: 0.009516478}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -20131,7 +20118,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1348576518
 MonoBehaviour:
   m_ObjectHideFlags: 0

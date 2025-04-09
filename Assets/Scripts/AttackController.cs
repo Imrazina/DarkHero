@@ -154,4 +154,23 @@ public class AttackController : MonoBehaviour
     {
         animator.SetBool("IsBlocking", true);
     }
+    
+    public bool IsBlocking()
+    {
+        return animator.GetBool("IsBlocking");
+    }
+
+    public bool IsBlockingTowards(Vector3 attackerPosition)
+    {
+        if (!IsBlocking()) return false;
+    
+        // Определяем направление к атакующему
+        Vector2 directionToAttacker = (attackerPosition - transform.position).normalized;
+    
+        // Определяем направление взгляда игрока (предполагаем, что спрайт повёрнут вправо)
+        float facingDirection = transform.localScale.x > 0 ? 1 : -1;
+    
+        // Блок работает только против атак спереди
+        return (directionToAttacker.x * facingDirection) > 0;
+    }
 }

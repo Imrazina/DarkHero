@@ -18,9 +18,9 @@ public class DialogueManager : MonoBehaviour
 
     [Header("Choice UI")] 
     public GameObject choicePanel;
-    private Button button1; // Левый
-    private Button button2; // Центральный
-    private Button button3; // Правый
+    private Button button1;
+    private Button button2; 
+    private Button button3; 
     private TextMeshProUGUI text1;
     private TextMeshProUGUI text2;
     private TextMeshProUGUI text3;
@@ -42,20 +42,9 @@ public class DialogueManager : MonoBehaviour
 
     private void InitializeButtonsByPosition()
     {
-        // Получаем все кнопки и сортируем по имени
         button1 = GameObject.Find("Button1").GetComponent<Button>();
         button2 = GameObject.Find("Button2").GetComponent<Button>();
         button3 = GameObject.Find("Button3").GetComponent<Button>();
-
-        // Визуальная маркировка (можно убрать после отладки)
-        button1.image.color = new Color(1, 0.5f, 0.5f); // Светло-красный
-        button2.image.color = new Color(0.5f, 1, 0.5f); // Светло-зеленый
-        button3.image.color = new Color(0.5f, 0.5f, 1); // Светло-синий
-
-        Debug.Log($"Фиксированный порядок:\n" +
-                  $"1. {button1.name} (цвет: красный)\n" +
-                  $"2. {button2.name} (цвет: зеленый)\n" +
-                  $"3. {button3.name} (цвет: синий)");
     }
 
     private void FindTextComponents()
@@ -63,11 +52,6 @@ public class DialogueManager : MonoBehaviour
         text1 = button1?.GetComponentInChildren<TextMeshProUGUI>(true);
         text2 = button2?.GetComponentInChildren<TextMeshProUGUI>(true);
         text3 = button3?.GetComponentInChildren<TextMeshProUGUI>(true);
-        
-        Debug.Log($"<color=cyan>Текстовые компоненты:</color>\n" +
-                 $"1. {(text1 != null ? text1.text : "NULL")}\n" +
-                 $"2. {(text2 != null ? text2.text : "NULL")}\n" +
-                 $"3. {(text3 != null ? text3.text : "NULL")}");
     }
 
     private void Start()
@@ -153,35 +137,21 @@ public class DialogueManager : MonoBehaviour
         imagePanda.SetActive(false);
         imageSamurai.SetActive(true);
 
-        // Визуальная маркировка кнопок
-        ColorButton(button1, Color.red);
-        ColorButton(button2, Color.green);
-        ColorButton(button3, Color.blue);
-
-        Debug.Log($"<color=yellow>Соответствие кнопок:</color>\n" +
-                  $"Button1 ({button1.transform.position.x}) → {choices[0].nextId}\n" +
-                  $"Button2 ({button2.transform.position.x}) → {choices[1].nextId}\n" +
-                  $"Button3 ({button3.transform.position.x}) → {choices[2].nextId}");
-
         choicePanel.SetActive(true);
         isWaitingForChoice = true;
 
-        // Установка текста
         text1.text = choices.Count > 0 ? choices[0].text : "";
         text2.text = choices.Count > 1 ? choices[1].text : "";
         text3.text = choices.Count > 2 ? choices[2].text : "";
 
-        // Активация кнопок
         button1.gameObject.SetActive(choices.Count > 0);
         button2.gameObject.SetActive(choices.Count > 1);
         button3.gameObject.SetActive(choices.Count > 2);
 
-        // Очистка старых обработчиков
         button1.onClick.RemoveAllListeners();
         button2.onClick.RemoveAllListeners();
         button3.onClick.RemoveAllListeners();
 
-        // Привязка новых обработчиков с проверкой
         if (choices.Count > 0)
         {
             string nextId = choices[0].nextId;
@@ -198,19 +168,6 @@ public class DialogueManager : MonoBehaviour
         {
             string nextId = choices[2].nextId;
             button3.onClick.AddListener(() => HandleChoice(3, nextId));
-        }
-
-        Debug.Log($"<color=yellow>Варианты выбора:</color>\n" +
-                 $"1. {text1.text} → {choices[0].nextId}\n" +
-                 $"2. {text2.text} → {choices[1]?.nextId}\n" +
-                 $"3. {text3.text} → {choices[2]?.nextId}");
-    }
-
-    private void ColorButton(Button button, Color color)
-    {
-        if (button != null && button.image != null)
-        {
-            button.image.color = color;
         }
     }
 
@@ -257,6 +214,12 @@ public class DialogueManager : MonoBehaviour
         imageSamurai.SetActive(false);
         titleName.text = "";
         dialogueText.text = "";
+        
+        PandaNPC npcReference = FindObjectOfType<PandaNPC>();
+        if (npcReference != null)
+        {
+            npcReference.OnDialogueEnd();
+        }
     }
 
     private void Update()

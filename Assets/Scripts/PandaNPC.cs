@@ -10,17 +10,12 @@ public class PandaNPC : MonoBehaviour
 
     private void Update()
     {
-        if (isPlayerNear && Input.GetKeyDown(KeyCode.E) && canStartDialogue && !isDialogueActive)
+        if (isPlayerNear && Input.GetKeyDown(KeyCode.E) && canStartDialogue)
         {
-            StartDialogue();
+            isDialogueActive = true;
+            canStartDialogue = false;
+            dialogueManager.StartDialogue("dialogue");
         }
-    }
-
-    private void StartDialogue()
-    {
-        isDialogueActive = true;
-        canStartDialogue = false;  // Запрещаем повторный запуск
-        dialogueManager.StartDialogue("dialogue");  // Запускаем диалог
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -36,23 +31,22 @@ public class PandaNPC : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isPlayerNear = false;
-            if (isDialogueActive)
-            {
-                EndDialogue();
-            }
+            dialogueManager.EndDialogue(); 
+            isDialogueActive = false;
+            canStartDialogue = true;
         }
     }
-
-    public void EndDialogue()
+    
+    public void OnDialogueEnd()
     {
-        StartCoroutine(ResetDialogue());
-    }
-
-    private IEnumerator ResetDialogue()
-    {
-        yield return new WaitForSeconds(2f);  // Подождите немного, прежде чем можно будет начать новый диалог
+        
         isDialogueActive = false;
+        StartCoroutine(CooldownStartDialogue());
+    }
+    
+    private IEnumerator CooldownStartDialogue()
+    {
+        yield return new WaitForSeconds(1f); 
         canStartDialogue = true;
-        dialogueManager.EndDialogue();
     }
 }

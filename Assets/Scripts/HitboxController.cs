@@ -42,28 +42,39 @@ public class HitboxController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("OnTriggerEnter triggered, colliding with: " + other.name);
+        Debug.Log($"OnTriggerEnter triggered, colliding with: {other.name} (Tag: {other.tag})");
+
         if (other.CompareTag("Enemy"))
         {
-            EnemyController enemy = other.GetComponent<EnemyController>();
+            // Пробуем найти EnemyController или EnemyAI
+            var enemy = other.GetComponent<EnemyController>();
+            var enemyAI = other.GetComponent<EnemyAI>();
+            if (enemyAI == null)
+            {
+                enemyAI = other.GetComponentInParent<EnemyAI>();
+            }
+
+            int damage = 0;
+            switch (currentAttackType)
+            {
+                case "LightAttack": damage = lightAttackDamage; break;
+                case "MediumAttack": damage = mediumAttackDamage; break;
+                case "HeavyAttack": damage = heavyAttackDamage; break;
+            }
+
             if (enemy != null)
             {
-                int damage = 0;
-
-                switch (currentAttackType)
-                {
-                    case "LightAttack":
-                        damage = lightAttackDamage;
-                        break;
-                    case "MediumAttack":
-                        damage = mediumAttackDamage;
-                        break;
-                    case "HeavyAttack":
-                        damage = heavyAttackDamage;
-                        break;
-                }
-                Debug.Log($"Hit registered! Attacking {enemy.name} with {damage} damage from {currentAttackType}");
+                Debug.Log($"Hit {enemy.name} with {damage} damage!");
                 enemy.TakeDamage(damage, currentAttackType);
+            }
+            else if (enemyAI != null)
+            {
+                Debug.Log($"Hit {enemyAI.name} with {damage} damage!");
+                enemyAI.TakeDamage(damage);
+            }
+            else
+            {
+                Debug.LogError("Враг не имеет EnemyController или EnemyAI!");
             }
         }
     }

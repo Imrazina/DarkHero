@@ -1,0 +1,835 @@
+fileFormatVersion: 2
+guid: 15327b037976a4531adb25a300a91da4
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
+  textureImporterSettings:
+    alphaSource: 1
+    mipMapMode: 0
+    enableMipMap: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+    convertToNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+    swizzle: 50462976
+    isReadable: 0
+    streamingMipmaps: 0
+    streamingMipmapsPriority: 0
+    vTOnly: 0
+    ignoreMipmapLimit: 0
+    nPOTScale: 1
+    sRGBTexture: 1
+    spriteMode: 2
+    spriteExtrude: 1
+    spriteMeshType: 1
+    alignment: 0
+    spritePivot: {x: 0.5, y: 0.5}
+    spritePixelsToUnits: 100
+    spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+    spriteGenerateFallbackPhysicsShape: 0
+    generateCubemap: 6
+    cubemapConvolution: 0
+    seamlessCubemap: 0
+    alphaIsTransparency: 1
+    spriteTessellationDetail: -1
+    textureType: 8
+    textureShape: 1
+    singleChannelComponent: 0
+    flipbookRows: 0
+    flipbookColumns: 0
+    ignorePngGamma: 0
+    cookieMode: 0
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+    normalMap: 0
+    textureFormat: 0
+    maxTextureSize: 0
+    lightmap: 0
+    compressionQuality: 0
+    linearTexture: 0
+    grayScaleToAlpha: 0
+    rGBM: 0
+    cubemapConvolutionSteps: 0
+    cubemapConvolutionExponent: 0
+    maxTextureSizeSet: 0
+    compressionQualitySet: 0
+    textureFormatSet: 0
+    applyGammaDecoding: 0
+  previousAsepriteImporterSettings:
+    fileImportMode: 1
+    importHiddenLayers: 0
+    layerImportMode: 1
+    defaultPivotSpace: 0
+    defaultPivotAlignment: 7
+    customPivotPosition: {x: 0.5, y: 0.5}
+    mosaicPadding: 4
+    spritePadding: 0
+    generateModelPrefab: 1
+    generateAnimationClips: 1
+    addSortingGroup: 1
+    addShadowCasters: 0
+  asepriteImporterSettings:
+    fileImportMode: 1
+    importHiddenLayers: 0
+    layerImportMode: 1
+    defaultPivotSpace: 0
+    defaultPivotAlignment: 7
+    customPivotPosition: {x: 0.5, y: 0.5}
+    mosaicPadding: 4
+    spritePadding: 0
+    generateModelPrefab: 1
+    generateAnimationClips: 1
+    addSortingGroup: 1
+    addShadowCasters: 0
+  importFileNodeState: 1
+  platformSettingsDirtyTick: 0
+  textureAssetName: 
+  singleSpriteImportData:
+  - name: 
+    originalName: 
+    pivot: {x: 0, y: 0}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 0
+      height: 0
+    spriteID: 
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 0, y: 0}
+  animatedSpriteImportData:
+  - name: The Blind Huntress_Frame_0
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 4
+      width: 1648
+      height: 1280
+    spriteID: 8ef6a01ae9f1d47fc89a529fd8b8c033
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 4}
+  - name: The Blind Huntress_Frame_1
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 1660
+      y: 4
+      width: 1648
+      height: 1280
+    spriteID: 2b2caafbd65e549b29eb41e6e9f88f1d
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1660, y: 4}
+  - name: The Blind Huntress_Frame_2
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 3316
+      y: 4
+      width: 1648
+      height: 1280
+    spriteID: 699e8936ae2094fdd81d5c872ea7a9d7
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 3316, y: 4}
+  - name: The Blind Huntress_Frame_3
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4972
+      y: 4
+      width: 1648
+      height: 1280
+    spriteID: 724f594385f474f9bb4563ee6de62a7d
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4972, y: 4}
+  - name: The Blind Huntress_Frame_4
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 1292
+      width: 1648
+      height: 1280
+    spriteID: e2da62a32e0ba4c16835526bd35e6e22
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 1292}
+  - name: The Blind Huntress_Frame_5
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 1660
+      y: 1292
+      width: 1648
+      height: 1280
+    spriteID: 6d90e8326d99e4224860ce54ff537052
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1660, y: 1292}
+  - name: The Blind Huntress_Frame_6
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 3316
+      y: 1292
+      width: 1648
+      height: 1280
+    spriteID: fdbc0295a873b4895a0211ea3e2b3ec0
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 3316, y: 1292}
+  - name: The Blind Huntress_Frame_7
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4972
+      y: 1292
+      width: 1648
+      height: 1280
+    spriteID: 66350e1f48b834bdf9a1ad1f1ed1fc3c
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4972, y: 1292}
+  - name: The Blind Huntress_Frame_8
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 2580
+      width: 1648
+      height: 1280
+    spriteID: 07e511593a65143e49298c9394ee1392
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 2580}
+  - name: The Blind Huntress_Frame_9
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 1660
+      y: 2580
+      width: 1648
+      height: 1280
+    spriteID: d69fbe840919546c5b3ecee203ca24f8
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1660, y: 2580}
+  - name: The Blind Huntress_Frame_10
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 3316
+      y: 2580
+      width: 1648
+      height: 1280
+    spriteID: cbd3d653420fb48e39b890de28cb0f60
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 3316, y: 2580}
+  - name: The Blind Huntress_Frame_11
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4972
+      y: 2580
+      width: 1648
+      height: 1280
+    spriteID: b2f3e634faafc4fd9b16db7e736e0b4d
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4972, y: 2580}
+  - name: The Blind Huntress_Frame_12
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 3868
+      width: 1648
+      height: 1280
+    spriteID: 2fb05a6395a8d42ed92e780effa49598
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 3868}
+  - name: The Blind Huntress_Frame_13
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 1660
+      y: 3868
+      width: 1648
+      height: 1280
+    spriteID: bd0f67346d5d64086a8b5434589bb405
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1660, y: 3868}
+  - name: The Blind Huntress_Frame_14
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 3316
+      y: 3868
+      width: 1648
+      height: 1280
+    spriteID: a63d234430f174062a9ba8c0c984c7e8
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 3316, y: 3868}
+  - name: The Blind Huntress_Frame_15
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4972
+      y: 3868
+      width: 1648
+      height: 1280
+    spriteID: b28d17ff8797f4ca69d8ad6da8aeb4f3
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4972, y: 3868}
+  - name: The Blind Huntress_Frame_16
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 5156
+      width: 1648
+      height: 1280
+    spriteID: 16f74f78b03314086afa094f173b4951
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 5156}
+  - name: The Blind Huntress_Frame_17
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 1660
+      y: 5156
+      width: 1648
+      height: 1280
+    spriteID: bbcab78e85d66428c8f2b1e147f90036
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1660, y: 5156}
+  - name: The Blind Huntress_Frame_18
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 3316
+      y: 5156
+      width: 1648
+      height: 1280
+    spriteID: e9b8e31a1c2d448b180581083f0c7ef8
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 3316, y: 5156}
+  - name: The Blind Huntress_Frame_19
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4972
+      y: 5156
+      width: 1648
+      height: 1280
+    spriteID: a4fcc9a65e433492b953a86cbaf6b5f0
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4972, y: 5156}
+  - name: The Blind Huntress_Frame_20
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 6444
+      width: 1648
+      height: 1280
+    spriteID: 4e15d464c29bd49d593a02dc2fb939b5
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 6444}
+  - name: The Blind Huntress_Frame_21
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 1660
+      y: 6444
+      width: 1648
+      height: 1280
+    spriteID: df635c6c6c0f24048bd757a3a4b8b2af
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1660, y: 6444}
+  - name: The Blind Huntress_Frame_22
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 3316
+      y: 6444
+      width: 1648
+      height: 1280
+    spriteID: 0a55d9db447854563b513f4550da402a
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 3316, y: 6444}
+  - name: The Blind Huntress_Frame_23
+    originalName: 
+    pivot: {x: 0.27184466, y: 0.2625}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 4972
+      y: 6444
+      width: 1648
+      height: 1280
+    spriteID: 420f73ac5d06e4cfab7ab91c686296c3
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4972, y: 6444}
+  spriteSheetImportData: []
+  asepriteLayers:
+  - layerIndex: 0
+    guid: 1751418276
+    name: The Blind Huntress
+    layerFlags: 0
+    layerType: 0
+    blendMode: 0
+    cells:
+    - name: The Blind Huntress_Frame_0
+      frameIndex: 0
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: 8ef6a01ae9f1d47fc89a529fd8b8c033
+    - name: The Blind Huntress_Frame_1
+      frameIndex: 1
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: 2b2caafbd65e549b29eb41e6e9f88f1d
+    - name: The Blind Huntress_Frame_2
+      frameIndex: 2
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: 699e8936ae2094fdd81d5c872ea7a9d7
+    - name: The Blind Huntress_Frame_3
+      frameIndex: 3
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: 724f594385f474f9bb4563ee6de62a7d
+    - name: The Blind Huntress_Frame_4
+      frameIndex: 4
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: e2da62a32e0ba4c16835526bd35e6e22
+    - name: The Blind Huntress_Frame_5
+      frameIndex: 5
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: 6d90e8326d99e4224860ce54ff537052
+    - name: The Blind Huntress_Frame_6
+      frameIndex: 6
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: fdbc0295a873b4895a0211ea3e2b3ec0
+    - name: The Blind Huntress_Frame_7
+      frameIndex: 7
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: 66350e1f48b834bdf9a1ad1f1ed1fc3c
+    - name: The Blind Huntress_Frame_8
+      frameIndex: 8
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: 07e511593a65143e49298c9394ee1392
+    - name: The Blind Huntress_Frame_9
+      frameIndex: 9
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: d69fbe840919546c5b3ecee203ca24f8
+    - name: The Blind Huntress_Frame_10
+      frameIndex: 10
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: cbd3d653420fb48e39b890de28cb0f60
+    - name: The Blind Huntress_Frame_11
+      frameIndex: 11
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: b2f3e634faafc4fd9b16db7e736e0b4d
+    - name: The Blind Huntress_Frame_12
+      frameIndex: 12
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: 2fb05a6395a8d42ed92e780effa49598
+    - name: The Blind Huntress_Frame_13
+      frameIndex: 13
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: bd0f67346d5d64086a8b5434589bb405
+    - name: The Blind Huntress_Frame_14
+      frameIndex: 14
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: a63d234430f174062a9ba8c0c984c7e8
+    - name: The Blind Huntress_Frame_15
+      frameIndex: 15
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: b28d17ff8797f4ca69d8ad6da8aeb4f3
+    - name: The Blind Huntress_Frame_16
+      frameIndex: 16
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: 16f74f78b03314086afa094f173b4951
+    - name: The Blind Huntress_Frame_17
+      frameIndex: 17
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: bbcab78e85d66428c8f2b1e147f90036
+    - name: The Blind Huntress_Frame_18
+      frameIndex: 18
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: e9b8e31a1c2d448b180581083f0c7ef8
+    - name: The Blind Huntress_Frame_19
+      frameIndex: 19
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: a4fcc9a65e433492b953a86cbaf6b5f0
+    - name: The Blind Huntress_Frame_20
+      frameIndex: 20
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: 4e15d464c29bd49d593a02dc2fb939b5
+    - name: The Blind Huntress_Frame_21
+      frameIndex: 21
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: df635c6c6c0f24048bd757a3a4b8b2af
+    - name: The Blind Huntress_Frame_22
+      frameIndex: 22
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: 0a55d9db447854563b513f4550da402a
+    - name: The Blind Huntress_Frame_23
+      frameIndex: 23
+      additiveSortOrder: 0
+      cellRect:
+        x: 0
+        y: -336
+        width: 1648
+        height: 1280
+      spriteId: 420f73ac5d06e4cfab7ab91c686296c3
+    linkedCells: []
+    parentIndex: -1
+  platformSettings: []
+  generatePhysicsShape: 0
+  secondarySpriteTextures: []
+  spritePackingTag: 
+  canvasSize: {x: 896, y: 896}

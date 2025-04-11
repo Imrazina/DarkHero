@@ -24,13 +24,13 @@ public class Character : MonoBehaviour
     [Header("Wall Jump")]
     public float wallSlideSpeed = -1.5f;
     public float wallJumpHorizontalForce = 20f;
-    public float wallJumpVerticalForce = 15f;
+    public float wallJumpVerticalForce = 17f;
     public float wallCoyoteTime = 0.2f;
 
     private float wallCoyoteTimer = 0f;
     private bool isWallJumping = false;
 
-    public float wallStickTime = 0.5f;
+    public float wallStickTime = 2f;
     private bool isTouchingWall = false;
     private bool isWallSliding = false;
     private float wallStickTimer = 0f;

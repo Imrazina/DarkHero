@@ -24,7 +24,7 @@ public class Character : MonoBehaviour
     [Header("Wall Jump")]
     public float wallSlideSpeed = -1.5f;
     public float wallJumpHorizontalForce = 20f;
-    public float wallJumpVerticalForce = 17f;
+    public float wallJumpVerticalForce = 15f;
     public float wallCoyoteTime = 0.2f;
 
     private float wallCoyoteTimer = 0f;
@@ -75,7 +75,15 @@ void Update()
     if (isDashing) return;
 
     // -------------------- Wall Slide --------------------
-    if (isTouchingWall && !isGrounded && moveInput != 0 && Mathf.Sign(moveInput) == -Mathf.Sign(wallNormal.x) && !isWallJumping && !justWallJumped)
+    bool canWallSlide =
+        isTouchingWall &&
+        !isGrounded &&
+        moveInput != 0 &&
+        Mathf.Sign(moveInput) == -Mathf.Sign(wallNormal.x) &&
+        !isWallJumping &&
+        !justWallJumped;
+
+    if (canWallSlide)
     {
         if (!isWallSliding)
         {
@@ -83,7 +91,7 @@ void Update()
             SetAnimState(4);
         }
 
-        rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, wallSlideSpeed)); // замедление падения
+        rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, wallSlideSpeed));
         wallCoyoteTimer = wallCoyoteTime;
     }
     else
@@ -139,21 +147,25 @@ void Update()
     // -------------------- Анимации --------------------
     if (!attackController.isAttacking)
     {
-        // Проверяем на wall sliding только если персонаж не был в прыжке от стены
         if (isWallSliding && !isWallJumping && !justWallJumped)
         {
             SetAnimState(4); // WallSlide
         }
-        else if (isGrounded)
+        else if (isWallJumping || justWallJumped)
         {
-            if (moveInput == 0)
-                SetAnimState(0); // Idle
-            else
-                SetAnimState(isRunning ? 2 : 1); // Run
+            SetAnimState(3); // Jump (WallJump)
         }
-        else if (!isGrounded && !isWallSliding && !isWallJumping)
+        else if (!isGrounded && Mathf.Abs(rb.velocity.y) > 0.1f) // <-- добавил условие чтобы не мешать Idle в воздухе
         {
-            SetAnimState(3); // Jump
+            SetAnimState(3); // В обычном воздухе
+        }
+        else if (isGrounded && Mathf.Abs(moveInput) > 0.01f)
+        {
+            SetAnimState(isRunning ? 2 : 1); // Walk/Run
+        }
+        else if (isGrounded) // <-- добавил явное условие
+        {
+            SetAnimState(0); // Idle
         }
     }
 
@@ -186,7 +198,8 @@ void Update()
     }
     else
     {
-        isTouchingWall = false;
+        if (!justWallJumped) // блокирует возвращение isTouchingWall
+            isTouchingWall = false;
     }
 }
 
@@ -213,8 +226,9 @@ private void WallJump()
 
 private IEnumerator ClearJustWallJumped()
 {
-    yield return new WaitForSeconds(0.3f); // немного времени, пока не врубим wall slide снова
+    yield return new WaitForSeconds(0.25f); // Увеличь время хотя бы до 0.25–0.3 сек
     justWallJumped = false;
+    isWallJumping = false;
 }
     private IEnumerator ResetWallJump()
     {
@@ -226,13 +240,14 @@ private IEnumerator ClearJustWallJumped()
     {
         isGrounded = false;
     }
+    
 
-    private void SetAnimState(int state)
+    void SetAnimState(int state)
     {
-        if (currentAnimState == state) return;
+        if (state == currentAnimState) return;
         currentAnimState = state;
+        Debug.Log("[Anim] Set State: " + state);
         animator.SetInteger("State", state);
-        Debug.Log($"[Anim] Set State: {state}");
     }
     public void StartDashFromAnimation()
     {

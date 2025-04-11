@@ -9,6 +9,7 @@ TagManager:
   - AttackHitbox
   - Enemy
   - dialog
+  - Wall
   layers:
   - Default
   - TransparentFX

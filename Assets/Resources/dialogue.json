@@ -3,41 +3,117 @@
     {
       "id": "1",
       "name": "Panda",
-      "text": "Hey, Samurai! What do you want?",
+      "text": "Ah, a wandering samurai... You don't see many of your kind anymore. What brings you here?",
       "avatar": "ImagePanda",
       "choices": [
         {
-          "text": "Do you have anything for sale?",
-          "nextId": "2"  
+          "text": "What is this place?",
+          "nextId": "2"
         },
         {
-          "text": "Tell me about this place.",
-          "nextId": "3"  
-        },
-        {
-          "text": "I must go now.",
-          "nextId": "4"  
+          "text": "I should get going.",
+          "nextId": "8"
         }
       ]
     },
     {
       "id": "2",
       "name": "Panda",
-      "text": "Of course! I have the best bamboo in town.",
+      "text": "This town was once a thriving haven for travelers. Merchants, monks, warriors... all passed through. But one night, shadows came from the woods, and everything changed.",
       "avatar": "ImagePanda",
-      "choices": []
+      "choices": [
+        {
+          "text": "Shadows? What happened?",
+          "nextId": "3"
+        },
+        {
+          "text": "Thanks for telling me.",
+          "nextId": "1"
+        }
+      ]
     },
     {
       "id": "3",
       "name": "Panda",
-      "text": "This is the ancient marketplace of the East.",
+      "text": "No one knows what they were—spirits, cursed souls, maybe worse. Those who fought them vanished. Now only echoes remain, and a tavern barely standing.",
       "avatar": "ImagePanda",
-      "choices": []
+      "choices": [
+        {
+          "text": "Is it safe now?",
+          "nextId": "4"
+        },
+        {
+          "text": "Thanks for the warning.",
+          "nextId": "1"
+        }
+      ]
     },
     {
       "id": "4",
       "name": "Panda",
-      "text": "Safe travels, Samurai!",
+      "text": "Safe? Hah... Not really. One of the creatures still lingers nearby—by the old tavern ruins. Kill it, and maybe this place will sleep again.",
+      "avatar": "ImagePanda",
+      "choices": [
+        {
+          "text": "I'll take care of it.",
+          "nextId": "7"
+        }
+      ]
+    },
+    {
+      "id": "7",
+      "name": "Panda",
+      "text": "If you're heading to the tavern ruins, be careful. The creature is not always in our world—it hides in the spirit world.",
+      "avatar": "ImagePanda",
+      "choices": [
+        {
+          "text": "How do I reach the spirit world?",
+          "nextId": "10"
+        },
+        {
+          "text": "Maybe I should reconsider.",
+          "nextId": "1"
+        }
+      ]
+    },
+    {
+      "id": "10",
+      "name": "Panda",
+      "text": "Use the 'T' key to shift between this world and the spirit world. But beware... the shift is not just visual—some things live only there.",
+      "avatar": "ImagePanda",
+      "choices": [
+        {
+          "text": "Understood. Why is the creature attacking the tavern?",
+          "nextId": "11"
+        },
+        {
+          "text": "Alright. Time to hunt.",
+          "nextId": "9"
+        }
+      ]
+    },
+    {
+      "id": "11",
+      "name": "Panda",
+      "text": "At night, the barrier weakens. The creature slips through, haunting the tavern ruins. That’s why it must be destroyed—fully, in the spirit world.",
+      "avatar": "ImagePanda",
+      "choices": [
+        {
+          "text": "Got it. Let's end this.",
+          "nextId": "9"
+        }
+      ]
+    },
+    {
+      "id": "9",
+      "name": "Panda",
+      "text": "Good luck, Samurai. Help me put this place to rest, and I’ll reward you with a healing potion.",
+      "avatar": "ImagePanda"
+    },
+    {
+      "id": "8",
+      "name": "Panda",
+      "text": "Very well. May your blade stay sharp, Samurai.",
       "avatar": "ImagePanda",
       "choices": []
     }

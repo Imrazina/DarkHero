@@ -45,14 +45,8 @@ public class AttackController : MonoBehaviour
 
         // Инициализация атак
         attackCooldowns["LightAttack"] = 0.5f;
-        attackCooldowns["MediumAttack"] = 0.7f;
-        attackCooldowns["HeavyAttack"] = 1f;
-        attackCooldowns["AirAttack"] = 0.6f; 
-
-        foreach (var key in attackCooldowns.Keys)
-        {
-            lastAttackTime[key] = 0f;
-        }
+        attackCooldowns["MediumAttack"] = 0.5f;
+        attackCooldowns["HeavyAttack"] = 0.5f;
         
         foreach (var key in attackCooldowns.Keys)
         {
@@ -71,7 +65,6 @@ public class AttackController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.J)) QueueAttack("LightAttack", currentTime);
         if (Input.GetKeyDown(KeyCode.K)) QueueAttack("MediumAttack", currentTime);
         if (Input.GetKeyDown(KeyCode.L)) QueueAttack("HeavyAttack", currentTime);
-        if (Input.GetKeyDown(KeyCode.O) && !isGrounded) QueueAttack("AirAttack", currentTime); // Атака в воздухе
 
         if (Input.GetKey(KeyCode.H)) Block();
         else animator.SetBool("IsBlocking", false);
@@ -117,18 +110,18 @@ public class AttackController : MonoBehaviour
 
         if (attackType == "HeavyAttack" && isGrounded)
         {
-            rb.velocity = new Vector2(rb.velocity.x, 6f); 
+            rb.velocity = new Vector2(rb.velocity.x, 5f); 
             isGrounded = false;
         }
-        
+    
         Debug.Log("Performing attack: " + attackType);
         animator.SetTrigger(attackType);
 
         yield return new WaitForSeconds(attackCooldowns[attackType] * 0.7f);
         canCombo = true;
-        
+    
         yield return new WaitForSeconds(attackCooldowns[attackType] * 0.3f);
-        
+    
         isAttacking = false;
         canCombo = false;
 
@@ -138,7 +131,7 @@ public class AttackController : MonoBehaviour
             Debug.Log($"Next attack in combo: {nextAttack}");
             StartCoroutine(PerformAttack(nextAttack, Time.time));
         }
-        
+
         if (hitbox != null)
         {
             Debug.Log($"Activating hitbox for {attackType}");
@@ -149,6 +142,7 @@ public class AttackController : MonoBehaviour
             Debug.LogError("Ошибка: HitboxController не найден! Назначь его в инспекторе.");
         }
     }
+
 
     void Block()
     {

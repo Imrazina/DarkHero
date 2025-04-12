@@ -39,6 +39,9 @@ public class EnemyAI : MonoBehaviour
     private Animator animator;
     private Transform target;
     private Rigidbody2D rb;
+    private bool isHitAnimating = false;
+    private bool hasDealtDamage = false;
+    private bool isAttacking = false;
 
     void Start()
     {
@@ -55,12 +58,17 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
-        if (isDead || target == null || isInHitStun) 
+        if (isDead || target == null)
         {
             animator.SetBool("Run", false);
             return;
         }
 
+        if (isInHitStun)
+        {
+            animator.SetBool("Run", false);
+            return;
+        }
         float distanceToPlayer = Vector2.Distance(transform.position, target.position);
         Vector2 directionToPlayer = (target.position - transform.position).normalized;
 
@@ -77,7 +85,7 @@ public class EnemyAI : MonoBehaviour
         }
 
         // Атака если игрок в радиусе
-        if (distanceToPlayer <= attackRange && canAttack)
+        if (distanceToPlayer <= attackRange && canAttack && !isAttacking)
         {
             StartCoroutine(Attack());
         }
@@ -136,45 +144,55 @@ public class EnemyAI : MonoBehaviour
     IEnumerator Attack()
     {
         canAttack = false;
-        animator.SetTrigger("Charge");
-        yield return new WaitForSeconds(0.5f);
+        isAttacking = true;
+        hasDealtDamage = false;
 
+        // 1. Проигрываем Charge-анимацию
+        animator.SetTrigger("Charge");
+
+        // 2. Ждем длину Charge (например, 0.5 сек)
+        float chargeDuration = 0.5f;
+        yield return new WaitForSeconds(chargeDuration);
+
+        // 3. Проигрываем атаку
         animator.SetTrigger("Attack");
-    
-        if (target != null && Vector2.Distance(transform.position, target.position) <= attackRange)
+
+        // 4. Ждём чуть-чуть, чтобы попасть в нужный момент удара (например, 0.2 сек после старта Attack-анимации)
+        yield return new WaitForSeconds(0.2f);
+
+        if (!hasDealtDamage && target != null && Vector2.Distance(transform.position, target.position) <= attackRange)
         {
-            AttackController playerAttack = target.GetComponent<AttackController>();
-            Character playerCharacter = target.GetComponent<Character>(); 
-        
-            if (playerCharacter != null && !playerCharacter.isDead) // Добавляем проверку на isDead
+            var playerAttack = target.GetComponent<AttackController>();
+            var playerCharacter = target.GetComponent<Character>();
+
+            if (playerCharacter != null && !playerCharacter.isDead)
             {
-                // Проверяем, защищается ли игрок
                 if (playerAttack != null && playerAttack.IsBlockingTowards(transform.position))
                 {
-                    // Эффект блокировки (оставляем без изменений)
                     Debug.Log("Атака заблокирована!");
-                    Vector2 pushDirection = (transform.position - target.position).normalized;
-                    pushDirection.y = 0.3f;
-            
-                    if (rb != null && !rb.isKinematic)
-                    {
-                        rb.velocity = Vector2.zero;
-                        rb.AddForce(pushDirection * 15f, ForceMode2D.Impulse);
-                    }
-            
+                    Vector2 pushDir = (transform.position - target.position).normalized;
+                    pushDir.y = 0.3f;
+
+                    rb.velocity = Vector2.zero;
+                    rb.AddForce(pushDir * 15f, ForceMode2D.Impulse);
                     StartCoroutine(BlockStun(0.3f));
                 }
                 else
                 {
-                    playerCharacter.TakeDamage(attackDamage); // Вызываем TakeDamage из Character
+                    playerCharacter.TakeDamage(attackDamage);
                 }
+
+                hasDealtDamage = true;
             }
         }
 
-        yield return new WaitForSeconds(attackCooldown);
-        canAttack = true;
-    }
+        // 5. Ждём остаток кулдауна
+        float cooldownLeft = attackCooldown - chargeDuration;
+        yield return new WaitForSeconds(cooldownLeft);
 
+        canAttack = true;
+        isAttacking = false;
+    }
     IEnumerator BlockStun(float duration)
     {
         isInHitStun = true;
@@ -201,23 +219,51 @@ public class EnemyAI : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        if (isDead || isInHitStun) return;
+        if (isDead || isInHitStun || isHitAnimating) return;
 
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
             Die();
-            return; // Важно: выходим сразу после смерти
+            return;
         }
-        animator.SetTrigger("Hit");
+
+        AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
+        if (currentState.IsName("hitEnemy")) return; // уже в анимации удара
+
+        StartCoroutine(PlayHitAnimation());
         StartCoroutine(HitStun());
+    }
+
+    IEnumerator PlayHitAnimation()
+    {
+        isHitAnimating = true;
+        animator.SetTrigger("Hit");
+
+        // Ожидаем пока анимация закончится
+        yield return new WaitForSeconds(0.4f); 
+
+        isHitAnimating = false;
     }
 
     IEnumerator HitStun()
     {
         isInHitStun = true;
-        rb.velocity = Vector2.zero; // Останавливаем движение при получении урона
+
+        // Прерываем движение и атаку
+        rb.velocity = Vector2.zero;
+        isAttacking = false; // <== предотвращает баг с застреванием в состоянии атаки
+
+        // Отталкиваем от игрока
+        if (target != null)
+        {
+            Vector2 pushDir = (transform.position - target.position).normalized;
+            pushDir.y = 0.3f;
+            rb.AddForce(pushDir * 10f, ForceMode2D.Impulse);
+        }
+
         yield return new WaitForSeconds(hitStunDuration);
+
         isInHitStun = false;
     }
 

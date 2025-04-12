@@ -17,7 +17,7 @@ public class Character : MonoBehaviour
     private Animator animator;
     private AttackController attackController;
 
-    public int maxHealth = 100;
+    public int maxHealth = 300;
     private int currentHealth;
     public bool isDead = false;
 
@@ -41,6 +41,7 @@ public class Character : MonoBehaviour
     private bool justWallJumped = false;
 
     private MovingPlatform currentPlatform;
+    public UI_HealthDisplay healthUI;
 
     void Start()
     {
@@ -57,6 +58,13 @@ public class Character : MonoBehaviour
         {
             Debug.LogError("Не найден дочерний объект Sprite!");
         }
+        
+        if (healthUI == null)
+        {
+            healthUI = FindObjectOfType<UI_HealthDisplay>();
+        }
+        
+        healthUI.UpdateHearts(currentHealth);
     }
 
 void Update()
@@ -330,7 +338,15 @@ private IEnumerator ClearJustWallJumped()
         if (isDead || isDashing) return;
 
         currentHealth -= damage;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth); // Защита от отрицательного
+
         animator.SetTrigger("Hurt");
+
+        // Обновляем UI
+        if (healthUI != null)
+        {
+            healthUI.UpdateHearts(currentHealth);
+        }
 
         if (currentHealth <= 0)
         {

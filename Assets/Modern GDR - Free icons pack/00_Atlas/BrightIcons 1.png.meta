@@ -1,12 +1,12 @@
 fileFormatVersion: 2
-guid: 132358e9bf26b60458b731bf001e31db
+guid: 3911fd1dabea44e929fcc9bdfb7c69a2
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 0
+    enableMipMap: 1
     sRGBTexture: 1
     linearTexture: 0
     fadeOut: 0
@@ -37,24 +37,24 @@ TextureImporter:
     filterMode: 0
     aniso: 2
     mipBias: 0
-    wrapU: 1
-    wrapV: 1
+    wrapU: 0
+    wrapV: 0
     wrapW: 0
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
-  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 1
+  spriteBorder: {x: 111, y: 713, z: 818, w: 218}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
-  alphaIsTransparency: 1
-  spriteTessellationDetail: -1
-  textureType: 8
+  alphaIsTransparency: 0
+  spriteTessellationDetail: 0
+  textureType: 0
   textureShape: 1
   singleChannelComponent: 0
   flipbookRows: 1
@@ -74,7 +74,7 @@ TextureImporter:
     textureFormat: -1
     textureCompression: 0
     compressionQuality: 50
-    crunchedCompression: 0
+    crunchedCompression: 1
     allowsAlphaSplitting: 0
     overridden: 0
     ignorePlatformSupport: 0
@@ -375,7 +375,7 @@ TextureImporter:
       name: Heart02_Bright
       rect:
         serializedVersion: 2
-        x: 131
+        x: 133
         y: 724
         width: 68
         height: 61
@@ -1152,12 +1152,12 @@ TextureImporter:
       name: Text_Bright
       rect:
         serializedVersion: 2
-        x: 18
-        y: 58
-        width: 92
-        height: 83
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+        x: 11
+        y: 12
+        width: 67
+        height: 61
+      alignment: 9
+      pivot: {x: 0.50000006, y: 0.50600606}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1253,11 +1253,42 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    outline: []
-    physicsShape: []
+    - serializedVersion: 2
+      name: Heart1
+      rect:
+        serializedVersion: 2
+        x: 125
+        y: 718
+        width: 79
+        height: 77
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d7a003b205c6e46de903f98ca2590346
+      internalID: 1883394629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline:
+    - - {x: -393, y: 193}
+      - {x: -396, y: 301}
+      - {x: -352.28857, y: 301.00006}
+      - {x: -303, y: 301}
+      - {x: -303, y: 191}
+    physicsShape:
+    - - {x: -387, y: 195}
+      - {x: -387, y: 300}
+      - {x: -346.57867, y: 300}
+      - {x: -301, y: 300}
+      - {x: -301, y: 195}
     bones: []
     spriteID: 2a7f941bc7925894682b7a4405e55ab1
-    internalID: 0
+    internalID: -408208584
     vertices: []
     indices: 
     edges: []
@@ -1312,6 +1343,7 @@ TextureImporter:
       Hamburger_Bright: 560201700
       Heart01_Bright: 381300419
       Heart02_Bright: 623849741
+      Heart1: 1883394629
       Key_Bright: 1426590355
       Left_Bright: -767216509
       Medal_Bright: 258959272

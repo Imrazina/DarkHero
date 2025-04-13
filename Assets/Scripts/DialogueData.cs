@@ -22,5 +22,5 @@ public class DialogueLine
 public class DialogueChoice
 {
     public string text;
-    public string nextId; // Теперь вместо объекта хранится ID следующего диалога
+    public string nextId; 
 }

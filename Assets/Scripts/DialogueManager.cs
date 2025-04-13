@@ -63,13 +63,17 @@ public class DialogueManager : MonoBehaviour
         imageSamurai.SetActive(false);
     }
 
-    public void StartDialogue(string fileName)
+    public void StartDialogue(string fileName, string startId)
     {
         dialogueQueue.Clear();
         dialogueMap.Clear();
 
         DialogueData data = DialogueLoader.LoadDialogue(fileName);
-        if (data == null) return;
+        if (data == null)
+        {
+            Debug.LogError($"Dialogue file not found: {fileName}");
+            return;
+        }
 
         foreach (var line in data.dialogues)
         {
@@ -79,12 +83,17 @@ public class DialogueManager : MonoBehaviour
             }
         }
 
-        if (dialogueMap.TryGetValue("1", out DialogueLine firstLine))
+        if (dialogueMap.TryGetValue(startId, out DialogueLine firstLine))
         {
             dialogueQueue.Enqueue(firstLine);
             dialoguePanel.SetActive(true);
             bgImage.SetActive(true);
             DisplayNextSentence();
+            Debug.Log($"Starting dialogue with ID: {startId}");  // Логируем начало диалога
+        }
+        else
+        {
+            Debug.LogError($"Dialogue ID {startId} not found in file {fileName}!");
         }
     }
     
@@ -176,7 +185,6 @@ public class DialogueManager : MonoBehaviour
         var clickedButton = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
         Debug.Log($"<color=magenta>Нажата: {clickedButton.name}</color> " +
                   $"({buttonNumber} в коде) → nextId: {nextId}");
-        Debug.Log($"<color=magenta>Нажата кнопка {buttonNumber}</color> ({(buttonNumber == 1 ? "Красная" : buttonNumber == 2 ? "Зеленая" : "Синяя")}), nextId: {nextId}");
         SelectChoice(nextId);
     }
 
@@ -196,6 +204,9 @@ public class DialogueManager : MonoBehaviour
             return;
         }
 
+        // Логируем, какой ID диалога был выбран
+        Debug.Log($"Перешли к диалогу с ID: {nextId}");
+    
         choicePanel.SetActive(false);
         isWaitingForChoice = false;
 

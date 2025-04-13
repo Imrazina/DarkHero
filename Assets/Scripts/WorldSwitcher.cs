@@ -4,10 +4,25 @@ using UnityEngine;
 
 public class WorldSwitcher : MonoBehaviour
 {
-    public GameObject normalWorld;  // Обычный мир
-    public GameObject spiritWorld;  // Мир духов
-    public Transform player;  // Персонаж
-    private bool isInSpiritWorld = false;
+    public GameObject normalWorld;
+    public GameObject spiritWorld;
+    public Transform player;
+
+    private bool isInSpiritWorld;
+
+    private void Start()
+    {
+        // Восстановить состояние мира
+        isInSpiritWorld = GameStateManager.Instance.CurrentState.isInSpiritWorld;
+
+        Vector3 savedPosition = GameStateManager.Instance.CurrentState.playerPosition;
+        if (savedPosition != Vector3.zero)
+        {
+            player.position = savedPosition;
+        }
+
+        UpdateWorldState();
+    }
 
     private void Update()
     {
@@ -20,13 +35,19 @@ public class WorldSwitcher : MonoBehaviour
     void SwitchWorld()
     {
         isInSpiritWorld = !isInSpiritWorld;
-        
-        Vector3 playerPosition = player.position;
-        
+        GameStateManager.Instance.CurrentState.isInSpiritWorld = isInSpiritWorld;
+
+        GameStateManager.Instance.CurrentState.playerPosition = player.position;
+
+        UpdateWorldState();
+
+        FindObjectOfType<SubtitleManager>().ShowSubtitle(
+            isInSpiritWorld ? "WORLD OF SPIRITS" : "WORLD OF PEOPLE", 3f);
+    }
+
+    void UpdateWorldState()
+    {
         normalWorld.SetActive(!isInSpiritWorld);
         spiritWorld.SetActive(isInSpiritWorld);
-        
-        player.position = playerPosition;
-        FindObjectOfType<SubtitleManager>().ShowSubtitle(isInSpiritWorld ? "WORLD OF SPIRITS" : "WORLD OF PEOPLE", 3f);
     }
 }

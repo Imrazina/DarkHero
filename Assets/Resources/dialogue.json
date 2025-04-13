@@ -116,6 +116,43 @@
       "text": "Very well. May your blade stay sharp, Samurai.",
       "avatar": "ImagePanda",
       "choices": []
+    },
+    {
+      "id": "100",
+      "name": "Panda",
+      "text": "You've done it... The town is at peace again. I can't thank you enough.",
+      "avatar": "ImagePanda",
+      "choices": [
+        {
+          "text": "It’s over now.",
+          "nextId": "101"
+        }
+      ]
+    },
+    {
+      "id": "101",
+      "name": "Panda",
+      "text": "Here, as promised. May this potion serve you well.",
+      "avatar": "ImagePanda"
+    },
+
+    {
+      "id": "200",
+      "name": "Panda",
+      "text": "Still wandering around? You really like it here, huh?",
+      "avatar": "ImagePanda",
+      "choices": [
+        {
+          "text": "Just checking in.",
+          "nextId": "201"
+        }
+      ]
+    },
+    {
+      "id": "201",
+      "name": "Panda",
+      "text": "Well, you're always welcome to chat. I’ve got plenty of ghost stories.",
+      "avatar": "ImagePanda"
     }
   ]
 }

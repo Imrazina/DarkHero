@@ -224,8 +224,9 @@ public class EnemyAI : MonoBehaviour
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
+            GameStateManager.Instance.CurrentState.pandaState = PandaDialogueState.AfterEnemyDefeated;
+            GameStateManager.Instance.SaveGame();
             Die();
-            return;
         }
 
         AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
@@ -269,22 +270,18 @@ public class EnemyAI : MonoBehaviour
 
     void Die()
     {
-        if (isDead) return; // Защита от повторного вызова
+        if (isDead) return; 
     
         isDead = true;
-    
-        // Останавливаем все корутины
+
         StopAllCoroutines();
-    
-        // Сбрасываем все триггеры аниматора
+
         animator.ResetTrigger("Hit");
         animator.ResetTrigger("Charge");
         animator.ResetTrigger("Attack");
-    
-        // Проигрываем анимацию смерти
+
         animator.SetTrigger("Death");
-    
-        // Отключаем физику и коллайдеры
+
         if (rb != null)
         {
             rb.velocity = Vector2.zero;

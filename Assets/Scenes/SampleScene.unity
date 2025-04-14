@@ -453,8 +453,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c433a4efd72c242eaae5c20678fdab37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hasRune: 1
-  runeIcon: {fileID: 0}
+  hasRune: 0
+  runeIcon: {fileID: 257355886}
 --- !u!114 &64506866
 MonoBehaviour:
   m_ObjectHideFlags: 0

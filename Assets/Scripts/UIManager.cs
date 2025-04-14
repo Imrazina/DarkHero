@@ -72,34 +72,18 @@ public class UIManager : MonoBehaviour
         isStartingNewGame = true;
 
         GameStateManager.Instance.ResetGame();
-        GameStateManager.Instance.SaveGame();
 
         Time.timeScale = 1f;
         isGamePaused = false;
 
-        StartCoroutine(LoadSceneAndStartIntro());
-        Debug.Log("Корутина LoadSceneAndStartIntro() запущена!");
+        StartCoroutine(StartIntroAfterFrame());
     }
 
-    private IEnumerator LoadSceneAndStartIntro()
+    private IEnumerator StartIntroAfterFrame()
     {
-        Debug.Log("Корутина LoadSceneAndStartIntro() запущена!");
+        yield return null; // ждём 1 кадр, чтобы всё прогрузилось
 
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
-        while (!asyncLoad.isDone)
-        {
-            yield return null;
-        }
-
-        LevelStart levelStart = null;
-        float timer = 0f;
-        while (levelStart == null && timer < 3f)
-        {
-            levelStart = FindObjectOfType<LevelStart>();
-            timer += 0.1f;
-            yield return new WaitForSecondsRealtime(0.1f);
-        }
-
+        LevelStart levelStart = FindObjectOfType<LevelStart>();
         if (levelStart != null)
         {
             Debug.Log("LevelStart найден, запускаю интро!");
@@ -109,7 +93,7 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("LevelStart так и не найден после загрузки!");
+            Debug.LogWarning("LevelStart не найден!");
         }
     }
 
@@ -125,7 +109,12 @@ public class UIManager : MonoBehaviour
 
         if (!GameStateManager.Instance.CurrentState.hasPlayedIntro)
         {
+            Debug.Log("Intro hasn't been played yet — launching it.");
             FindObjectOfType<LevelStart>()?.StartIntro();
+        }
+        else
+        {
+            Debug.Log("Intro already played — skipping it.");
         }
     }
     

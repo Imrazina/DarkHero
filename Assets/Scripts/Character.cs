@@ -153,7 +153,7 @@ void Update()
     }
 
     // -------------------- Анимации --------------------
-    if (!attackController.isAttacking)
+    if (!attackController.isAttacking && !isDashing)
     {
         if (isWallSliding && !isWallJumping && !justWallJumped)
         {

@@ -28,19 +28,12 @@ public class LevelStart : MonoBehaviour
 
     private IEnumerator PlayIntro()
     {
-        
         Debug.Log("Starting intro...");
 
         var subtitleManager = FindObjectOfType<SubtitleManager>();
         if (subtitleManager == null) Debug.LogWarning("SubtitleManager not found!");
         else Debug.Log("SubtitleManager found!");
 
-        var canvas = subtitleManager.GetComponentInParent<Canvas>();
-        if (canvas != null)
-        {
-            Debug.Log("Subtitle Canvas isActive: " + canvas.gameObject.activeSelf);
-        }
-        
         FindObjectOfType<SubtitleManager>().ShowSubtitle("Where am I?..", 3f);
         yield return new WaitForSeconds(1.5f);
 

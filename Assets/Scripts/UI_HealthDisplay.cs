@@ -14,8 +14,7 @@ public class UI_HealthDisplay : MonoBehaviour
     public void UpdateHearts(int currentHealth)
     {
         float normalized = Mathf.Clamp01(currentHealth / (float)maxHealth);
-
-        // Каждое сердце — 1/3
+        
         UpdateHeart(heart1, normalized, 0f);
         UpdateHeart(heart2, normalized, 1f / 3f);
         UpdateHeart(heart3, normalized, 2f / 3f);

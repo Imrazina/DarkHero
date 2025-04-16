@@ -12,4 +12,5 @@ public class GameState
     public List<string> collectedItems = new List<string>();
     
     public bool hasPlayedIntro = false;
+    public int totalCoins = 0;
 }

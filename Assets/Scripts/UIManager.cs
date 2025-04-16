@@ -47,11 +47,9 @@ public class UIManager : MonoBehaviour
             settingsPanel.SetActive(false);
             Time.timeScale = 1f;
 
-            isStartingNewGame = false; // сбрасываем флаг
+            isStartingNewGame = false; 
             return;
         }
-
-        // обычная логика
         Time.timeScale = 0f;
         mainMenuPanel.SetActive(true);
         pausePanel.SetActive(false);
@@ -81,7 +79,7 @@ public class UIManager : MonoBehaviour
 
     private IEnumerator StartIntroAfterFrame()
     {
-        yield return null; // ждём 1 кадр, чтобы всё прогрузилось
+        yield return null; 
 
         LevelStart levelStart = FindObjectOfType<LevelStart>();
         if (levelStart != null)
@@ -128,8 +126,6 @@ public class UIManager : MonoBehaviour
         Application.Quit();
         Debug.Log("Quit");
     }
-
-    // -------- Пауза --------
 
     public void TogglePause()
     {

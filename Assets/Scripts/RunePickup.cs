@@ -5,11 +5,21 @@ using UnityEngine;
 public class RunePickup : MonoBehaviour
 {
     private bool isPlayerNearby = false;
-    public GameObject pickupEffect; // Эффект при поднятии
-    public AudioClip pickupSound;   // Звук поднятия
     private bool isPickedUp = false;
 
-    public SpriteRenderer runeIcon; // Иконка руны в UI (перетащи в Inspector!)
+    public GameObject pickupEffect;
+    public AudioClip pickupSound;
+
+    public string uniqueID = "Rune_1"; 
+    public SpriteRenderer runeIcon;
+
+    private void Start()
+    {
+        if (GameStateManager.Instance.CurrentState.collectedItems.Contains(uniqueID))
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -38,22 +48,24 @@ public class RunePickup : MonoBehaviour
     void PickUp()
     {
         isPickedUp = true;
-        FindObjectOfType<PlayerInventory>().hasRune = true; // Добавляем руну в инвентарь
+        
+        GameStateManager.Instance.CurrentState.collectedItems.Add(uniqueID);
 
-        // 🎨 Меняем цвет иконки руны (если она указана в Inspector)
+        FindObjectOfType<PlayerInventory>().PickUpRune();
+
         if (runeIcon != null)
         {
-            runeIcon.color = Color.white; // Или любой другой цвет
+            runeIcon.color = Color.white;
         }
 
         if (pickupEffect)
-            Instantiate(pickupEffect, transform.position, Quaternion.identity); // Спавн эффекта
+            Instantiate(pickupEffect, transform.position, Quaternion.identity);
 
         if (pickupSound)
             AudioSource.PlayClipAtPoint(pickupSound, transform.position);
 
         FindObjectOfType<SubtitleManager>().ShowSubtitle("What was that..?", 3f);
-        
-        Destroy(gameObject); 
+
+        Destroy(gameObject);
     }
 }

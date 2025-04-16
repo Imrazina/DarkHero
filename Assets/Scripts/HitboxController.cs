@@ -6,6 +6,8 @@ public class HitboxController : MonoBehaviour
     public int heavyAttackDamage = 30;
     public int mediumAttackDamage = 20;
     public float activeTime = 0.2f;
+    public float attackRange = 1f; 
+    public LayerMask lootLayer;
     
     public BoxCollider2D hitboxCollider;
     private string currentAttackType;
@@ -16,10 +18,9 @@ public class HitboxController : MonoBehaviour
         {
             Debug.LogError("Collider не найден в HitboxController! Проверь объект AttackHitBox.");
         }
-        hitboxCollider.enabled = false; // Изначально хитбокс отключен
+        hitboxCollider.enabled = false;
     }
-
-    // Вызывается в начале фазы удара
+    
     public void ActivateHitbox(string attackType)
     {
         if (hitboxCollider == null)
@@ -30,6 +31,7 @@ public class HitboxController : MonoBehaviour
         
         currentAttackType = attackType;
         hitboxCollider.enabled = true;
+        hitboxCollider.transform.rotation = transform.rotation; 
         Debug.Log("Hitbox активирован для атаки: " + attackType);
         Invoke("DeactivateHitbox", activeTime);
     }
@@ -46,7 +48,6 @@ public class HitboxController : MonoBehaviour
 
         if (other.CompareTag("Enemy"))
         {
-            // Пробуем найти EnemyController или EnemyAI
             var enemy = other.GetComponent<EnemyController>();
             var enemyAI = other.GetComponent<EnemyAI>();
             if (enemyAI == null)

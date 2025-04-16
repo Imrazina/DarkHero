@@ -6,16 +6,15 @@ public class PlayerInventory : MonoBehaviour
 {
     public bool hasRune = false;
     
-    public SpriteRenderer runeIcon; // Ссылка на иконку руны (SpriteRenderer)
+    public SpriteRenderer runeIcon;
 
     public void PickUpRune()
     {
         hasRune = true;
-
-        // Меняем цвет иконки на нормальный
+        
         if (runeIcon != null)
         {
-            runeIcon.color = Color.white; // Или любой другой цвет
+            runeIcon.color = Color.white; 
         }
     }
 }

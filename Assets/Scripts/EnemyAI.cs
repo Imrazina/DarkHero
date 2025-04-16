@@ -10,15 +10,11 @@ public class EnemyAI : MonoBehaviour
 
     [Header("Movement")]
     public float speed = 2f;
-    public float detectionRange = 5f;
+    public float detectionRange = 2f;
     public float minFollowDistance = 1f;
     private bool facingRight = true;
     private float lastFlipTime;
     public float flipCooldown = 1f;
-    
-    [Header("Damage Settings")]
-    public float hitStunDuration = 0.5f; 
-    private bool isInHitStun = false;
 
     [Header("Combat")]
     public float attackRange = 1.5f;
@@ -31,9 +27,10 @@ public class EnemyAI : MonoBehaviour
     public Vector2 backGroundCheck = new Vector2(-0.5f, -0.5f);
     public float groundCheckDistance = 0.28f;
     public LayerMask groundLayer;
+    
 
     [Header("Wall Check")]
-    public float wallCheckDistance = 0.2f;
+    public float wallCheckDistance = 0.6f;
 
     [Header("References")]
     private Animator animator;
@@ -42,6 +39,8 @@ public class EnemyAI : MonoBehaviour
     private bool isHitAnimating = false;
     private bool hasDealtDamage = false;
     private bool isAttacking = false;
+    private bool isAgro => Vector2.Distance(transform.position, target.position) <= detectionRange;
+
 
     void Start()
     {
@@ -63,36 +62,32 @@ public class EnemyAI : MonoBehaviour
             animator.SetBool("Run", false);
             return;
         }
-
-        if (isInHitStun)
-        {
-            animator.SetBool("Run", false);
-            return;
-        }
         float distanceToPlayer = Vector2.Distance(transform.position, target.position);
         Vector2 directionToPlayer = (target.position - transform.position).normalized;
-
-        // Определяем нужно ли двигаться к игроку
+        
         bool shouldMove = distanceToPlayer <= detectionRange && 
                          distanceToPlayer > minFollowDistance;
-
-        // Определяем правильное направление взгляда
+        
         bool shouldFaceRight = directionToPlayer.x > 0;
         if (shouldFaceRight != facingRight && Time.time > lastFlipTime + flipCooldown)
         {
             Flip();
             lastFlipTime = Time.time;
         }
-
-        // Атака если игрок в радиусе
+        
         if (distanceToPlayer <= attackRange && canAttack && !isAttacking)
         {
+            animator.SetBool("Run", false);
+            rb.velocity = new Vector2(0, rb.velocity.y);
             StartCoroutine(Attack());
         }
-        // Движение если можно
-        else if (shouldMove && CanMoveTowards(directionToPlayer))
+        else if (isAgro && CanMoveTowards(directionToPlayer) && distanceToPlayer > minFollowDistance)
         {
             MoveTowardsPlayer(directionToPlayer);
+        }
+        else if (!isAgro)
+        {
+            Patrol();
         }
         else
         {
@@ -105,7 +100,6 @@ public class EnemyAI : MonoBehaviour
 
     bool CanMoveTowards(Vector2 direction)
     {
-        // Проверка земли впереди
         Vector2 checkPos = (Vector2)transform.position + 
                          (facingRight ? frontGroundCheck : backGroundCheck);
         
@@ -115,8 +109,7 @@ public class EnemyAI : MonoBehaviour
             groundCheckDistance,
             groundLayer
         );
-
-        // Проверка стены перед собой
+        
         bool hasWall = Physics2D.Raycast(
             (Vector2)transform.position,
             facingRight ? Vector2.right : Vector2.left,
@@ -125,6 +118,30 @@ public class EnemyAI : MonoBehaviour
         );
 
         return hasGround && !hasWall;
+    }
+    
+    void Patrol()
+    {
+        Vector2 groundCheckPos = (Vector2)transform.position + (facingRight ? frontGroundCheck : backGroundCheck);
+        bool hasGround = Physics2D.Raycast(groundCheckPos, Vector2.down, groundCheckDistance, groundLayer);
+        bool hasWall = Physics2D.Raycast(transform.position, facingRight ? Vector2.right : Vector2.left, wallCheckDistance, groundLayer);
+
+        if (!hasGround || hasWall)
+        {
+            Flip();
+        }
+
+        if (hasWall)
+        {
+            animator.SetBool("Run", false);
+            rb.velocity = new Vector2(0, rb.velocity.y);
+        }
+        else
+        {
+            animator.SetBool("Run", true);
+            float direction = facingRight ? 1f : -1f;
+            rb.velocity = new Vector2(direction * speed, rb.velocity.y);
+        }
     }
 
     void MoveTowardsPlayer(Vector2 direction)
@@ -175,7 +192,6 @@ public class EnemyAI : MonoBehaviour
 
                     rb.velocity = Vector2.zero;
                     rb.AddForce(pushDir * 15f, ForceMode2D.Impulse);
-                    StartCoroutine(BlockStun(0.3f));
                 }
                 else
                 {
@@ -192,12 +208,6 @@ public class EnemyAI : MonoBehaviour
 
         canAttack = true;
         isAttacking = false;
-    }
-    IEnumerator BlockStun(float duration)
-    {
-        isInHitStun = true;
-        yield return new WaitForSeconds(duration);
-        isInHitStun = false;
     }
     
     void DebugDrawRays()
@@ -219,7 +229,7 @@ public class EnemyAI : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        if (isDead || isInHitStun || isHitAnimating) return;
+        if (isDead || isHitAnimating) return;
 
         currentHealth -= damage;
         if (currentHealth <= 0)
@@ -233,40 +243,19 @@ public class EnemyAI : MonoBehaviour
         if (currentState.IsName("hitEnemy")) return; // уже в анимации удара
 
         StartCoroutine(PlayHitAnimation());
-        StartCoroutine(HitStun());
+ 
     }
 
     IEnumerator PlayHitAnimation()
     {
         isHitAnimating = true;
         animator.SetTrigger("Hit");
-
-        // Ожидаем пока анимация закончится
-        yield return new WaitForSeconds(0.4f); 
+        
+        yield return new WaitForSeconds(0.2f); 
 
         isHitAnimating = false;
     }
-
-    IEnumerator HitStun()
-    {
-        isInHitStun = true;
-
-        // Прерываем движение и атаку
-        rb.velocity = Vector2.zero;
-        isAttacking = false; // <== предотвращает баг с застреванием в состоянии атаки
-
-        // Отталкиваем от игрока
-        if (target != null)
-        {
-            Vector2 pushDir = (transform.position - target.position).normalized;
-            pushDir.y = 0.3f;
-            rb.AddForce(pushDir * 10f, ForceMode2D.Impulse);
-        }
-
-        yield return new WaitForSeconds(hitStunDuration);
-
-        isInHitStun = false;
-    }
+    
 
     void Die()
     {

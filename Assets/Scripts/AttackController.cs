@@ -19,7 +19,7 @@ public class AttackController : MonoBehaviour
 
     void Start()
     {
-        if (hitbox == null) hitbox = GetComponentInChildren<HitboxController>(); // Ищем HitboxController среди детей
+        if (hitbox == null) hitbox = GetComponentInChildren<HitboxController>(); 
         
         if (hitbox == null) Debug.LogError("HitboxController не найден! Назначь его в инспекторе.");
 
@@ -42,8 +42,7 @@ public class AttackController : MonoBehaviour
             Debug.LogError("Animator не найден на дочернем объекте Sprite!");
             return;
         }
-
-        // Инициализация атак
+        
         attackCooldowns["LightAttack"] = 0.5f;
         attackCooldowns["MediumAttack"] = 0.5f;
         attackCooldowns["HeavyAttack"] = 0.5f;
@@ -136,10 +135,26 @@ public class AttackController : MonoBehaviour
         {
             Debug.Log($"Activating hitbox for {attackType}");
             hitbox.ActivateHitbox(attackType);
+            CheckLootHit();
         }
         else
         {
             Debug.LogError("Ошибка: HitboxController не найден! Назначь его в инспекторе.");
+        }
+    }
+    
+    void CheckLootHit()
+    {
+        Collider2D[] hitLootItems = Physics2D.OverlapCircleAll(transform.position, hitbox.attackRange, hitbox.lootLayer);
+    
+        foreach (Collider2D loot in hitLootItems)
+        {
+            LootItem lootItem = loot.GetComponent<LootItem>();
+        
+            if (lootItem != null && lootItem.lootType == LootItem.LootType.AttackPickup)
+            {
+                lootItem.TakeHit(); 
+            }
         }
     }
 
@@ -157,14 +172,11 @@ public class AttackController : MonoBehaviour
     public bool IsBlockingTowards(Vector3 attackerPosition)
     {
         if (!IsBlocking()) return false;
-    
-        // Определяем направление к атакующему
+        
         Vector2 directionToAttacker = (attackerPosition - transform.position).normalized;
-    
-        // Определяем направление взгляда игрока (предполагаем, что спрайт повёрнут вправо)
+        
         float facingDirection = transform.localScale.x > 0 ? 1 : -1;
-    
-        // Блок работает только против атак спереди
+        
         return (directionToAttacker.x * facingDirection) > 0;
     }
 }

@@ -6,7 +6,7 @@ public class AnimationEventHandler : MonoBehaviour
 
     void Start()
     {
-        character = GetComponentInParent<Character>(); // Ищем скрипт наверху
+        character = GetComponentInParent<Character>(); 
     }
 
     public void StartDash()

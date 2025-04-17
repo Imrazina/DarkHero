@@ -17,13 +17,13 @@ public class LevelStart : MonoBehaviour
 
         // Проверка: если уже играли интро — выходим
         if (GameStateManager.Instance.CurrentState.hasPlayedIntro)
+        {
+            screenFade.FadeIn(1f); // Просто делаем плавное появление
             return;
-
-        // Ставим флаг, что интро сыграно
-        GameStateManager.Instance.CurrentState.hasPlayedIntro = true;
-        GameStateManager.Instance.SaveGame();
+        }
 
         StartCoroutine(PlayIntro());
+        GameStateManager.Instance.CurrentState.hasPlayedIntro = true;
     }
 
     private IEnumerator PlayIntro()

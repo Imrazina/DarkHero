@@ -2,6 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class CameraState
+{
+    public Vector3 position;
+    public bool isOrthographic;
+}
+
 public class WorldSwitcher : MonoBehaviour
 {
     public GameObject normalWorld;
@@ -9,7 +16,6 @@ public class WorldSwitcher : MonoBehaviour
     public Transform player;
 
     private bool isInSpiritWorld;
-
     private void Start()
     {
         // Восстановить состояние мира
@@ -49,5 +55,25 @@ public class WorldSwitcher : MonoBehaviour
     {
         normalWorld.SetActive(!isInSpiritWorld);
         spiritWorld.SetActive(isInSpiritWorld);
+    }
+    
+    private void SaveCameraState()
+    {
+        var cam = Camera.main;
+        GameStateManager.Instance.CurrentState.cameraState = new CameraState
+        {
+            position = cam.transform.position,
+            isOrthographic = cam.orthographic
+        };
+    }
+
+    private void LoadCameraState()
+    {
+        if (GameStateManager.Instance.CurrentState.cameraState != null)
+        {
+            var cam = Camera.main;
+            cam.transform.position = GameStateManager.Instance.CurrentState.cameraState.position;
+            cam.orthographic = GameStateManager.Instance.CurrentState.cameraState.isOrthographic;
+        }
     }
 }

@@ -14,14 +14,12 @@ public class CameraSwitchTrigger : MonoBehaviour
         float playerX = other.transform.position.x;
         float triggerX = transform.position.x;
 
-        if (playerX > triggerX)
-        {
-            MoveCamera(cameraPositionBackward.position);
-        }
-        else
-        {
-            MoveCamera(cameraPositionForward.position);
-        }
+        Vector3 targetPos = playerX > triggerX ? 
+            cameraPositionBackward.position : 
+            cameraPositionForward.position;
+
+        MoveCamera(targetPos);
+        GameStateManager.Instance.CurrentState.lastCameraPosition = targetPos;
     }
 
     private void MoveCamera(Vector3 targetPos)

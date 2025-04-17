@@ -27,9 +27,16 @@ public class GameStateManager : MonoBehaviour
 
     public void SaveGame()
     {
+        var player = FindObjectOfType<Character>();
+        if (player != null)
+        {
+            CurrentState.playerPosition = player.transform.position;
+            Debug.Log($"Saving position: {CurrentState.playerPosition}");
+        }
+    
         string json = JsonUtility.ToJson(CurrentState, true);
         File.WriteAllText(saveFilePath, json);
-        Debug.Log("Game Saved to: " + saveFilePath);
+        Debug.Log("Game Saved to: " + saveFilePath); 
     }
 
     public void LoadGame()
@@ -38,7 +45,7 @@ public class GameStateManager : MonoBehaviour
         {
             string json = File.ReadAllText(saveFilePath);
             CurrentState = JsonUtility.FromJson<GameState>(json);
-            Debug.Log("Game Loaded from: " + saveFilePath);
+            Debug.Log($"Game Loaded! Position: {CurrentState.playerPosition}");
         }
         else
         {
@@ -48,6 +55,15 @@ public class GameStateManager : MonoBehaviour
 
     public void ResetGame()
     {
-        CurrentState = new GameState();
+        CurrentState = new GameState()
+        {
+            playerPosition = new Vector3(0, 0, 0), // Стартовая позиция для New Game
+            enemyDefeated = false,
+            isInSpiritWorld = false,
+            collectedItems = new List<string>(),
+            hasPlayedIntro = false,
+            totalCoins = 0,
+            isPlayerDead = false
+        };
     }
 }

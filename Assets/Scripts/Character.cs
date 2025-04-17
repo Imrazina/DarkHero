@@ -45,6 +45,12 @@ public class Character : MonoBehaviour
 
     void Start()
     {
+        if (GameStateManager.Instance.CurrentState.playerPosition != Vector3.zero)
+        {
+            transform.position = GameStateManager.Instance.CurrentState.playerPosition;
+            Debug.Log($"Loaded position: {transform.position}");
+        }
+        
         currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
         attackController = GetComponent<AttackController>();
@@ -69,6 +75,12 @@ public class Character : MonoBehaviour
 
 void Update()
 {
+    if (!isDead)
+    {
+        
+        GameStateManager.Instance.CurrentState.playerPosition = transform.position;
+    }
+    
     if (isDead) return;
 
     float moveInput = Input.GetAxisRaw("Horizontal");
@@ -77,7 +89,7 @@ void Update()
 
     if (Input.GetKeyDown(KeyCode.O) && !isDashing)
     {
-        StartDashFromAnimation(); // твой метод
+        StartDashFromAnimation(); 
     }
     
     if (isDashing) return;
@@ -157,23 +169,23 @@ void Update()
     {
         if (isWallSliding && !isWallJumping && !justWallJumped)
         {
-            SetAnimState(4); // WallSlide
+            SetAnimState(4); 
         }
         else if (isWallJumping || justWallJumped)
         {
-            SetAnimState(3); // Jump (WallJump)
+            SetAnimState(3);
         }
         else if (!isGrounded && Mathf.Abs(rb.velocity.y) > 0.1f) // <-- добавил условие чтобы не мешать Idle в воздухе
         {
-            SetAnimState(3); // В обычном воздухе
+            SetAnimState(3);
         }
         else if (isGrounded && Mathf.Abs(moveInput) > 0.01f)
         {
-            SetAnimState(isRunning ? 2 : 1); // Walk/Run
+            SetAnimState(isRunning ? 2 : 1); 
         }
-        else if (isGrounded) // <-- добавил явное условие
+        else if (isGrounded)
         {
-            SetAnimState(0); // Idle
+            SetAnimState(0);
         }
     }
 
@@ -206,7 +218,7 @@ void Update()
     }
     else
     {
-        if (!justWallJumped) // блокирует возвращение isTouchingWall
+        if (!justWallJumped) 
             isTouchingWall = false;
     }
 }
@@ -228,13 +240,13 @@ private void WallJump()
         Debug.Log($"[WallJump] Направление прыжка: {jumpDirection}, Применённая скорость: {rb.velocity}");
 
         StartCoroutine(ResetWallJump());
-        StartCoroutine(ClearJustWallJumped()); // <-- Вызов нового корутина
+        StartCoroutine(ClearJustWallJumped()); 
     }
 }
 
 private IEnumerator ClearJustWallJumped()
 {
-    yield return new WaitForSeconds(0.25f); // Увеличь время хотя бы до 0.25–0.3 сек
+    yield return new WaitForSeconds(0.25f); 
     justWallJumped = false;
     isWallJumping = false;
 }
@@ -359,6 +371,7 @@ private IEnumerator ClearJustWallJumped()
         if (isDead) return;
         isDead = true;
 
+        // Останавливаем физику и управление, но НЕ отключаем сам объект
         rb.velocity = Vector2.zero;
         rb.isKinematic = true;
         rb.simulated = false;
@@ -369,31 +382,15 @@ private IEnumerator ClearJustWallJumped()
         }
 
         GetComponent<AttackController>().enabled = false;
-        this.enabled = false;
 
-        animator.ResetTrigger("Hurt");
-        animator.ResetTrigger("Attack");
-        animator.ResetTrigger("Dash");
-
-        animator.Play("Death", 0, 0f);
-        animator.SetTrigger("Death");
-
-        StartCoroutine(FadeOutAndDie(1f));
-    }
-
-    private IEnumerator FadeOutAndDie(float fadeTime)
-    {
-        SpriteRenderer sprite = GetComponentInChildren<SpriteRenderer>();
-        float timer = 0f;
-
-        while (timer < fadeTime)
+        // Вызываем Game Over
+        if (UIManager.Instance != null)
         {
-            timer += Time.deltaTime;
-            float alpha = Mathf.Lerp(1f, 0f, timer / fadeTime);
-            sprite.color = new Color(1, 1, 1, alpha);
-            yield return null;
+            UIManager.Instance.GameOverWithDelay(0.5f);
         }
-
-        Destroy(gameObject);
+        else
+        {
+            Debug.LogError("UIManager.Instance не найден!");
+        }
     }
 }

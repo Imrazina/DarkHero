@@ -13,14 +13,19 @@ public class LevelSegmentSpawner : MonoBehaviour
     [Header("Decorations")]
     public GameObject[] decorationPrefabs;
     public Transform[] decorationSpawnPoints;
+    
+    [Header("Backgrounds")]
+    public GameObject[] backgrounds;
 
     private int lootIdCounter = 1;
 
+    
     void Start()
     {
         SpawnEnemies();
         SpawnLoot();
         SpawnDecorations();
+        ChangeBackground();
     }
 
     void SpawnEnemies()
@@ -42,8 +47,7 @@ public class LevelSegmentSpawner : MonoBehaviour
         {
             GameObject selectedLoot = lootPrefabs[Random.Range(0, lootPrefabs.Length)];
             Vector3 spawnPosition = spawnPoint.position;
-
-            // Если это монета — поднимаем чуть выше
+            
             if (selectedLoot.name.ToLower().Contains("coin"))
             {
                 spawnPosition.y += 0.5f;
@@ -65,8 +69,7 @@ public class LevelSegmentSpawner : MonoBehaviour
         {
             GameObject selectedDecoration = decorationPrefabs[Random.Range(0, decorationPrefabs.Length)];
             GameObject decor = Instantiate(selectedDecoration, spawnPoint.position, Quaternion.identity, transform);
-
-            // Рандомный флип по X или небольшое вращение
+            
             if (Random.value > 0.5f)
             {
                 Vector3 scale = decor.transform.localScale;
@@ -79,5 +82,15 @@ public class LevelSegmentSpawner : MonoBehaviour
                 decor.transform.Rotate(Vector3.forward * Random.Range(-10f, 10f));
             }
         }
+    }
+    
+    void ChangeBackground()
+    {
+        foreach (GameObject background in backgrounds)
+        {
+            background.SetActive(false);
+        }
+        int randomIndex = Random.Range(0, backgrounds.Length);
+        backgrounds[randomIndex].SetActive(true);
     }
 }

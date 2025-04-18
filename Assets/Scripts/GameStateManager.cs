@@ -83,6 +83,17 @@ public class GameStateManager : MonoBehaviour
             player.Resurrect();
             player.transform.position = new Vector3(-7.7f, 0, 0);
         }
+        var inventory = FindObjectOfType<PlayerInventory>();
+        if (inventory != null)
+        {
+            inventory.ResetInventory();
+        }
+        
+        var allRunes = FindObjectsOfType<RunePickup>(true); 
+        foreach (var rune in allRunes)
+        {
+            rune.SetRuneActive(true); 
+        }
         
         if (Camera.main != null)
         {

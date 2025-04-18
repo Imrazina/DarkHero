@@ -39,7 +39,5 @@ public class CameraSwitchTrigger : MonoBehaviour
             isOrthographic = Camera.main.orthographic
         };
         GameStateManager.Instance.SaveGame();
-
-        Debug.Log("📸 Камера сохранена с задержкой.");
     }
 }

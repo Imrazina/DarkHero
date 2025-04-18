@@ -17,4 +17,13 @@ public class PlayerInventory : MonoBehaviour
             runeIcon.color = Color.white; 
         }
     }
+    
+    public void ResetInventory()
+    {
+        hasRune = false;
+        if (runeIcon != null)
+        {
+            runeIcon.color = Color.black;
+        }
+    }
 }

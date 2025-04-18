@@ -1,33 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-[System.Serializable]
-public class CameraState
-{
-    public Vector3 position;
-    public bool isOrthographic;
-}
-
 public class WorldSwitcher : MonoBehaviour
 {
-    public GameObject normalWorld;
+public GameObject normalWorld;
     public GameObject spiritWorld;
     public Transform player;
 
-    private bool isInSpiritWorld;
     private void Start()
     {
-        // Восстановить состояние мира
-        isInSpiritWorld = GameStateManager.Instance.CurrentState.isInSpiritWorld;
-
-        Vector3 savedPosition = GameStateManager.Instance.CurrentState.playerPosition;
-        if (savedPosition != Vector3.zero)
-        {
-            player.position = savedPosition;
-        }
-
-        UpdateWorldState();
+        // Загружаем состояние мира и камеры
+        LoadWorldState();
+        LoadCameraState();
     }
 
     private void Update()
@@ -40,21 +24,20 @@ public class WorldSwitcher : MonoBehaviour
 
     void SwitchWorld()
     {
-        isInSpiritWorld = !isInSpiritWorld;
-        GameStateManager.Instance.CurrentState.isInSpiritWorld = isInSpiritWorld;
-
+        GameStateManager.Instance.CurrentState.isInSpiritWorld = !GameStateManager.Instance.CurrentState.isInSpiritWorld;
         GameStateManager.Instance.CurrentState.playerPosition = player.position;
-
+        SaveCameraState();
         UpdateWorldState();
-
+        
         FindObjectOfType<SubtitleManager>().ShowSubtitle(
-            isInSpiritWorld ? "WORLD OF SPIRITS" : "WORLD OF PEOPLE", 3f);
+            GameStateManager.Instance.CurrentState.isInSpiritWorld ? "WORLD OF SPIRITS" : "WORLD OF PEOPLE", 3f);
     }
 
     void UpdateWorldState()
     {
-        normalWorld.SetActive(!isInSpiritWorld);
-        spiritWorld.SetActive(isInSpiritWorld);
+        bool isSpiritWorld = GameStateManager.Instance.CurrentState.isInSpiritWorld;
+        normalWorld.SetActive(!isSpiritWorld);
+        spiritWorld.SetActive(isSpiritWorld);
     }
     
     private void SaveCameraState()
@@ -75,5 +58,22 @@ public class WorldSwitcher : MonoBehaviour
             cam.transform.position = GameStateManager.Instance.CurrentState.cameraState.position;
             cam.orthographic = GameStateManager.Instance.CurrentState.cameraState.isOrthographic;
         }
+    }
+
+    private void LoadWorldState()
+    {
+        UpdateWorldState();
+        
+        if (GameStateManager.Instance.CurrentState.playerPosition != Vector3.zero)
+        {
+            player.position = GameStateManager.Instance.CurrentState.playerPosition;
+        }
+    }
+    public void ResetWorlds()
+    {
+        GameStateManager.Instance.CurrentState.isInSpiritWorld = false;
+        UpdateWorldState();
+        
+        GameStateManager.Instance.SaveGame();
     }
 }

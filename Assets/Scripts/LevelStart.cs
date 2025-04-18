@@ -9,47 +9,54 @@ public class LevelStart : MonoBehaviour
     private void Awake()
     {
         Debug.Log("LevelStart активен в сцене!");
+        screenFade = FindObjectOfType<ScreenFade>();
     }
+
     public void StartIntro()
     {
-        screenFade = FindObjectOfType<ScreenFade>();
-        if (screenFade == null) Debug.LogWarning("ScreenFade not found!");
-
-        // Проверка: если уже играли интро — выходим
-        if (GameStateManager.Instance.CurrentState.hasPlayedIntro)
+        if (screenFade == null) 
         {
-            screenFade.FadeIn(1f); // Просто делаем плавное появление
-            return;
+            screenFade = FindObjectOfType<ScreenFade>();
+            if (screenFade == null) Debug.LogWarning("ScreenFade not found!");
         }
+        
+        StartCoroutine(PlayFullIntro());
 
-        StartCoroutine(PlayIntro());
         GameStateManager.Instance.CurrentState.hasPlayedIntro = true;
+        GameStateManager.Instance.SaveGame();
     }
 
-    private IEnumerator PlayIntro()
+    private IEnumerator PlayFullIntro()
     {
-        Debug.Log("Starting intro...");
-
+        Debug.Log("Starting FULL intro...");
+        
+        screenFade.FadeOut(0f); 
+        yield return null; 
+        
         var subtitleManager = FindObjectOfType<SubtitleManager>();
-        if (subtitleManager == null) Debug.LogWarning("SubtitleManager not found!");
-        else Debug.Log("SubtitleManager found!");
-
-        FindObjectOfType<SubtitleManager>().ShowSubtitle("Where am I?..", 3f);
+        if (subtitleManager == null) 
+        {
+            Debug.LogWarning("SubtitleManager not found!");
+            yield break;
+        }
+        
+        subtitleManager.ShowSubtitle("Where am I?..", 3f);
         yield return new WaitForSeconds(1.5f);
 
-        FindObjectOfType<SubtitleManager>().ShowSubtitle("This city... Why does it feel so familiar?", 3f);
+        subtitleManager.ShowSubtitle("This city... Why does it feel so familiar?", 3f);
         yield return new WaitForSeconds(3.5f);
 
-        FindObjectOfType<SubtitleManager>().ShowSubtitle("Move forward. The truth is hidden behind the veil.", 2f);
+        subtitleManager.ShowSubtitle("Move forward. The truth is hidden behind the veil.", 2f);
         yield return new WaitForSeconds(3.5f);
-
         screenFade.FadeIn(2f);
+        
         yield return new WaitForSeconds(2.5f);
 
-        FindObjectOfType<SubtitleManager>().ShowSubtitle("I still remember how to move...", 2f);
+        subtitleManager.ShowSubtitle("I still remember how to move...", 2f);
         yield return new WaitForSeconds(2.5f);
 
-        FindObjectOfType<SubtitleManager>().ShowSubtitle("This symbol... It's calling me.", 2f);
+        subtitleManager.ShowSubtitle("This symbol... It's calling me.", 2f);
         yield return new WaitForSeconds(2.5f);
+        
     }
 }

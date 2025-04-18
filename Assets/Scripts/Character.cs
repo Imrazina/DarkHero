@@ -45,10 +45,14 @@ public class Character : MonoBehaviour
 
     void Start()
     {
-        if (GameStateManager.Instance.CurrentState.playerPosition != Vector3.zero)
+        if (!GameStateManager.Instance.CurrentState.hasPlayedIntro || 
+            GameStateManager.Instance.CurrentState.isPlayerDead)
+        {
+            transform.position = new Vector3(-6, 0, 0);
+        }
+        else if (GameStateManager.Instance.CurrentState.playerPosition != Vector3.zero)
         {
             transform.position = GameStateManager.Instance.CurrentState.playerPosition;
-            Debug.Log($"Loaded position: {transform.position}");
         }
         
         currentHealth = maxHealth;
@@ -353,8 +357,7 @@ private IEnumerator ClearJustWallJumped()
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth); // Защита от отрицательного
 
         animator.SetTrigger("Hurt");
-
-        // Обновляем UI
+        
         if (healthUI != null)
         {
             healthUI.UpdateHearts(currentHealth);
@@ -371,7 +374,6 @@ private IEnumerator ClearJustWallJumped()
         if (isDead) return;
         isDead = true;
 
-        // Останавливаем физику и управление, но НЕ отключаем сам объект
         rb.velocity = Vector2.zero;
         rb.isKinematic = true;
         rb.simulated = false;
@@ -382,8 +384,7 @@ private IEnumerator ClearJustWallJumped()
         }
 
         GetComponent<AttackController>().enabled = false;
-
-        // Вызываем Game Over
+        
         if (UIManager.Instance != null)
         {
             UIManager.Instance.GameOverWithDelay(0.5f);
@@ -392,5 +393,21 @@ private IEnumerator ClearJustWallJumped()
         {
             Debug.LogError("UIManager.Instance не найден!");
         }
+    }
+    
+    public void Resurrect()
+    {
+        isDead = false;
+        currentHealth = maxHealth;
+        rb.isKinematic = false;
+        rb.simulated = true;
+    
+        foreach (Collider2D col in GetComponentsInChildren<Collider2D>())
+        {
+            col.enabled = true;
+        }
+    
+        GetComponent<AttackController>().enabled = true;
+        healthUI.UpdateHearts(currentHealth);
     }
 }

@@ -1,15 +1,28 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ScreenFade : MonoBehaviour
 {
     public Image fadeImage;
+    public GameObject fadeCanvas;
 
     private void Awake()
     {
+        fadeCanvas.SetActive(true);
         fadeImage.color = new Color(0f, 0f, 0f, 1f);
+    }
+    
+    
+    public void ForceFadeOut()
+    {
+        fadeCanvas.SetActive(true);
+    }
+    
+    private IEnumerator DelayedFadeIn()
+    {
+        
+        yield return FadeToClear(2f);
     }
 
     public void FadeOut(float duration)
@@ -54,5 +67,7 @@ public class ScreenFade : MonoBehaviour
 
         color.a = 0f;
         fadeImage.color = color;
+
+        fadeCanvas.SetActive(false);
     }
 }

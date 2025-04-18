@@ -58,6 +58,39 @@ public class UIManager : MonoBehaviour
             isStartingNewGame = false; 
             return;
         }
+        
+        restartGameButton.onClick.AddListener(() => {
+            Debug.Log("RESTART GAME clicked");
+            NewGame(); // Используем тот же функционал, что и New Game
+        });
+        
+        loadLastSaveButton.onClick.AddListener(() => {
+            Debug.Log("LOAD GAME clicked");
+    
+            GameStateManager.Instance.LoadGame();
+    
+            var player = FindObjectOfType<Character>();
+            if (player != null)
+            {
+                player.Resurrect();
+                player.transform.position = GameStateManager.Instance.CurrentState.playerPosition;
+            }
+    
+            // Восстанавливаем камеру
+            if (GameStateManager.Instance.CurrentState.cameraState != null)
+            {
+                Camera.main.transform.position = GameStateManager.Instance.CurrentState.cameraState.position;
+            }
+    
+            gameOverPanel.SetActive(false);
+            Time.timeScale = 1f;
+        });
+        
+        exitToMenuFromGameOverButton.onClick.AddListener(() => {
+            Time.timeScale = 0f;
+            mainMenuPanel.SetActive(true);
+            gameOverPanel.SetActive(false);
+        });
 
         Time.timeScale = 0f;
         mainMenuPanel.SetActive(true);
@@ -80,55 +113,89 @@ public class UIManager : MonoBehaviour
             ShowGameOver();
         }
     }
-
-    public void NewGame()
+    
+    private IEnumerator ReloadSceneWithIntro()
     {
-        Debug.Log("NewGame()");
-        isStartingNewGame = true;
-        GameStateManager.Instance.ResetGame();
-        Time.timeScale = 1f;
-        isGamePaused = false;
-        StartCoroutine(StartIntroAfterFrame());
-    }
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+        
+        while (!asyncLoad.isDone)
+        {
+            yield return null;
+        }
 
-    private IEnumerator StartIntroAfterFrame()
-    {
-        Debug.Log("StartIntroAfterFrame() started.");
-        yield return null;
-
-        LevelStart levelStart = FindObjectOfType<LevelStart>();
+        var levelStart = FindObjectOfType<LevelStart>();
         if (levelStart != null)
         {
-            Debug.Log("LevelStart найден — запускаю интро.");
-            mainMenuPanel.SetActive(false);
-            gameOverPanel.SetActive(false);
-            isGamePaused = false;
             levelStart.StartIntro();
         }
         else
         {
-            Debug.LogWarning("LevelStart не найден.");
+            Debug.LogError("LevelStart не найден после перезагрузки сцены!");
         }
+    
+        gameOverPanel.SetActive(false);
+        Time.timeScale = 1f;
+    }
+
+    public void NewGame()
+    {
+        Debug.Log("Starting NEW GAME with full reset");
+        
+        GameStateManager.Instance.FullReset();
+        
+        var worldSwitcher = FindObjectOfType<WorldSwitcher>();
+        if (worldSwitcher != null)
+        {
+            worldSwitcher.ResetWorlds();
+        }
+        
+        isStartingNewGame = true;
+
+        mainMenuPanel.SetActive(false);
+        gameOverPanel.SetActive(false);
+        pausePanel.SetActive(false);
+        
+        var screenFade = FindObjectOfType<ScreenFade>();
+        if (screenFade != null)
+        {
+            screenFade.ForceFadeOut();
+        }
+
+        StartCoroutine(StartGameAfterReset());
+    }
+
+    private IEnumerator StartGameAfterReset()
+    {
+        yield return null;
+        
+        var levelStart = FindObjectOfType<LevelStart>();
+        if (levelStart != null)
+        {
+            levelStart.StartIntro();
+        }
+        else
+        {
+            Debug.LogError("LevelStart не найден!");
+        }
+    
+        Time.timeScale = 1f;
     }
 
     public void ContinueGame()
     {
         GameStateManager.Instance.LoadGame();
-    
-        // Применяем все загруженные состояния
+        
         var player = FindObjectOfType<Character>();
         if (player != null)
         {
             player.transform.position = GameStateManager.Instance.CurrentState.playerPosition;
         }
-
-        // Восстанавливаем камеру
+        
         if (GameStateManager.Instance.CurrentState.lastCameraPosition != Vector3.zero)
         {
             Camera.main.transform.position = GameStateManager.Instance.CurrentState.lastCameraPosition;
         }
-
-        // Управление UI
+        
         mainMenuPanel.SetActive(false);
         Time.timeScale = 1f;
     }

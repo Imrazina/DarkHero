@@ -11,15 +11,12 @@ public class CameraSwitchTrigger : MonoBehaviour
     {
         if (!other.CompareTag("Player")) return;
 
-        float playerX = other.transform.position.x;
-        float triggerX = transform.position.x;
-
-        Vector3 targetPos = playerX > triggerX ? 
-            cameraPositionBackward.position : 
-            cameraPositionForward.position;
+        Vector3 targetPos = other.transform.position.x > transform.position.x 
+            ? cameraPositionBackward.position 
+            : cameraPositionForward.position;
 
         MoveCamera(targetPos);
-        GameStateManager.Instance.CurrentState.lastCameraPosition = targetPos;
+        StartCoroutine(DelayedSaveCameraPosition(targetPos, 0.75f));
     }
 
     private void MoveCamera(Vector3 targetPos)
@@ -29,5 +26,20 @@ public class CameraSwitchTrigger : MonoBehaviour
             targetPos.y,
             Camera.main.transform.position.z
         );
+    }
+
+    private IEnumerator DelayedSaveCameraPosition(Vector3 position, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        GameStateManager.Instance.CurrentState.lastCameraPosition = position;
+        GameStateManager.Instance.CurrentState.cameraState = new CameraState
+        {
+            position = position,
+            isOrthographic = Camera.main.orthographic
+        };
+        GameStateManager.Instance.SaveGame();
+
+        Debug.Log("📸 Камера сохранена с задержкой.");
     }
 }

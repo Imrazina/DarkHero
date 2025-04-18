@@ -46,10 +46,14 @@ public class GameStateManager : MonoBehaviour
             string json = File.ReadAllText(saveFilePath);
             CurrentState = JsonUtility.FromJson<GameState>(json);
             Debug.Log($"Game Loaded! Position: {CurrentState.playerPosition}");
-        }
-        else
-        {
-            Debug.LogWarning("No save file found!");
+            
+            CurrentState.isPlayerDead = false;
+            
+            var player = FindObjectOfType<Character>();
+            if (player != null)
+            {
+                player.Resurrect();
+            }
         }
     }
 
@@ -57,13 +61,32 @@ public class GameStateManager : MonoBehaviour
     {
         CurrentState = new GameState()
         {
-            playerPosition = new Vector3(0, 0, 0), // Стартовая позиция для New Game
+            playerPosition = new Vector3(-6, 0, 0),
             enemyDefeated = false,
             isInSpiritWorld = false,
             collectedItems = new List<string>(),
             hasPlayedIntro = false,
             totalCoins = 0,
-            isPlayerDead = false
+            isPlayerDead = false,
+            cameraState = new CameraState(), 
+            lastCameraPosition = Vector3.zero,
         };
+    }
+    
+    public void FullReset()
+    {
+        ResetGame(); 
+        
+        var player = FindObjectOfType<Character>();
+        if (player != null)
+        {
+            player.Resurrect();
+            player.transform.position = new Vector3(-7.7f, 0, 0);
+        }
+        
+        if (Camera.main != null)
+        {
+            Camera.main.transform.position = new Vector3(0.16f, 0.95f, -10); 
+        }
     }
 }

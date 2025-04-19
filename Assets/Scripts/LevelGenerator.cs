@@ -4,24 +4,75 @@ using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
 {
-    public GameObject[] levelPrefabs; 
+    public GameObject[] levelPrefabs;
     public Transform spawnPoint;
+
+    private Transform lastExitPoint;
 
     void Start()
     {
+        lastExitPoint = null; 
         GenerateLevel();
     }
 
     void GenerateLevel()
     {
-        Vector3 currentPosition = spawnPoint.position;
-        
-        for (int i = 0; i < 5; i++)
+   Vector3 currentPosition = spawnPoint.position;
+   currentPosition.z = 0f;
+
+    for (int i = 0; i < 5; i++)
+    {
+        GameObject prefab = levelPrefabs[Random.Range(0, levelPrefabs.Length)];
+
+        GameObject temp = Instantiate(prefab);
+        BoxCollider2D col = temp.GetComponent<BoxCollider2D>();
+        Transform entry = temp.transform.Find("EntryPoint");
+        Transform exit = temp.transform.Find("ExitPoint");
+
+        if (col == null || entry == null || exit == null)
         {
-            int prefabIndex = Random.Range(0, levelPrefabs.Length);
-            GameObject levelSegment = Instantiate(levelPrefabs[prefabIndex], currentPosition, Quaternion.identity);
-            
-            currentPosition.x += levelSegment.GetComponent<Collider2D>().bounds.size.x;
+            Debug.LogError(prefab.name + " missing components!");
+            Destroy(temp);
+            continue;
         }
+
+        Vector3 spawnPos;
+
+        if (i == 0)
+        {
+            Vector3 offset = col.bounds.center - temp.transform.position;
+            spawnPos = currentPosition - offset;
+        }
+        else
+        {
+            Vector3 offset = entry.position - temp.transform.position;
+            spawnPos = currentPosition - offset;
+        }
+
+        Destroy(temp);
+
+        GameObject levelSegment = Instantiate(prefab, spawnPos, Quaternion.identity);
+        Debug.Log("Spawned " + levelSegment.name + " at " + spawnPos);
+        
+        Transform newExit = levelSegment.transform.Find("ExitPoint");
+        if (newExit != null)
+        {
+            currentPosition = newExit.position;
+        }
+
+        Transform forwardCamera = levelSegment.transform.Find("Forward");
+        Transform backwardCamera = levelSegment.transform.Find("Backward");
+        Transform cameraTrigger = levelSegment.transform.Find("ExitTriggerRight");
+
+        if (cameraTrigger != null)
+        {
+            CameraSwitchTrigger switcher = cameraTrigger.GetComponent<CameraSwitchTrigger>();
+            if (switcher != null)
+            {
+                switcher.cameraPositionForward = forwardCamera;
+                switcher.cameraPositionBackward = backwardCamera;
+            }
+        }
+    }
     }
 }

@@ -571,7 +571,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3794385808090186525}
   m_Layer: 0
-  m_Name: Backward
+  m_Name: CameraTarget_Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4128,7 +4128,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8635862715001627725}
   m_Layer: 0
-  m_Name: EntryPoint
+  m_Name: Connection_Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4159,7 +4159,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2677830991359966312}
   m_Layer: 0
-  m_Name: ExitPoint
+  m_Name: Connection_Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4207,8 +4207,8 @@ Transform:
   m_GameObject: {fileID: 7184699721149234407}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 9.49, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 9.84, y: 0, z: 0}
+  m_LocalScale: {x: 0.5375, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 109854336962280024}
@@ -4270,8 +4270,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15e7fc30b32bf445fae6cf2460fab0df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraPositionForward: {fileID: 4766197740902956005}
-  cameraPositionBackward: {fileID: 3794385808090186525}
+  cameraTargetUp: {fileID: 0}
+  cameraTargetDown: {fileID: 0}
+  cameraTargetLeft: {fileID: 0}
+  cameraTargetRight: {fileID: 0}
 --- !u!1 &7355262126197196390
 GameObject:
   m_ObjectHideFlags: 0
@@ -4378,7 +4380,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4766197740902956005}
   m_Layer: 0
-  m_Name: Forward
+  m_Name: CameraTarget_Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4489,7 +4491,6 @@ MonoBehaviour:
   - {fileID: 297585313085491230}
   - {fileID: 1910581940763436386}
   - {fileID: 3020604312201471062}
-  - {fileID: 0}
 --- !u!61 &9039710744973526764
 BoxCollider2D:
   m_ObjectHideFlags: 0

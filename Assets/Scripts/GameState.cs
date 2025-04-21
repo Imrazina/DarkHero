@@ -12,6 +12,14 @@ public class CameraState
 
 
 [System.Serializable]
+public struct SavedLevelSegment
+{
+    public int prefabIndex;
+    public Direction entryDirection;
+}
+
+
+[System.Serializable]
 public class GameState
 {
     public bool enemyDefeated;
@@ -28,5 +36,5 @@ public class GameState
     public CameraState cameraState;
     public Vector3 lastCameraPosition;
     
-    public List<int> levelPrefabIndices = new List<int>();
+    public List<SavedLevelSegment> levelSegments = new();
 }

@@ -212,7 +212,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lootType: 0
   value: 1
-  uniqueID: Coins_5
+  uniqueID: Coins_7
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 0}
 --- !u!1 &1890058191527593424
@@ -225,7 +225,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3543765537882992870}
   m_Layer: 0
-  m_Name: EntryPoint
+  m_Name: Connection_Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -271,7 +271,7 @@ Transform:
   m_GameObject: {fileID: 2532823363064564212}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.62, y: -4.39, z: 0}
+  m_LocalPosition: {x: -6.62, y: -4.31, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -426,7 +426,7 @@ Transform:
   m_GameObject: {fileID: 3055678767476001062}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.07, y: 2.72, z: 0}
+  m_LocalPosition: {x: 2.07, y: 2.44, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -621,8 +621,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15e7fc30b32bf445fae6cf2460fab0df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraPositionForward: {fileID: 1504179768409045558}
-  cameraPositionBackward: {fileID: 1674966341473935325}
+  cameraTargetUp: {fileID: 0}
+  cameraTargetDown: {fileID: 0}
+  cameraTargetLeft: {fileID: 0}
+  cameraTargetRight: {fileID: 0}
 --- !u!1 &4201813737039228992
 GameObject:
   m_ObjectHideFlags: 0
@@ -648,7 +650,7 @@ Transform:
   m_GameObject: {fileID: 4201813737039228992}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.06, y: -0.41, z: 0}
+  m_LocalPosition: {x: -7.06, y: -0.18, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -679,7 +681,7 @@ Transform:
   m_GameObject: {fileID: 4367473044998153415}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.7, y: 3.49, z: 0}
+  m_LocalPosition: {x: 8.36, y: 3.38, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -830,7 +832,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lootType: 0
   value: 1
-  uniqueID: Coins_5
+  uniqueID: Coins_8
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 0}
 --- !u!1 &4868138252902729880
@@ -889,7 +891,7 @@ Transform:
   m_GameObject: {fileID: 5650702831520625574}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.67, y: 0.77, z: 0}
+  m_LocalPosition: {x: -1.67, y: 0.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1124,7 +1126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lootType: 0
   value: 1
-  uniqueID: Coins_5
+  uniqueID: Coins_6
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 0}
 --- !u!1 &5840094186137509830
@@ -1236,7 +1238,7 @@ Transform:
   m_GameObject: {fileID: 5840975233627233073}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.59, y: -0.57, z: 0}
+  m_LocalPosition: {x: -7.59, y: -0.68, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1252,7 +1254,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1504179768409045558}
   m_Layer: 0
-  m_Name: Forward
+  m_Name: CameraTarget_Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1318,7 +1320,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9118397541026242359}
   m_Layer: 0
-  m_Name: ExitPoint
+  m_Name: Connection_Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1349,7 +1351,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1674966341473935325}
   m_Layer: 0
-  m_Name: Backward
+  m_Name: CameraTarget_Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1749,7 +1751,7 @@ Transform:
   m_GameObject: {fileID: 8715037171062545689}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.95, y: -4.63, z: 0}
+  m_LocalPosition: {x: -7.95, y: -4.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

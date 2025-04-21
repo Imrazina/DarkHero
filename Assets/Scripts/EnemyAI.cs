@@ -163,18 +163,14 @@ public class EnemyAI : MonoBehaviour
         canAttack = false;
         isAttacking = true;
         hasDealtDamage = false;
-
-        // 1. Проигрываем Charge-анимацию
+        
         animator.SetTrigger("Charge");
 
-        // 2. Ждем длину Charge (например, 0.5 сек)
         float chargeDuration = 0.5f;
         yield return new WaitForSeconds(chargeDuration);
 
-        // 3. Проигрываем атаку
         animator.SetTrigger("Attack");
 
-        // 4. Ждём чуть-чуть, чтобы попасть в нужный момент удара (например, 0.2 сек после старта Attack-анимации)
         yield return new WaitForSeconds(0.2f);
 
         if (!hasDealtDamage && target != null && Vector2.Distance(transform.position, target.position) <= attackRange)
@@ -201,8 +197,7 @@ public class EnemyAI : MonoBehaviour
                 hasDealtDamage = true;
             }
         }
-
-        // 5. Ждём остаток кулдауна
+        
         float cooldownLeft = attackCooldown - chargeDuration;
         yield return new WaitForSeconds(cooldownLeft);
 
@@ -212,14 +207,12 @@ public class EnemyAI : MonoBehaviour
     
     void DebugDrawRays()
     {
-        // Проверка земли впереди
         Vector2 frontCheck = (Vector2)transform.position + frontGroundCheck;
         Vector2 backCheck = (Vector2)transform.position + backGroundCheck;
         
         Debug.DrawRay(frontCheck, Vector2.down * groundCheckDistance, Color.green);
         Debug.DrawRay(backCheck, Vector2.down * groundCheckDistance, Color.cyan);
         
-        // Проверка стены
         Debug.DrawRay(
             transform.position,
             (facingRight ? Vector2.right : Vector2.left) * wallCheckDistance,
@@ -240,7 +233,7 @@ public class EnemyAI : MonoBehaviour
         }
 
         AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
-        if (currentState.IsName("hitEnemy")) return; // уже в анимации удара
+        if (currentState.IsName("hitEnemy")) return; 
 
         StartCoroutine(PlayHitAnimation());
  

@@ -31,11 +31,12 @@ public class CameraSwitchTrigger : MonoBehaviour
     private IEnumerator DelayedSaveCameraPosition(Vector3 position, float delay)
     {
         yield return new WaitForSeconds(delay);
+        Vector3 fixedPosition = new Vector3(position.x, position.y, -10f);
 
         GameStateManager.Instance.CurrentState.lastCameraPosition = position;
         GameStateManager.Instance.CurrentState.cameraState = new CameraState
         {
-            position = position,
+            position = fixedPosition,
             isOrthographic = Camera.main.orthographic
         };
         GameStateManager.Instance.SaveGame();

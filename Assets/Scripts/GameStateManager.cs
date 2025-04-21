@@ -45,6 +45,7 @@ public class GameStateManager : MonoBehaviour
         {
             string json = File.ReadAllText(saveFilePath);
             CurrentState = JsonUtility.FromJson<GameState>(json);
+            FindObjectOfType<LevelGenerator>()?.GenerateLevelFromSave(CurrentState.levelPrefabIndices);
             Debug.Log($"Game Loaded! Position: {CurrentState.playerPosition}");
             
             CurrentState.isPlayerDead = false;

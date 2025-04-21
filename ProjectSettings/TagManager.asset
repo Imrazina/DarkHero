@@ -10,6 +10,7 @@ TagManager:
   - Enemy
   - dialog
   - Wall
+  - KillZone
   layers:
   - Default
   - TransparentFX

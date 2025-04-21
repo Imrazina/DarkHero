@@ -28,4 +28,5 @@ public class GameState
     public CameraState cameraState;
     public Vector3 lastCameraPosition;
     
+    public List<int> levelPrefabIndices = new List<int>();
 }

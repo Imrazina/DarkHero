@@ -8,7 +8,7 @@ public class RunePickup : MonoBehaviour
     public GameObject runeVisual; 
     public GameObject pickupEffect;
     public AudioClip pickupSound;
-    public Collider2D pickupCollider; 
+    public Collider2D pickupCollider;
 
     private void Start()
     {

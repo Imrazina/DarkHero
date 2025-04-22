@@ -1,40 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.Examples;
 using UnityEngine;
 
 public class CameraSwitchTrigger : MonoBehaviour
 {
-   public Transform cameraTargetUp;
-    public Transform cameraTargetDown;
-    public Transform cameraTargetLeft;
-    public Transform cameraTargetRight;
+    public Transform cameraTargetForward;
+    public Transform cameraTargetBackward;
 
-    private void Awake()
-    {
-        if (cameraTargetUp == null) cameraTargetUp = transform.Find("CameraTarget_Up");
-        if (cameraTargetDown == null) cameraTargetDown = transform.Find("CameraTarget_Down");
-        if (cameraTargetLeft == null) cameraTargetLeft = transform.Find("CameraTarget_Left");
-        if (cameraTargetRight == null) cameraTargetRight = transform.Find("CameraTarget_Right");
-    }
+    private Vector3 lastPlayerPosition;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (!other.CompareTag("Player")) return;
-    
-        bool isPlayerOnRight = other.transform.position.x > transform.position.x;
-        bool isPlayerOnTop = other.transform.position.y > transform.position.y;
 
-        Transform target = null;
+        lastPlayerPosition = other.transform.position;
+    }
 
-         if (Mathf.Abs(other.transform.position.x - transform.position.x) > 
-            Mathf.Abs(other.transform.position.y - transform.position.y))
+    private void OnTriggerStay2D(Collider2D other)
+    {
+        if (!other.CompareTag("Player")) return;
+
+        Vector3 currentPos = other.transform.position;
+        Vector3 direction = currentPos - lastPlayerPosition;
+
+        Transform target;
+
+        if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
         {
-             target = isPlayerOnRight ? cameraTargetRight : cameraTargetLeft;
+            target = direction.x > 0 ? cameraTargetForward : cameraTargetBackward;
         }
-
         else
         {
-            target = isPlayerOnTop ? cameraTargetUp : cameraTargetDown;
+            target = direction.y > 0 ? cameraTargetForward : cameraTargetBackward;
         }
 
         if (target != null)
@@ -42,6 +40,8 @@ public class CameraSwitchTrigger : MonoBehaviour
             MoveCamera(target.position);
             StartCoroutine(DelayedSaveCameraPosition(target.position, 0.75f));
         }
+
+        lastPlayerPosition = currentPos;
     }
 
     private void MoveCamera(Vector3 targetPos)

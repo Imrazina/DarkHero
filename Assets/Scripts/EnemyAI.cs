@@ -253,6 +253,7 @@ public class EnemyAI : MonoBehaviour
     void Die()
     {
         if (isDead) return; 
+        
     
         isDead = true;
 

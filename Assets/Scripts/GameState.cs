@@ -37,4 +37,7 @@ public class GameState
     public Vector3 lastCameraPosition;
     
     public List<SavedLevelSegment> levelSegments = new();
+    
+    public string currentDialogueId = ""; 
+    public string currentDialogueFile = "";
 }

@@ -11,10 +11,29 @@
           "nextId": "2"
         },
         {
-          "text": "I should get going.",
-          "nextId": "8"
+          "text": "You don't seem like a local either. What's your story?",
+          "nextId": "5"
+        },
+        {
+          "text": "[Stay silent, observing the ruins]",
+          "nextId": "1a"
         }
-      ]
+      ],
+      "returnNode": true 
+    },
+    {
+      "id": "1a",
+      "name": "Samurai",
+      "text": "(This place... the air tastes of regret and old blood.)",
+      "avatar": "ImageSamurai",
+      "nextId": "1b"
+    },
+    {
+      "id": "1b",
+      "name": "Panda",
+      "text": "Silent type, huh? I've met your kind before. The quiet ones always have the sharpest blades.",
+      "avatar": "ImagePanda",
+      "nextId": "2"
     },
     {
       "id": "2",
@@ -27,10 +46,22 @@
           "nextId": "3"
         },
         {
-          "text": "Thanks for telling me.",
-          "nextId": "1"
+          "text": "[Touch the cracked ground] 'The earth remembers...'",
+          "nextId": "2a"
+        },
+        {
+          "text": "Enough stories. What do you want from me?",
+          "nextId": "7"
         }
-      ]
+      ],
+      "returnNode": true
+    },
+    {
+      "id": "2a",
+      "name": "Samurai",
+      "text": "(A vision flashes—screams, a blade cutting through mist, then silence.)",
+      "avatar": "ImageSamurai",
+      "nextId": "3"
     },
     {
       "id": "3",
@@ -43,10 +74,22 @@
           "nextId": "4"
         },
         {
-          "text": "Thanks for the warning.",
+          "text": "[Grip your sword] 'I've hunted worse.'",
+          "nextId": "3a"
+        },
+        {
+          "text": "Let's talk about something else.",
           "nextId": "1"
         }
-      ]
+      ],
+      "returnNode": true
+    },
+    {
+      "id": "3a",
+      "name": "Samurai",
+      "text": "(The weight of the blade feels heavier. Something here is... wrong.)",
+      "avatar": "ImageSamurai",
+      "nextId": "4"
     },
     {
       "id": "4",
@@ -57,8 +100,80 @@
         {
           "text": "I'll take care of it.",
           "nextId": "7"
+        },
+        {
+          "text": "[Whisper] 'Show me the way.'",
+          "nextId": "4a"
+        },
+        {
+          "text": "Why should I trust you?",
+          "nextId": "5"
         }
-      ]
+      ],
+      "returnNode": true
+    },
+    {
+      "id": "4a",
+      "name": "Samurai",
+      "text": "(The wind howls—or is it laughter?)",
+      "avatar": "ImageSamurai",
+      "nextId": "7"
+    },
+    {
+      "id": "5",
+      "name": "Panda",
+      "text": "Me? I used to guard this road. Now I just... linger. The shadows took my purpose that night.",
+      "avatar": "ImagePanda",
+      "choices": [
+        {
+          "text": "So you're a ghost?",
+          "nextId": "6"
+        },
+        {
+          "text": "[Narrow your eyes] 'Prove you're real.'",
+          "nextId": "5a"
+        },
+        {
+          "text": "Forget it. Tell me about the creature again.",
+          "nextId": "4"
+        }
+      ],
+      "returnNode": true
+    },
+    {
+      "id": "5a",
+      "name": "Samurai",
+      "text": "(You swipe a hand through Panda's form—it flickers like candlelight.)",
+      "avatar": "ImageSamurai",
+      "nextId": "6"
+    },
+    {
+      "id": "6",
+      "name": "Panda",
+      "text": "Not quite. More like... a memory. When the creature is gone, maybe I'll fade too.",
+      "avatar": "ImagePanda",
+      "choices": [
+        {
+          "text": "That's... tragic.",
+          "nextId": "7"
+        },
+        {
+          "text": "[Turn away] 'I don't deal with ghosts.'",
+          "nextId": "6a"
+        },
+        {
+          "text": "Change the subject.",
+          "nextId": "1"
+        }
+      ],
+      "returnNode": true
+    },
+    {
+      "id": "6a",
+      "name": "Samurai",
+      "text": "(But something pulls you back. A debt unpaid? Or curiosity?)",
+      "avatar": "ImageSamurai",
+      "nextId": "7"
     },
     {
       "id": "7",
@@ -71,10 +186,22 @@
           "nextId": "10"
         },
         {
-          "text": "Maybe I should reconsider.",
+          "text": "[Draw your blade] 'Let it come to me.'",
+          "nextId": "7a"
+        },
+        {
+          "text": "Wait, I have more questions.",
           "nextId": "1"
         }
-      ]
+      ],
+      "returnNode": true
+    },
+    {
+      "id": "7a",
+      "name": "Samurai",
+      "text": "(The steel glows faintly blue. It remembers how to cut spirits.)",
+      "avatar": "ImageSamurai",
+      "nextId": "10"
     },
     {
       "id": "10",
@@ -87,35 +214,78 @@
           "nextId": "11"
         },
         {
-          "text": "Alright. Time to hunt.",
-          "nextId": "9"
+          "text": "[Press T experimentally]",
+          "nextId": "10a"
+        },
+        {
+          "text": "Actually, tell me about yourself again.",
+          "nextId": "5"
         }
-      ]
+      ],
+      "returnNode": true
+    },
+    {
+      "id": "10a",
+      "name": "Samurai",
+      "text": "(The world splits—colors bleed, the tavern's ruins reform for a moment. Then pain. Something is WATCHING.)",
+      "avatar": "ImageSamurai",
+      "nextId": "11"
     },
     {
       "id": "11",
       "name": "Panda",
-      "text": "At night, the barrier weakens. The creature slips through, haunting the tavern ruins. That’s why it must be destroyed—fully, in the spirit world.",
+      "text": "At night, the barrier weakens. The creature slips through, haunting the tavern ruins. That's why it must be destroyed—fully, in the spirit world.",
       "avatar": "ImagePanda",
       "choices": [
         {
           "text": "Got it. Let's end this.",
           "nextId": "9"
+        },
+        {
+          "text": "[Breathe deeply] 'I'll need a drink after this.'",
+          "nextId": "11a"
+        },
+        {
+          "text": "One last question...",
+          "nextId": "1"
         }
-      ]
+      ],
+      "returnNode": true
+    },
+    {
+      "id": "11a",
+      "name": "Samurai",
+      "text": "(Panda smiles sadly. There hasn't been sake here for decades.)",
+      "avatar": "ImageSamurai",
+      "nextId": "9"
     },
     {
       "id": "9",
       "name": "Panda",
-      "text": "Good luck, Samurai. Help me put this place to rest, and I’ll reward you with a healing potion.",
-      "avatar": "ImagePanda"
+      "text": "Good luck, Samurai. Help me put this place to rest, and I'll reward you with a healing potion.",
+      "avatar": "ImagePanda",
+      "choices": [
+        {
+          "text": "[Nod and leave]",
+          "nextId": "quest_start"
+        },
+        {
+          "text": "'Rewards mean nothing to the dead.'",
+          "nextId": "9a"
+        },
+        {
+          "text": "Wait, I forgot to ask something.",
+          "nextId": "1"
+        }
+      ],
+      "returnNode": true
     },
     {
-      "id": "8",
-      "name": "Panda",
-      "text": "Very well. May your blade stay sharp, Samurai.",
-      "avatar": "ImagePanda",
-      "choices": []
+      "id": "9a",
+      "name": "Samurai",
+      "text": "(But you take the potion anyway. The living still need it.)",
+      "avatar": "ImageSamurai",
+      "nextId": "quest_start"
     },
     {
       "id": "100",
@@ -124,18 +294,47 @@
       "avatar": "ImagePanda",
       "choices": [
         {
-          "text": "It’s over now.",
+          "text": "It's over now.",
           "nextId": "101"
+        },
+        {
+          "text": "What will happen to you?",
+          "nextId": "102"
         }
-      ]
+      ],
+      "returnNode": true
     },
     {
       "id": "101",
       "name": "Panda",
       "text": "Here, as promised. May this potion serve you well.",
-      "avatar": "ImagePanda"
+      "avatar": "ImagePanda",
+      "nextId": "200" 
     },
-
+    {
+      "id": "102",
+      "name": "Panda",
+      "text": "I'll watch over the ruins a little longer... then join the others in the mist.",
+      "avatar": "ImagePanda",
+      "choices": [
+        {
+          "text": "Farewell, Panda.",
+          "nextId": "101"
+        },
+        {
+          "text": "Is there no other way?",
+          "nextId": "103"
+        }
+      ],
+      "returnNode": true
+    },
+    {
+      "id": "103",
+      "name": "Panda",
+      "text": "Some chains cannot be broken, Samurai. But I'm at peace now.",
+      "avatar": "ImagePanda",
+      "nextId": "101"
+    },
     {
       "id": "200",
       "name": "Panda",
@@ -145,14 +344,20 @@
         {
           "text": "Just checking in.",
           "nextId": "201"
+        },
+        {
+          "text": "Actually, I have more questions.",
+          "nextId": "1"
         }
-      ]
+      ],
+      "returnNode": true
     },
     {
       "id": "201",
       "name": "Panda",
-      "text": "Well, you're always welcome to chat. I’ve got plenty of ghost stories.",
-      "avatar": "ImagePanda"
+      "text": "Well, you're always welcome to chat. I've got plenty of ghost stories.",
+      "avatar": "ImagePanda",
+      "nextId": "200"  
     }
   ]
 }

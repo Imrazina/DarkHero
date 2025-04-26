@@ -10,7 +10,6 @@ public class GameStateManager : MonoBehaviour
     public GameState CurrentState { get; private set; } = new GameState();
 
     private string saveFilePath;
-    public bool IsNewGame { get; private set; } = true;
 
     private void Awake()
     {
@@ -34,9 +33,6 @@ public class GameStateManager : MonoBehaviour
             CurrentState.playerPosition = player.transform.position;
             Debug.Log($"Saving position: {CurrentState.playerPosition}");
         }
-        
-        PandaNPC[] allPandas = FindObjectsOfType<PandaNPC>();
-        Debug.Log($"Сохранение текущего состояния панды: {CurrentState.pandaState}");
     
         string json = JsonUtility.ToJson(CurrentState, true);
         File.WriteAllText(saveFilePath, json);
@@ -45,7 +41,6 @@ public class GameStateManager : MonoBehaviour
 
     public void LoadGame()
     {
-        IsNewGame = false;
         if (File.Exists(saveFilePath))
         {
             string json = File.ReadAllText(saveFilePath);
@@ -75,15 +70,11 @@ public class GameStateManager : MonoBehaviour
             isPlayerDead = false,
             cameraState = new CameraState(), 
             lastCameraPosition = Vector3.zero,
-            pandaState = PandaDialogueState.FirstMeeting,
-            currentDialogueId = "", 
-            currentDialogueFile = ""
         };
     }
     
     public void FullReset()
     {
-        IsNewGame = true;
         ResetGame(); 
         
         var player = FindObjectOfType<Character>();

@@ -15,7 +15,8 @@ public class LevelSegmentSpawner : MonoBehaviour
     public Transform[] decorationSpawnPoints;
     
     [Header("Backgrounds")]
-    public GameObject[] backgrounds;
+    public GameObject[] peopleWorldBackgrounds;
+    public GameObject[] spiritWorldBackgrounds;
 
     private int lootIdCounter = 1;
 
@@ -38,6 +39,24 @@ public class LevelSegmentSpawner : MonoBehaviour
                 Quaternion.identity,
                 transform
             );
+
+            var worldComponent = enemy.AddComponent<WorldDependentObject>();
+            var spawnerWorld = spawnPoint.GetComponent<WorldDependentObject>();
+            
+            var spriteRenderer = enemy.GetComponentInChildren<SpriteRenderer>();
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.sortingOrder = 2; 
+            }
+
+            if (spawnerWorld != null)
+            {
+                worldComponent.worldType = spawnerWorld.worldType;
+            }
+            else
+            {
+                worldComponent.worldType = WorldType.AlwaysActive; 
+            }
         }
     }
 
@@ -47,13 +66,31 @@ public class LevelSegmentSpawner : MonoBehaviour
         {
             GameObject selectedLoot = lootPrefabs[Random.Range(0, lootPrefabs.Length)];
             Vector3 spawnPosition = spawnPoint.position;
-            
-            if (selectedLoot.name.ToLower().Contains("coin"))
+
+            if (selectedLoot.name.ToLower().Contains("coin") || selectedLoot.name.ToLower().Contains("goldshape"))
             {
-                spawnPosition.y += 0.5f;
+                spawnPosition.y += 2f;
             }
 
             GameObject lootInstance = Instantiate(selectedLoot, spawnPosition, Quaternion.identity, transform);
+            
+            var worldComponent = lootInstance.AddComponent<WorldDependentObject>();
+            var spawnerWorld = spawnPoint.GetComponent<WorldDependentObject>();
+            
+            var spriteRenderer = lootInstance.GetComponentInChildren<SpriteRenderer>();
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.sortingOrder = 1; 
+            }
+
+            if (spawnerWorld != null)
+            {
+                worldComponent.worldType = spawnerWorld.worldType;
+            }
+            else
+            {
+                worldComponent.worldType = WorldType.AlwaysActive;
+            }
 
             LootItem lootItem = lootInstance.GetComponent<LootItem>();
             if (lootItem != null)
@@ -83,14 +120,29 @@ public class LevelSegmentSpawner : MonoBehaviour
             }
         }
     }
-    
-    void ChangeBackground()
+
+    public void ChangeBackground()
     {
-        foreach (GameObject background in backgrounds)
+        bool isSpiritWorld = GameStateManager.Instance.CurrentState.isInSpiritWorld;
+
+        // Выбираем нужный массив бэкграундов
+        GameObject[] currentBackgrounds = isSpiritWorld ? spiritWorldBackgrounds : peopleWorldBackgrounds;
+
+        // Выключаем ВСЕ бэкграунды (и людей, и духов)
+        foreach (GameObject background in peopleWorldBackgrounds)
         {
             background.SetActive(false);
         }
-        int randomIndex = Random.Range(0, backgrounds.Length);
-        backgrounds[randomIndex].SetActive(true);
+        foreach (GameObject background in spiritWorldBackgrounds)
+        {
+            background.SetActive(false);
+        }
+
+        // Ставим случайный фон из правильного мира
+        if (currentBackgrounds.Length > 0)
+        {
+            int randomIndex = Random.Range(0, currentBackgrounds.Length);
+            currentBackgrounds[randomIndex].SetActive(true);
+        }
     }
 }

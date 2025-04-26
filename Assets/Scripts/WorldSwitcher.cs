@@ -29,6 +29,12 @@ public GameObject normalWorld;
         SaveCameraState();
         UpdateWorldState();
         
+        LevelSegmentSpawner[] spawners = FindObjectsOfType<LevelSegmentSpawner>();
+        foreach (var spawner in spawners)
+        {
+            spawner.ChangeBackground();
+        }
+        
         FindObjectOfType<SubtitleManager>().ShowSubtitle(
             GameStateManager.Instance.CurrentState.isInSpiritWorld ? "WORLD OF SPIRITS" : "WORLD OF PEOPLE", 3f);
     }
@@ -38,6 +44,24 @@ public GameObject normalWorld;
         bool isSpiritWorld = GameStateManager.Instance.CurrentState.isInSpiritWorld;
         normalWorld.SetActive(!isSpiritWorld);
         spiritWorld.SetActive(isSpiritWorld);
+        
+        WorldDependentObject[] worldObjects = FindObjectsOfType<WorldDependentObject>(true); // true чтобы находить и неактивные
+
+        foreach (var obj in worldObjects)
+        {
+            switch (obj.worldType)
+            {
+                case WorldType.PeopleWorld:
+                    obj.gameObject.SetActive(!isSpiritWorld);
+                    break;
+                case WorldType.SpiritWorld:
+                    obj.gameObject.SetActive(isSpiritWorld);
+                    break;
+                case WorldType.AlwaysActive:
+                    obj.gameObject.SetActive(true);
+                    break;
+            }
+        }
     }
     
     private void SaveCameraState()

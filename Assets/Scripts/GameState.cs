@@ -40,4 +40,6 @@ public class GameState
     
     public string currentDialogueId = ""; 
     public string currentDialogueFile = "";
+    
+    public int fallStatus = 0;
 }

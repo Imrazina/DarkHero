@@ -26,6 +26,11 @@ public class Character : MonoBehaviour
     public float wallJumpHorizontalForce = 20f;
     public float wallJumpVerticalForce = 17f;
     public float wallCoyoteTime = 0.2f;
+    
+    [Header("Knockback")]
+    public float knockbackForce = 10f;
+    public float knockbackDuration = 0.2f; 
+    private bool isKnockedBack = false; 
 
     private float wallCoyoteTimer = 0f;
     private bool isWallJumping = false;
@@ -85,7 +90,7 @@ void Update()
         GameStateManager.Instance.CurrentState.playerPosition = transform.position;
     }
     
-    if (isDead) return;
+    if (isDead || isKnockedBack) return;
 
     float moveInput = Input.GetAxisRaw("Horizontal");
     bool isRunning = Input.GetKey(KeyCode.LeftShift);
@@ -325,12 +330,7 @@ private IEnumerator ClearJustWallJumped()
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y); 
         }
     }
-
-    private IEnumerator DelayedPlatformReset()
-    {
-        yield return new WaitForSeconds(0.1f);
-        currentPlatform = null;
-    }
+    
     private void OnCollisionStay2D(Collision2D collision)
     {
         if (!isGrounded && collision.gameObject.CompareTag("Wall"))
@@ -351,13 +351,19 @@ private IEnumerator ClearJustWallJumped()
 
     public void TakeDamage(int damage)
     {
-        if (isDead || isDashing) return;
+        if (isDead || isDashing || isKnockedBack) return;
 
         currentHealth -= damage;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth); // Защита от отрицательного
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        GameObject attacker = GameObject.FindGameObjectWithTag("Enemy");
+        if (attacker != null)
+        {
+            StartCoroutine(ApplyKnockback(attacker.transform.position));
+        }
 
         animator.SetTrigger("Hurt");
-        
+    
         if (healthUI != null)
         {
             healthUI.UpdateHearts(currentHealth);
@@ -367,6 +373,24 @@ private IEnumerator ClearJustWallJumped()
         {
             Die();
         }
+    }
+    
+    private IEnumerator ApplyKnockback(Vector2 attackerPosition)
+    {
+        isKnockedBack = true;
+
+        Vector2 knockbackDir = (new Vector2(attackerPosition.x, attackerPosition.y) - (Vector2)transform.position).normalized;
+ 
+        knockbackDir.y = 0.3f;
+
+        knockbackDir.x = Mathf.Sign(knockbackDir.x) * 0.2f;
+
+        rb.velocity = Vector2.zero;  
+        rb.AddForce(knockbackDir * knockbackForce, ForceMode2D.Impulse); 
+    
+        yield return new WaitForSeconds(knockbackDuration);
+
+        isKnockedBack = false;
     }
 
     public void Die()

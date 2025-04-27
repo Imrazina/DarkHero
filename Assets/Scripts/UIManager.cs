@@ -106,35 +106,6 @@ public class UIManager : MonoBehaviour
             Debug.Log("Escape pressed — toggling pause.");
             TogglePause();
         }
-
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            Debug.Log("G pressed — showing Game Over.");
-            ShowGameOver();
-        }
-    }
-    
-    private IEnumerator ReloadSceneWithIntro()
-    {
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
-        
-        while (!asyncLoad.isDone)
-        {
-            yield return null;
-        }
-
-        var levelStart = FindObjectOfType<LevelStart>();
-        if (levelStart != null)
-        {
-            levelStart.StartIntro();
-        }
-        else
-        {
-            Debug.LogError("LevelStart не найден после перезагрузки сцены!");
-        }
-    
-        gameOverPanel.SetActive(false);
-        Time.timeScale = 1f;
     }
 
     public void NewGame()
@@ -154,19 +125,12 @@ public class UIManager : MonoBehaviour
         mainMenuPanel.SetActive(false);
         gameOverPanel.SetActive(false);
         pausePanel.SetActive(false);
-        
-        var screenFade = FindObjectOfType<ScreenFade>();
-        if (screenFade != null)
-        {
-            screenFade.ForceFadeOut();
-        }
-
+ 
         StartCoroutine(StartGameAfterReset());
     }
 
     private IEnumerator StartGameAfterReset()
     {
-        yield return null;
         
         var levelStart = FindObjectOfType<LevelStart>();
         if (levelStart != null)
@@ -179,6 +143,7 @@ public class UIManager : MonoBehaviour
         }
     
         Time.timeScale = 1f;
+        yield return null;
     }
 
     public void ContinueGame()

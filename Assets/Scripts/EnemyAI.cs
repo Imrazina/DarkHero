@@ -62,6 +62,7 @@ public class EnemyAI : MonoBehaviour
             animator.SetBool("Run", false);
             return;
         }
+        
         float distanceToPlayer = Vector2.Distance(transform.position, target.position);
         Vector2 directionToPlayer = (target.position - transform.position).normalized;
         
@@ -101,21 +102,22 @@ public class EnemyAI : MonoBehaviour
     bool CanMoveTowards(Vector2 direction)
     {
         Vector2 checkPos = (Vector2)transform.position + 
-                         (facingRight ? frontGroundCheck : backGroundCheck);
+                           (facingRight ? frontGroundCheck : backGroundCheck);
         
-        bool hasGround = Physics2D.Raycast(
-            checkPos,
-            Vector2.down,
-            groundCheckDistance,
-            groundLayer
-        );
-        
+        bool hasGround = Physics2D.OverlapCircle(checkPos, groundCheckDistance, groundLayer);
         bool hasWall = Physics2D.Raycast(
             (Vector2)transform.position,
             facingRight ? Vector2.right : Vector2.left,
             wallCheckDistance,
             groundLayer
         );
+    
+        if (!hasGround || hasWall)
+        {
+            animator.SetBool("Run", false);
+            rb.velocity = Vector2.zero;
+            return false;
+        }
 
         return hasGround && !hasWall;
     }
@@ -163,16 +165,28 @@ public class EnemyAI : MonoBehaviour
         canAttack = false;
         isAttacking = true;
         hasDealtDamage = false;
-        
+    
         animator.SetTrigger("Charge");
+        rb.velocity = Vector2.zero;
+        rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
 
-        float chargeDuration = 0.5f;
-        yield return new WaitForSeconds(chargeDuration);
+        float chargeDuration = 0.3f;
+        yield return new WaitForSeconds(chargeDuration); 
 
-        animator.SetTrigger("Attack");
+        animator.SetTrigger("Attack"); 
+        yield return new WaitForSeconds(0.1f);
+        DealDamage();
 
-        yield return new WaitForSeconds(0.2f);
+        float cooldownLeft = attackCooldown - chargeDuration;
+        yield return new WaitForSeconds(cooldownLeft);
 
+        canAttack = true;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        isAttacking = false;
+    }
+    
+    public void DealDamage()
+    {
         if (!hasDealtDamage && target != null && Vector2.Distance(transform.position, target.position) <= attackRange)
         {
             var playerAttack = target.GetComponent<AttackController>();
@@ -184,10 +198,10 @@ public class EnemyAI : MonoBehaviour
                 {
                     Debug.Log("Атака заблокирована!");
                     Vector2 pushDir = (transform.position - target.position).normalized;
-                    pushDir.y = 0.3f;
+                    pushDir.y = 0.3f; 
 
                     rb.velocity = Vector2.zero;
-                    rb.AddForce(pushDir * 15f, ForceMode2D.Impulse);
+                    rb.AddForce(pushDir * 25f, ForceMode2D.Impulse);
                 }
                 else
                 {
@@ -197,12 +211,6 @@ public class EnemyAI : MonoBehaviour
                 hasDealtDamage = true;
             }
         }
-        
-        float cooldownLeft = attackCooldown - chargeDuration;
-        yield return new WaitForSeconds(cooldownLeft);
-
-        canAttack = true;
-        isAttacking = false;
     }
     
     void DebugDrawRays()
@@ -236,7 +244,6 @@ public class EnemyAI : MonoBehaviour
         if (currentState.IsName("hitEnemy")) return; 
 
         StartCoroutine(PlayHitAnimation());
- 
     }
 
     IEnumerator PlayHitAnimation()
@@ -244,7 +251,11 @@ public class EnemyAI : MonoBehaviour
         isHitAnimating = true;
         animator.SetTrigger("Hit");
         
-        yield return new WaitForSeconds(0.2f); 
+        Vector2 pushDir = (transform.position - target.position).normalized;
+        pushDir.y = 0.2f; 
+        rb.AddForce(pushDir * 40f, ForceMode2D.Impulse);
+
+        yield return new WaitForSeconds(0.3f); 
 
         isHitAnimating = false;
     }

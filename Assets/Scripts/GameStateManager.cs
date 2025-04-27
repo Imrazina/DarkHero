@@ -54,6 +54,12 @@ public class GameStateManager : MonoBehaviour
             {
                 player.Resurrect();
             }
+            
+            var screenFade = FindObjectOfType<ScreenFade>();
+            if (screenFade != null)
+            {
+                screenFade.FadeIn(0.5f);
+            }
         }
     }
 
@@ -70,6 +76,7 @@ public class GameStateManager : MonoBehaviour
             isPlayerDead = false,
             cameraState = new CameraState(), 
             lastCameraPosition = Vector3.zero,
+            fallStatus = 0
         };
     }
     

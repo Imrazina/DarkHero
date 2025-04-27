@@ -19,19 +19,21 @@ public class LevelStart : MonoBehaviour
             screenFade = FindObjectOfType<ScreenFade>();
             if (screenFade == null) Debug.LogWarning("ScreenFade not found!");
         }
-        
+        screenFade.FadeOut(0f);
         StartCoroutine(PlayFullIntro());
 
         GameStateManager.Instance.CurrentState.hasPlayedIntro = true;
         GameStateManager.Instance.SaveGame();
+        
+        if (!GameStateManager.Instance.CurrentState.hasPlayedIntro)
+        {
+            screenFade.FadeIn(1f); 
+        }
     }
 
     private IEnumerator PlayFullIntro()
     {
         Debug.Log("Starting FULL intro...");
-        
-        screenFade.FadeOut(0f); 
-        yield return null; 
         
         var subtitleManager = FindObjectOfType<SubtitleManager>();
         if (subtitleManager == null) 

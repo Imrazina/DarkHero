@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class AbyssTrigger : MonoBehaviour
 {
-    public Transform newCameraPosition; // Куда камера переместится при падении
-    public Transform startCameraPosition; // Куда вернётся при возврате
+    public Transform newCameraPosition;
+    public Transform startCameraPosition;
     private ScreenFade screenFade;
     private SubtitleManager subtitleManager;
     public float delayBeforeCameraMove = 2f;
@@ -14,14 +14,32 @@ public class AbyssTrigger : MonoBehaviour
     {
         screenFade = FindObjectOfType<ScreenFade>();
         subtitleManager = FindObjectOfType<SubtitleManager>();
+
+        if (screenFade == null)
+        {
+            Debug.LogWarning("[AbyssTrigger] ScreenFade not found on Start!");
+        }
+        else
+        {
+            Debug.Log("[AbyssTrigger] ScreenFade found successfully.");
+        }
+
+        if (subtitleManager == null)
+        {
+            Debug.LogWarning("[AbyssTrigger] SubtitleManager not found on Start!");
+        }
+        else
+        {
+            Debug.Log("[AbyssTrigger] SubtitleManager found successfully.");
+        }
     }
-    
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
             PlayerPrefs.DeleteKey("HasFallen");
-            Debug.Log("HasFallen reset!");
+            Debug.Log("[AbyssTrigger] HasFallen reset manually!");
         }
     }
 
@@ -29,28 +47,33 @@ public class AbyssTrigger : MonoBehaviour
     {
         if (!other.CompareTag("Player")) return;
 
-        int fallStatus = PlayerPrefs.GetInt("HasFallen", 0);
+        int fallStatus = GameStateManager.Instance.CurrentState.fallStatus;
+        Debug.Log($"[AbyssTrigger] Player entered trigger. Current fall status: {fallStatus}");
 
         if (fallStatus == 0)
         {
-            // Первый раз падает → с эффектами
+            Debug.Log("[AbyssTrigger] Starting fall into abyss...");
             StartCoroutine(FallIntoAbyss());
         }
         else if (fallStatus == 1)
         {
-            // Возврат наверх
+            Debug.Log("[AbyssTrigger] Returning player to start position instantly.");
             ReturnToStartInstant();
-            PlayerPrefs.SetInt("HasFallen", 2); 
+            GameStateManager.Instance.CurrentState.fallStatus = 2;
+            GameStateManager.Instance.SaveGame();
         }
         else if (fallStatus == 2)
         {
+            Debug.Log("[AbyssTrigger] Returning player to abyss instantly.");
             ReturnToAbyssInstant();
-            PlayerPrefs.SetInt("HasFallen", 1); 
+            GameStateManager.Instance.CurrentState.fallStatus = 1;
+            GameStateManager.Instance.SaveGame();
         }
     }
-    
+
     private void ReturnToStartInstant()
     {
+        Debug.Log("[AbyssTrigger] Moving camera to start position.");
         Camera.main.transform.position = new Vector3(
             startCameraPosition.position.x,
             startCameraPosition.position.y,
@@ -82,11 +105,13 @@ public class AbyssTrigger : MonoBehaviour
         if (screenFade != null)
             screenFade.FadeIn(fadeDuration);
 
-        PlayerPrefs.SetInt("HasFallen", 1); // теперь можно вернуться
+        GameStateManager.Instance.CurrentState.fallStatus = 1;
+        GameStateManager.Instance.SaveGame();
     }
 
     private void ReturnToAbyssInstant()
     {
+        Debug.Log("[AbyssTrigger] Moving camera to abyss position instantly.");
         Camera.main.transform.position = new Vector3(
             newCameraPosition.position.x,
             newCameraPosition.position.y,

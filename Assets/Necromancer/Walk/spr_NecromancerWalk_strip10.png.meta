@@ -34,7 +34,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -43,7 +43,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -69,7 +69,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 16384
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -108,7 +108,217 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: spr_NecromancerWalk_strip10_0
+      rect:
+        serializedVersion: 2
+        x: 35
+        y: 32
+        width: 32
+        height: 49
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1eed1a3118632418eb5a1cf8aef3f42d
+      internalID: -1250730704
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: spr_NecromancerWalk_strip10_1
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 32
+        width: 31
+        height: 49
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f563ba91ef9514140972a1e859b0b59e
+      internalID: 478153744
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: spr_NecromancerWalk_strip10_2
+      rect:
+        serializedVersion: 2
+        x: 228
+        y: 32
+        width: 28
+        height: 49
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fa26b75d426724bba8cff67ad9e528de
+      internalID: -1014102208
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: spr_NecromancerWalk_strip10_3
+      rect:
+        serializedVersion: 2
+        x: 325
+        y: 32
+        width: 22
+        height: 49
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0015a5dec0c85407896b62e29618b1f6
+      internalID: 1897466461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: spr_NecromancerWalk_strip10_4
+      rect:
+        serializedVersion: 2
+        x: 423
+        y: 32
+        width: 18
+        height: 49
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e08c216583b5646548ac7a9dbdbf4777
+      internalID: 1022898129
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: spr_NecromancerWalk_strip10_5
+      rect:
+        serializedVersion: 2
+        x: 519
+        y: 32
+        width: 18
+        height: 49
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cf1ff43d5ddba4231a8b72d4adbf49f3
+      internalID: 1539589326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: spr_NecromancerWalk_strip10_6
+      rect:
+        serializedVersion: 2
+        x: 616
+        y: 32
+        width: 17
+        height: 50
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 018153ba8aa8d41a49e82bdba1c64921
+      internalID: -619028730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: spr_NecromancerWalk_strip10_7
+      rect:
+        serializedVersion: 2
+        x: 711
+        y: 32
+        width: 20
+        height: 51
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c3a084eb04c245669ebd5ce0d5494dd
+      internalID: 1137913813
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: spr_NecromancerWalk_strip10_8
+      rect:
+        serializedVersion: 2
+        x: 806
+        y: 32
+        width: 26
+        height: 51
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0bcfd9c9d36a846a7886c08370c056c5
+      internalID: 1728612753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: spr_NecromancerWalk_strip10_9
+      rect:
+        serializedVersion: 2
+        x: 900
+        y: 32
+        width: 30
+        height: 50
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b18e59bae4aca430e9bb69744e33d3ec
+      internalID: 53266435
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -119,7 +329,17 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      spr_NecromancerWalk_strip10_0: -1250730704
+      spr_NecromancerWalk_strip10_1: 478153744
+      spr_NecromancerWalk_strip10_2: -1014102208
+      spr_NecromancerWalk_strip10_3: 1897466461
+      spr_NecromancerWalk_strip10_4: 1022898129
+      spr_NecromancerWalk_strip10_5: 1539589326
+      spr_NecromancerWalk_strip10_6: -619028730
+      spr_NecromancerWalk_strip10_7: 1137913813
+      spr_NecromancerWalk_strip10_8: 1728612753
+      spr_NecromancerWalk_strip10_9: 53266435
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

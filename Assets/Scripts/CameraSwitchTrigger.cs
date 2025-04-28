@@ -59,7 +59,7 @@ public class CameraSwitchTrigger : MonoBehaviour
         Vector3 fixedPosition = new Vector3(position.x, position.y, -10f);
 
         GameStateManager.Instance.CurrentState.lastCameraPosition = fixedPosition;
-        GameStateManager.Instance.CurrentState.cameraState = new CameraState
+        GameStateManager.Instance.CurrentState.cameraState = new CameraState 
         {
             position = fixedPosition,
             isOrthographic = Camera.main.orthographic

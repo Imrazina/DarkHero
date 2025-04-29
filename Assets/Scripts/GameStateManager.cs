@@ -76,6 +76,7 @@ public class GameStateManager : MonoBehaviour
             isPlayerDead = false,
             cameraState = new CameraState(), 
             lastCameraPosition = Vector3.zero,
+            totalPotions = 0,
             fallStatus = 0
         };
     }

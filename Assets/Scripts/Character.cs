@@ -31,6 +31,11 @@ public class Character : MonoBehaviour
     public float knockbackForce = 10f;
     public float knockbackDuration = 0.2f; 
     private bool isKnockedBack = false; 
+    
+    [Header("Healing")]
+    public int potionHealAmount = 200; 
+    public float healingAnimationTime = 1f; 
+    private bool isHealing = false;
 
     private float wallCoyoteTimer = 0f;
     private bool isWallJumping = false;
@@ -90,7 +95,7 @@ void Update()
         GameStateManager.Instance.CurrentState.playerPosition = transform.position;
     }
     
-    if (isDead || isKnockedBack) return;
+    if (isDead || isKnockedBack || isHealing) return;
 
     float moveInput = Input.GetAxisRaw("Horizontal");
     bool isRunning = Input.GetKey(KeyCode.LeftShift);
@@ -220,6 +225,11 @@ void Update()
             Debug.Log("[WallJump Attempt] Условия НЕ выполнены.");
         }
     }
+    
+    if (Input.GetKeyDown(KeyCode.Q) && !isHealing)
+    {
+        TryUsePotion();
+    }
 
     if (wallStickTimer > 0)
     {
@@ -230,6 +240,41 @@ void Update()
         if (!justWallJumped) 
             isTouchingWall = false;
     }
+}
+
+private void TryUsePotion()
+{
+    var inventory = FindObjectOfType<PlayerInventory>();
+     if (inventory != null && inventory.UsePotion())
+    {
+        StartCoroutine(HealingProcess());
+    }
+    else if (inventory != null && inventory.potionCount <= 0)
+    {
+        Debug.Log("Нет зелий для использования!");
+    }
+}
+
+private IEnumerator HealingProcess()
+{
+    isHealing = true;
+    
+    animator.SetTrigger("Healing");
+    
+    yield return new WaitForSeconds(0.2f);
+    
+    currentHealth = Mathf.Min(currentHealth + potionHealAmount, maxHealth);
+    
+    if (healthUI != null)
+    {
+        healthUI.UpdateHearts(currentHealth);
+    }
+
+    yield return new WaitForSeconds(healingAnimationTime - 0.2f);
+    
+    isHealing = false;
+
+    Debug.Log("Использовано зелье! Восстановлено " + potionHealAmount + " HP");
 }
 
 private void WallJump()
@@ -351,16 +396,10 @@ private IEnumerator ClearJustWallJumped()
 
     public void TakeDamage(int damage)
     {
-        if (isDead || isDashing || isKnockedBack) return;
+        if (isDead || isDashing || isKnockedBack || isHealing) return;
 
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-
-        GameObject attacker = GameObject.FindGameObjectWithTag("Enemy");
-        if (attacker != null)
-        {
-            StartCoroutine(ApplyKnockback(attacker.transform.position));
-        }
 
         animator.SetTrigger("Hurt");
     
@@ -375,23 +414,6 @@ private IEnumerator ClearJustWallJumped()
         }
     }
     
-    private IEnumerator ApplyKnockback(Vector2 attackerPosition)
-    {
-        isKnockedBack = true;
-
-        Vector2 knockbackDir = (new Vector2(attackerPosition.x, attackerPosition.y) - (Vector2)transform.position).normalized;
- 
-        knockbackDir.y = 0.3f;
-
-        knockbackDir.x = Mathf.Sign(knockbackDir.x) * 0.2f;
-
-        rb.velocity = Vector2.zero;  
-        rb.AddForce(knockbackDir * knockbackForce, ForceMode2D.Impulse); 
-    
-        yield return new WaitForSeconds(knockbackDuration);
-
-        isKnockedBack = false;
-    }
 
     public void Die()
     {

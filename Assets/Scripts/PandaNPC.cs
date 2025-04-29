@@ -6,11 +6,13 @@ public class PandaNPC : MonoBehaviour
    public DialogueManager dialogueManager;
     private bool isPlayerNear = false;
     private bool canStartDialogue = true;
-
+    private bool rewardGiven;
+    
     [SerializeField] private string dialogueFileName = "dialogue";
     
     private void Start()
     {
+        rewardGiven = GameStateManager.Instance.CurrentState.pandaRewardGiven;
         PandaDialogueState loadedState = GameStateManager.Instance.CurrentState.pandaState;
         SetDialogueState(loadedState);
     }
@@ -22,11 +24,6 @@ public class PandaNPC : MonoBehaviour
             canStartDialogue = false;
 
             dialogueManager.StartDialogue(dialogueFileName, GetDialogueId());
-
-            if (GameStateManager.Instance.CurrentState.pandaState == PandaDialogueState.AfterEnemyDefeated)
-            {
-                GameStateManager.Instance.CurrentState.pandaState = PandaDialogueState.SmallTalk;
-            }
         }
     }
 
@@ -62,6 +59,19 @@ public class PandaNPC : MonoBehaviour
 
     public void OnDialogueEnd()
     {
+        if (GameStateManager.Instance.CurrentState.pandaState == PandaDialogueState.AfterEnemyDefeated && !rewardGiven)
+        {
+            var inventory = FindObjectOfType<PlayerInventory>();
+            if (inventory != null)
+            {
+                inventory.AddPotion(1);
+            }
+
+            rewardGiven = true;
+            GameStateManager.Instance.CurrentState.pandaRewardGiven = true;
+            GameStateManager.Instance.CurrentState.pandaState = PandaDialogueState.SmallTalk; // <-- Перенесено сюда
+            GameStateManager.Instance.SaveGame();
+        }
         StartCoroutine(CooldownStartDialogue());
     }
 

@@ -30,6 +30,8 @@ public class GameState
     
     public bool hasPlayedIntro = false;
     public int totalCoins = 0;
+    public int totalPotions = 0; 
+    public bool pandaRewardGiven;
     
     public bool isPlayerDead = false;
     

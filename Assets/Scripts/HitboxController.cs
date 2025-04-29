@@ -48,12 +48,9 @@ public class HitboxController : MonoBehaviour
 
         if (other.CompareTag("Enemy"))
         {
-            var enemy = other.GetComponent<EnemyController>();
-            var enemyAI = other.GetComponent<EnemyAI>();
-            if (enemyAI == null)
-            {
-                enemyAI = other.GetComponentInParent<EnemyAI>();
-            }
+            var enemy = other.GetComponent<EnemyController>() ?? other.GetComponentInParent<EnemyController>();
+            var enemyAI = other.GetComponent<EnemyAI>() ?? other.GetComponentInParent<EnemyAI>();
+            var bossAI = other.GetComponent<BossAI>() ?? other.GetComponentInParent<BossAI>();
 
             int damage = 0;
             switch (currentAttackType)
@@ -73,9 +70,14 @@ public class HitboxController : MonoBehaviour
                 Debug.Log($"Hit {enemyAI.name} with {damage} damage!");
                 enemyAI.TakeDamage(damage);
             }
+            else if (bossAI != null)
+            {
+                Debug.Log($"Hit {bossAI.name} with {damage} damage!");
+                bossAI.TakeDamage(damage); // Убедись, что метод такой есть
+            }
             else
             {
-                Debug.LogError("Враг не имеет EnemyController или EnemyAI!");
+                Debug.LogWarning("Объект с тегом 'Enemy' не имеет подходящего компонента для получения урона.");
             }
         }
     }

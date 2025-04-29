@@ -17,6 +17,11 @@ public class PlayerInventory : MonoBehaviour
     private void Start()
     {
         potionCount = GameStateManager.Instance.CurrentState.totalPotions;
+
+        hasRune = GameStateManager.Instance.CurrentState.collectedItems.Contains("Rune_1");
+        if (runeIcon != null)
+            runeIcon.color = hasRune ? Color.white : Color.black;
+    
         UpdatePotionsUI();
     }
 
@@ -46,7 +51,7 @@ public class PlayerInventory : MonoBehaviour
         UpdatePotionsUI();
     }
 
-    private void UpdatePotionsUI()
+    public void UpdatePotionsUI()
     {
         if (potionText != null)
             potionText.text = potionCount.ToString();

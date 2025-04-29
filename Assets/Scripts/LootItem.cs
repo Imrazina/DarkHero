@@ -46,17 +46,17 @@ public class LootItem : MonoBehaviour
     private void Collect()
     {
         pickedUp = true;  
-        
         GameStateManager.Instance.CurrentState.collectedItems.Add(uniqueID);
-        
-        StatsManager.Instance.AddCoins(value);
-        
+ 
+        GameStateManager.Instance.CurrentState.totalCoins += value;
+        StatsManager.Instance.AddCoins(value); 
+    
         if (pickupEffect)
             Instantiate(pickupEffect, transform.position, Quaternion.identity);
 
         if (pickupSound)
             AudioSource.PlayClipAtPoint(pickupSound, transform.position);
-        
+    
         Destroy(gameObject);
     }
 }

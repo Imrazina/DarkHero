@@ -30,6 +30,7 @@ public class DialogueManager : MonoBehaviour
     private bool isWaitingForChoice = false;
     private bool isTyping = false;
     private Dictionary<string, DialogueLine> dialogueMap;
+    private bool skipTyping = false;
 
     private void Awake()
     {
@@ -143,6 +144,7 @@ public class DialogueManager : MonoBehaviour
     private IEnumerator TypeSentence(DialogueLine line)
     {
         isTyping = true;
+        skipTyping = false;
         dialogueText.text = "";
         titleName.text = line.name;
 
@@ -151,6 +153,12 @@ public class DialogueManager : MonoBehaviour
 
         foreach (char letter in line.text.ToCharArray())
         {
+            if (skipTyping)
+            {
+                dialogueText.text = line.text; // Мгновенно показываем весь текст
+                break;
+            }
+
             dialogueText.text += letter;
             yield return new WaitForSeconds(0.05f);
         }
@@ -238,8 +246,7 @@ public class DialogueManager : MonoBehaviour
             EndDialogue();
             return;
         }
-
-        // Логируем, какой ID диалога был выбран
+        
         Debug.Log($"Перешли к диалогу с ID: {nextId}");
     
         choicePanel.SetActive(false);
@@ -270,9 +277,18 @@ public class DialogueManager : MonoBehaviour
 
     private void Update()
     {
-        if (dialoguePanel.activeSelf && Input.GetKeyDown(KeyCode.E) && !isTyping && !isWaitingForChoice)
+        if (!dialoguePanel.activeSelf) return;
+
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            DisplayNextSentence();
+            if (isTyping)
+            {
+                skipTyping = true; 
+            }
+            else if (!isWaitingForChoice)
+            {
+                DisplayNextSentence();
+            }
         }
     }
 }

@@ -34,6 +34,22 @@ public class GameStateManager : MonoBehaviour
             Debug.Log($"Saving position: {CurrentState.playerPosition}");
         }
     
+        var inventory = FindObjectOfType<PlayerInventory>();
+        if (inventory != null)
+        {
+            CurrentState.totalPotions = inventory.potionCount;
+            CurrentState.hasRune = inventory.hasRune;
+            
+            if (inventory.hasRune && !CurrentState.collectedItems.Contains("Rune_1"))
+            {
+                CurrentState.collectedItems.Add("Rune_1");
+            }
+            else if (!inventory.hasRune && CurrentState.collectedItems.Contains("Rune_1"))
+            {
+                CurrentState.collectedItems.Remove("Rune_1");
+            }
+        }
+
         string json = JsonUtility.ToJson(CurrentState, true);
         File.WriteAllText(saveFilePath, json);
         Debug.Log("Game Saved to: " + saveFilePath); 
@@ -46,8 +62,25 @@ public class GameStateManager : MonoBehaviour
             string json = File.ReadAllText(saveFilePath);
             CurrentState = JsonUtility.FromJson<GameState>(json);
             Debug.Log($"Game Loaded! Position: {CurrentState.playerPosition}");
-            
+        
             CurrentState.isPlayerDead = false;
+        
+            var statsManager = FindObjectOfType<StatsManager>();
+            if (statsManager != null)
+            {
+                statsManager.SetCoins(CurrentState.totalCoins);
+            }
+            
+            var inventory = FindObjectOfType<PlayerInventory>();
+            if (inventory != null)
+            {
+                inventory.potionCount = CurrentState.totalPotions;
+                inventory.hasRune = CurrentState.collectedItems.Contains("Rune_1");
+                inventory.UpdatePotionsUI();
+            
+                if (inventory.runeIcon != null)
+                    inventory.runeIcon.color = inventory.hasRune ? Color.white : Color.black;
+            }
             
             var player = FindObjectOfType<Character>();
             if (player != null)

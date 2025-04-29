@@ -34,6 +34,7 @@ public class GameState
     public bool pandaRewardGiven;
     
     public bool isPlayerDead = false;
+    public bool hasRune = false;
     
     public CameraState cameraState;
     public Vector3 lastCameraPosition;

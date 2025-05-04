@@ -1,0 +1,33 @@
+{
+  "dialogues": [
+    {
+      "id": "1",
+      "name": "Panda",
+      "avatar": "ImagePanda",
+      "text": "Welcome to my shop! What do you need?",
+      "choices": [
+        {
+          "text": "Show me your goods",
+          "nextId": "open_shop"
+        },
+        {
+          "text": "Nothing, thanks",
+          "nextId": "end"
+        }
+      ]
+    },
+    {
+      "id": "after_shop",
+      "name": "Panda",
+      "avatar": "ImagePanda",
+      "text": "Thank you for your purchase! Come again!",
+      "choices": []
+    },
+    {
+      "id": "end",
+      "name": "Panda",
+      "avatar": "ImagePanda",
+      "text": "Okay... Come back if you need anything! *waves*"
+    }
+  ]
+}

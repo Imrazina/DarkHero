@@ -60,5 +60,6 @@ public class LevelStart : MonoBehaviour
         subtitleManager.ShowSubtitle("This symbol... It's calling me.", 2f);
         yield return new WaitForSeconds(2.5f);
         
+        GameStateManager.Instance.SaveGame();
     }
 }

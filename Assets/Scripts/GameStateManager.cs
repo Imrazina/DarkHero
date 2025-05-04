@@ -49,6 +49,17 @@ public class GameStateManager : MonoBehaviour
                 CurrentState.collectedItems.Remove("Rune_1");
             }
         }
+        
+        var mainCamera = Camera.main;
+        if (mainCamera != null)
+        {
+            CurrentState.cameraState = new CameraState
+            {
+                position = mainCamera.transform.position,
+                isOrthographic = mainCamera.orthographic,
+            };
+            Debug.Log($"Saved camera: {CurrentState.cameraState.position}");
+        }
 
         string json = JsonUtility.ToJson(CurrentState, true);
         File.WriteAllText(saveFilePath, json);
@@ -80,6 +91,14 @@ public class GameStateManager : MonoBehaviour
             
                 if (inventory.runeIcon != null)
                     inventory.runeIcon.color = inventory.hasRune ? Color.white : Color.black;
+            }
+            
+            var mainCamera = Camera.main;
+            if (mainCamera != null && CurrentState.cameraState != null)
+            {
+                mainCamera.transform.position = CurrentState.cameraState.position;
+                mainCamera.orthographic = CurrentState.cameraState.isOrthographic;
+                Debug.Log($"Restored camera: {CurrentState.cameraState.position}");
             }
             
             var player = FindObjectOfType<Character>();

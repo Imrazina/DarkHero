@@ -38,6 +38,7 @@ public class RunePickup : MonoBehaviour
         SetRuneActive(false);
         
         FindObjectOfType<SubtitleManager>().ShowSubtitle("What was that..?", 3f);
+        GameStateManager.Instance.SaveGame();
     }
 
     public void SetRuneActive(bool isActive)

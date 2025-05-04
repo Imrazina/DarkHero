@@ -8,7 +8,7 @@ public class BossAI : MonoBehaviour
     public int maxHealth = 500;
     private int currentHealth;
     private bool isDead = false;
-    public Slider healthBar; 
+    public EnemyHealthSlider healthBar; 
 
     [Header("Movement")]
     public float speed = 1.5f;
@@ -45,6 +45,7 @@ public class BossAI : MonoBehaviour
     private Rigidbody2D rb;
     private bool isHitAnimating = false;
     private bool isInAttackFrame = false;
+    public TupikController tupik;
 
     void Start()
     {
@@ -194,7 +195,7 @@ public class BossAI : MonoBehaviour
 
             if (hit.CompareTag("Player"))
             {
-                Character player = hit.GetComponent<Character>();
+                Character player = hit.GetComponentInParent<Character>();
                 if (player != null)
                 {
                     player.TakeDamage(attackDamage);
@@ -235,6 +236,10 @@ public class BossAI : MonoBehaviour
 
         if (currentHealth <= 0)
         {
+            if (healthBar != null)
+            {
+                healthBar.gameObject.SetActive(false);
+            }
             Die();
         }
         else
@@ -247,8 +252,8 @@ public class BossAI : MonoBehaviour
     {
         if (healthBar != null)
         {
-            healthBar.maxValue = maxHealth;
-            healthBar.value = currentHealth;
+            float healthPercent = (float)currentHealth / maxHealth;
+            healthBar.UpdateHealthSlider(healthPercent);
         }
     }
 
@@ -281,8 +286,10 @@ public class BossAI : MonoBehaviour
         {
             col.enabled = false;
         }
+        
 
-        Destroy(gameObject, 2f);
+        tupik.OpenExit();
+     //  Destroy(gameObject, 2f);
     }
 
     private void Flip()

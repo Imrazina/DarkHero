@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class PandaNPC : MonoBehaviour
+public class PandaNPC : MonoBehaviour, IDialogueCallback
 {
    public DialogueManager dialogueManager;
     private bool isPlayerNear = false;

@@ -9,7 +9,7 @@ public class UI_HealthDisplay : MonoBehaviour
     public Image heart2;
     public Image heart3;
 
-    private int maxHealth = 300;
+    private int maxHealth = 500;
 
     public void UpdateHearts(int currentHealth)
     {

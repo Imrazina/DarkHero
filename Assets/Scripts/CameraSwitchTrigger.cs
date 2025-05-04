@@ -64,6 +64,6 @@ public class CameraSwitchTrigger : MonoBehaviour
             position = fixedPosition,
             isOrthographic = Camera.main.orthographic
         };
-        GameStateManager.Instance.SaveGame();
+ //       GameStateManager.Instance.SaveGame();
     }
 }

@@ -31,6 +31,8 @@ public class DialogueManager : MonoBehaviour
     private bool isTyping = false;
     private Dictionary<string, DialogueLine> dialogueMap;
     private bool skipTyping = false;
+    
+    private MonoBehaviour currentNPC;
 
     private void Awake()
     {
@@ -92,8 +94,10 @@ public class DialogueManager : MonoBehaviour
     }
     
     
-    public void StartDialogue(string fileName, string startId)
+    public void StartDialogue(string fileName, string startId, MonoBehaviour npc = null)
     {
+        currentNPC = npc;
+        
         dialogueQueue.Clear();
         dialogueMap.Clear();
 
@@ -111,6 +115,8 @@ public class DialogueManager : MonoBehaviour
                 dialogueMap[line.id] = line;
             }
         }
+        
+        Debug.Log($"Starting dialogue, NPC: {npc != null}, file: {fileName}, startID: {startId}");
 
         if (dialogueMap.TryGetValue(startId, out DialogueLine firstLine))
         {
@@ -118,12 +124,14 @@ public class DialogueManager : MonoBehaviour
             dialoguePanel.SetActive(true);
             bgImage.SetActive(true);
             DisplayNextSentence();
-            Debug.Log($"Starting dialogue with ID: {startId}");  // Логируем начало диалога
+            Debug.Log($"Starting dialogue with ID: {startId}"); 
         }
         else
         {
             Debug.LogError($"Dialogue ID {startId} not found in file {fileName}!");
         }
+        
+        Debug.Log($"Loaded dialogues: {string.Join(", ", dialogueMap.Keys)}");
     }
     
 
@@ -145,32 +153,39 @@ public class DialogueManager : MonoBehaviour
     {
         isTyping = true;
         skipTyping = false;
+        
         dialogueText.text = "";
-        titleName.text = line.name;
+        titleName.text = line.name ?? ""; 
 
         imagePanda.SetActive(line.avatar == "ImagePanda");
         imageSamurai.SetActive(line.avatar == "ImageSamurai");
-
+        
         foreach (char letter in line.text.ToCharArray())
         {
             if (skipTyping)
             {
-                dialogueText.text = line.text; // Мгновенно показываем весь текст
+                dialogueText.text = line.text;
                 break;
             }
-
             dialogueText.text += letter;
             yield return new WaitForSeconds(0.05f);
         }
 
         isTyping = false;
-
+        
         if (line.choices != null && line.choices.Count > 0)
         {
             isWaitingForChoice = true;
             yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.E)); 
             ShowChoices(line.choices);
         }
+        else if (!string.IsNullOrEmpty(line.text))
+        {
+            yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.E));
+            EndDialogue();
+        }
+        
+        Debug.Log($"Showing line: {line.text}, avatar: {line.avatar}, name: {line.name}");
     }
 
     private void ShowChoices(List<DialogueChoice> choices)
@@ -222,6 +237,40 @@ public class DialogueManager : MonoBehaviour
             button3.onClick.AddListener(() => HandleChoice(3, nextId));
         }
     }
+    
+    public void ContinueDialogue(string dialogueId)
+    {
+        if (string.IsNullOrEmpty(dialogueId))
+        {
+            Debug.LogError("Dialogue ID is empty!");
+            return;
+        }
+        
+        if (dialogueMap == null || dialogueMap.Count == 0)
+        {
+            Debug.LogError("Dialogue map is not loaded!");
+            return;
+        }
+
+        if (dialogueMap.TryGetValue(dialogueId, out DialogueLine nextLine))
+        {
+            dialogueQueue.Clear();
+            dialogueQueue.Enqueue(nextLine);
+            
+            ShowDialogueUI();
+            
+            isTyping = false;
+            isWaitingForChoice = false;
+            skipTyping = false;
+            DisplayNextSentence();
+        
+            Debug.Log($"Successfully continued dialogue with ID: {dialogueId}");
+        }
+        else
+        {
+            Debug.LogError($"Dialogue ID {dialogueId} not found in dialogue map!");
+        }
+    }
 
     private void HandleChoice(int buttonNumber, string nextId)
     {
@@ -239,6 +288,27 @@ public class DialogueManager : MonoBehaviour
             EndDialogue();
             return;
         }
+        
+        if (nextId == "open_shop")
+        {
+            ShopManager shopManager = FindObjectOfType<ShopManager>();
+            if (shopManager != null)
+            {
+                shopManager.OpenShop();
+                HideDialogueUI();
+            }
+            return;
+        }
+      //  else if (nextId == "end")
+     //   {
+     //       EndDialogue();
+            
+     //       if (currentNPC != null && currentNPC is IDialogueCallback callback)
+    //        {
+     //           callback.OnDialogueEnd();
+    //        }
+     //       return;
+    //    }
 
         if (!dialogueMap.ContainsKey(nextId))
         {
@@ -268,11 +338,33 @@ public class DialogueManager : MonoBehaviour
         titleName.text = "";
         dialogueText.text = "";
         
-        PandaNPC npcReference = FindObjectOfType<PandaNPC>();
-        if (npcReference != null)
+        if (currentNPC != null && currentNPC is IDialogueCallback callback)
         {
-            npcReference.OnDialogueEnd();
+            callback.OnDialogueEnd();
         }
+        currentNPC = null;
+    }
+    
+    public void HideDialogueUI()
+    {
+        dialoguePanel.SetActive(false);
+        bgImage.SetActive(false);
+        choicePanel.SetActive(false);
+        imagePanda.SetActive(false);
+        imageSamurai.SetActive(false);
+        titleName.text = "";
+        dialogueText.text = "";
+    }
+
+    public void ShowDialogueUI()
+    {
+        dialoguePanel.SetActive(true);
+        bgImage.SetActive(true);
+        dialogueText.text = "";
+        titleName.text = "";
+        imagePanda.SetActive(false);
+        imageSamurai.SetActive(false);
+        choicePanel.SetActive(false);
     }
 
     private void Update()

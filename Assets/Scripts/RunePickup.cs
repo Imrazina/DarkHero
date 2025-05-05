@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class RunePickup : MonoBehaviour
@@ -14,7 +12,7 @@ public class RunePickup : MonoBehaviour
     {
         if (GameStateManager.Instance.CurrentState.collectedItems.Contains(uniqueID))
         {
-            SetRuneActive(false);
+            gameObject.SetActive(false);
         }
     }
 
@@ -30,23 +28,17 @@ public class RunePickup : MonoBehaviour
     void PickUp()
     {
         GameStateManager.Instance.CurrentState.collectedItems.Add(uniqueID);
+        GameStateManager.Instance.CurrentState.hasRune = true;
         FindObjectOfType<PlayerInventory>().PickUpRune();
         
         if (pickupEffect) Instantiate(pickupEffect, transform.position, Quaternion.identity);
         if (pickupSound) AudioSource.PlayClipAtPoint(pickupSound, transform.position);
         
-        SetRuneActive(false);
+        gameObject.SetActive(false);
         
         FindObjectOfType<SubtitleManager>().ShowSubtitle("What was that..?", 3f);
         GameStateManager.Instance.SaveGame();
     }
 
-    public void SetRuneActive(bool isActive)
-    {
-        if (runeVisual != null)
-        {
-            runeVisual.SetActive(isActive);
-            pickupCollider.enabled = isActive; // Отключаем коллайдер
-        }
-    }
+    
 }

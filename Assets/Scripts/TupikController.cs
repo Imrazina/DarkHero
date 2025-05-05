@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TupikController : MonoBehaviour
@@ -14,42 +12,95 @@ public class TupikController : MonoBehaviour
 
     public float speed = 2f;
 
-    private bool openExit = false;
-    private bool closeEntrance = false;
+    public bool openExit = false;
+    public bool closeEntrance = false;
 
     private Vector3 exitTargetPosition;
     private Vector3 entranceStartPosition;
+    private Vector3 exitStartPosition;
+    private Vector3 entranceTargetPosition;
+
 
     void Start()
     {
         if (exitPlank != null)
-            exitTargetPosition = exitPlank.position + Vector3.up * exitMoveDistance;
+        {
+            exitStartPosition = exitPlank.position;
+            exitTargetPosition = exitStartPosition + Vector3.up * exitMoveDistance;
+        }
 
         if (entrancePlank != null)
+        {
             entranceStartPosition = entrancePlank.position;
+            entranceTargetPosition = entranceStartPosition + Vector3.down * entranceMoveDistance;
+        }
+        LoadPlanksState();
+    }
+
+    public void LoadPlanksState()
+    {
+        if (GameStateManager.Instance == null) return;
+
+        var state = GameStateManager.Instance.CurrentState;
+        
+        if (state.isExitPlankOpen && exitPlank != null)
+        {
+            exitPlank.position = exitTargetPosition;
+            openExit = true;
+        }
+
+        if (state.isEntrancePlankClosed && entrancePlank != null)
+        {
+            entrancePlank.position = entranceTargetPosition;
+            closeEntrance = true;
+        }
+    }
+
+    void SavePlanksState()
+    {
+        if (GameStateManager.Instance == null) return;
+
+        var state = GameStateManager.Instance.CurrentState;
+        state.isExitPlankOpen = openExit;
+        state.isEntrancePlankClosed = closeEntrance;
+        
+        GameStateManager.Instance.SaveGame();
+    }
+
+    public void CloseEntrance()
+    {
+        if (closeEntrance) return;
+        
+        closeEntrance = true;
+        SavePlanksState();
+    }
+
+    public void OpenExit()
+    {
+        if (openExit) return;
+        
+        openExit = true;
+        SavePlanksState();
     }
 
     void Update()
     {
         if (openExit && exitPlank != null)
         {
-            exitPlank.position = Vector3.MoveTowards(exitPlank.position, exitTargetPosition, speed * Time.deltaTime);
+            exitPlank.position = Vector3.MoveTowards(
+                exitPlank.position, 
+                exitTargetPosition, 
+                speed * Time.deltaTime
+            );
         }
 
         if (closeEntrance && entrancePlank != null)
         {
-            Vector3 target = entranceStartPosition + Vector3.down * entranceMoveDistance;
-            entrancePlank.position = Vector3.MoveTowards(entrancePlank.position, target, speed * Time.deltaTime);
+            entrancePlank.position = Vector3.MoveTowards(
+                entrancePlank.position, 
+                entranceTargetPosition, 
+                speed * Time.deltaTime
+            );
         }
-    }
-
-    public void CloseEntrance()
-    {
-        closeEntrance = true;
-    }
-
-    public void OpenExit()
-    {
-        openExit = true;
     }
 }

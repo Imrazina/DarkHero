@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class BossAI : MonoBehaviour
 {
@@ -289,7 +288,7 @@ public class BossAI : MonoBehaviour
         
 
         tupik.OpenExit();
-     //  Destroy(gameObject, 2f);
+        //  Destroy(gameObject, 2f);
     }
 
     private void Flip()

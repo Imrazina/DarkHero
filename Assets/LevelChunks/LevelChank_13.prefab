@@ -59,7 +59,7 @@ Transform:
   m_GameObject: {fileID: 499631523695127956}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.68, y: 0.75, z: 0}
+  m_LocalPosition: {x: 1.68, y: 1.35, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -79,6 +79,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueManager: {fileID: 0}
+  shopManager: {fileID: 0}
   dialogueFileName: shop_dialogue
 --- !u!61 &7982109385889212856
 BoxCollider2D:
@@ -112,7 +113,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 3.8613358, y: -3.0930083}
+  m_Offset: {x: 4.055519, y: -3.908597}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -123,7 +124,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 5.885788, y: 3.718696}
+  m_Size: {x: 5.3808746, y: 3.0972948}
   m_EdgeRadius: 0
 --- !u!1 &958456592631821362
 GameObject:
@@ -5012,7 +5013,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 328461806, guid: 7f2ce20460aed514eac3c2f58335f032, type: 3}
+  m_Sprite: {fileID: 670185345, guid: 52e28900d0c99494aabb074c0444a887, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

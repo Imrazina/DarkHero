@@ -1,9 +1,9 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Rendering.UI;
 
-public class PandaNPC : MonoBehaviour, IDialogueCallback
-{
-   public DialogueManager dialogueManager;
+public class PandaNPC : MonoBehaviour{
+    public DialogueManager dialogueManager;
     private bool isPlayerNear = false;
     private bool canStartDialogue = true;
     private bool rewardGiven;
@@ -56,9 +56,25 @@ public class PandaNPC : MonoBehaviour, IDialogueCallback
             canStartDialogue = true;
         }
     }
+    
+
+    private IEnumerator CooldownStartDialogue()
+    {
+        yield return new WaitForSeconds(1f);
+        canStartDialogue = true;
+    }
+
+    public void OnEnemyDefeated()
+    {
+        GameStateManager.Instance.CurrentState.enemyDefeated = true;
+        GameStateManager.Instance.CurrentState.pandaState = PandaDialogueState.AfterEnemyDefeated;
+        
+        GameStateManager.Instance.SaveGame();
+    }
 
     public void OnDialogueEnd()
     {
+        Debug.Log("Dialogue end");
         if (GameStateManager.Instance.CurrentState.pandaState == PandaDialogueState.AfterEnemyDefeated && !rewardGiven)
         {
             var inventory = FindObjectOfType<PlayerInventory>();
@@ -73,19 +89,5 @@ public class PandaNPC : MonoBehaviour, IDialogueCallback
             GameStateManager.Instance.SaveGame();
         }
         StartCoroutine(CooldownStartDialogue());
-    }
-
-    private IEnumerator CooldownStartDialogue()
-    {
-        yield return new WaitForSeconds(1f);
-        canStartDialogue = true;
-    }
-
-    public void OnEnemyDefeated()
-    {
-        GameStateManager.Instance.CurrentState.enemyDefeated = true;
-        GameStateManager.Instance.CurrentState.pandaState = PandaDialogueState.AfterEnemyDefeated;
-        
-        GameStateManager.Instance.SaveGame();
     }
 }

@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -8,7 +7,7 @@ using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
-   [Header("Main Dialogue UI")]
+    [Header("Main Dialogue UI")]
     public GameObject dialoguePanel;
     public GameObject bgImage;
     public TextMeshProUGUI dialogueText;
@@ -124,7 +123,6 @@ public class DialogueManager : MonoBehaviour
             dialoguePanel.SetActive(true);
             bgImage.SetActive(true);
             DisplayNextSentence();
-            Debug.Log($"Starting dialogue with ID: {startId}"); 
         }
         else
         {
@@ -299,16 +297,6 @@ public class DialogueManager : MonoBehaviour
             }
             return;
         }
-      //  else if (nextId == "end")
-     //   {
-     //       EndDialogue();
-            
-     //       if (currentNPC != null && currentNPC is IDialogueCallback callback)
-    //        {
-     //           callback.OnDialogueEnd();
-    //        }
-     //       return;
-    //    }
 
         if (!dialogueMap.ContainsKey(nextId))
         {
@@ -341,6 +329,11 @@ public class DialogueManager : MonoBehaviour
         if (currentNPC != null && currentNPC is IDialogueCallback callback)
         {
             callback.OnDialogueEnd();
+        }
+        else 
+        {
+            PandaNPC npcReference = FindObjectOfType<PandaNPC>();
+            if (npcReference != null) npcReference.OnDialogueEnd();
         }
         currentNPC = null;
     }

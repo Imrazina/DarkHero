@@ -66,6 +66,13 @@ public class LevelSegmentSpawner : MonoBehaviour
         {
             GameObject selectedLoot = lootPrefabs[Random.Range(0, lootPrefabs.Length)];
             Vector3 spawnPosition = spawnPoint.position;
+            
+            string potentialID = $"Loot_{lootIdCounter}";
+            if (GameStateManager.Instance.CurrentState.collectedItems.Contains(potentialID))
+            {
+                lootIdCounter++;
+                continue; 
+            }
 
             if (selectedLoot.name.ToLower().Contains("coin") || selectedLoot.name.ToLower().Contains("goldshape"))
             {
@@ -73,10 +80,11 @@ public class LevelSegmentSpawner : MonoBehaviour
             }
 
             GameObject lootInstance = Instantiate(selectedLoot, spawnPosition, Quaternion.identity, transform);
+            lootInstance.transform.localScale *= 1.5f;
             
             var worldComponent = lootInstance.AddComponent<WorldDependentObject>();
             var spawnerWorld = spawnPoint.GetComponent<WorldDependentObject>();
-            
+        
             var spriteRenderer = lootInstance.GetComponentInChildren<SpriteRenderer>();
             if (spriteRenderer != null)
             {

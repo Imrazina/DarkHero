@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 using UnityEditor.Rendering.LookDev;
 using UnityEngine;
@@ -30,8 +29,11 @@ public class GameState
     
     public bool hasPlayedIntro = false;
     public int totalCoins = 0;
-    public int totalPotions = 0; 
+    public int totalPotions = 0;
+    public int damageBoostCount = 0;
+    public int invincibilityCount = 0;
     public bool pandaRewardGiven;
+    
     
     public bool isPlayerDead = false;
     public bool hasRune = false;
@@ -45,4 +47,7 @@ public class GameState
     public string currentDialogueFile = "";
     
     public int fallStatus = 0;
+    
+    public bool isExitPlankOpen = false;
+    public bool isEntrancePlankClosed = false;
 }

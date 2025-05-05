@@ -34,6 +34,7 @@ public class LevelGenerator : MonoBehaviour
         GenerateMainLine();
         GenerateAllBranches();
         FillDeadEnds(); 
+        GenerateMissingCameraTriggers();
     }
 
     private void InitializeStartSegment()
@@ -254,6 +255,7 @@ public class LevelGenerator : MonoBehaviour
             var exits = GetAvailableExits(selected, direction);
             currentDirection = exits.Count > 0 ? exits[Random.Range(0, exits.Count)] : direction;
         }
+        Debug.Log($"[Segment] Placed segment at {nextPos} from {fromPos} going {direction}");
 
         return true;
     }
@@ -341,6 +343,8 @@ public class LevelGenerator : MonoBehaviour
         Vector3 toWorldPos = CalculateWorldPosition(toPos);
         Vector3 triggerPos = (fromWorldPos + toWorldPos) / 2f;
 
+        Debug.Log($"[CameraTrigger] Creating trigger between {fromPos} -> {toPos}");
+
         GameObject triggerObject = new GameObject("CameraSwitchTrigger");
         triggerObject.transform.position = triggerPos;
         triggerObject.transform.parent = transform;
@@ -362,20 +366,61 @@ public class LevelGenerator : MonoBehaviour
 
         CameraSwitchTrigger switchTrigger = triggerObject.AddComponent<CameraSwitchTrigger>();
 
-        GameObject nextSegment = placedSegments[toPos];
-        switchTrigger.cameraTargetForward = nextSegment.transform.Find("CameraTarget_Center");
-        switchTrigger.cameraTargetBackward = placedSegments[fromPos].transform.Find("CameraTarget_Center");
-
-
-        if (toPos.x > fromPos.x || toPos.y > fromPos.y)
+        if (!placedSegments.TryGetValue(toPos, out GameObject nextSegment) ||
+            !placedSegments.TryGetValue(fromPos, out GameObject prevSegment))
         {
-            switchTrigger.cameraTargetForward = nextSegment.transform.Find("CameraTarget_Center");
-            switchTrigger.cameraTargetBackward = placedSegments[fromPos].transform.Find("CameraTarget_Center");
+            Debug.LogWarning($"[CameraTrigger] Missing segment references at {fromPos} or {toPos}");
+            return;
         }
-        else 
+
+        Transform forwardTarget = nextSegment.transform.Find("CameraTarget_Center");
+        Transform backwardTarget = prevSegment.transform.Find("CameraTarget_Center");
+
+        if (forwardTarget == null || backwardTarget == null)
         {
-            switchTrigger.cameraTargetForward = placedSegments[fromPos].transform.Find("CameraTarget_Center");
-            switchTrigger.cameraTargetBackward = nextSegment.transform.Find("CameraTarget_Center");
+            Debug.LogWarning($"[CameraTrigger] Missing CameraTarget_Center in segments at {fromPos} or {toPos}");
+        }
+        else
+        {
+            switchTrigger.cameraTargetForward = forwardTarget;
+            switchTrigger.cameraTargetBackward = backwardTarget;
+        }
+
+        Debug.Log($"[CameraTrigger] Trigger set with Forward: {forwardTarget?.name}, Backward: {backwardTarget?.name}");
+    }
+
+    
+    private void GenerateMissingCameraTriggers()
+    {
+        foreach (var kvp in placedSegments)
+        {
+            Vector2Int pos = kvp.Key;
+            foreach (Direction dir in System.Enum.GetValues(typeof(Direction)))
+            {
+                Vector2Int neighborPos = pos + DirectionToOffset(dir);
+
+                if (!placedSegments.ContainsKey(neighborPos)) continue;
+                
+                Vector3 from = CalculateWorldPosition(pos);
+                Vector3 to = CalculateWorldPosition(neighborPos);
+                Vector3 triggerPos = (from + to) / 2f;
+
+                Collider2D[] colliders = Physics2D.OverlapPointAll(triggerPos);
+                bool triggerExists = false;
+                foreach (var col in colliders)
+                {
+                    if (col.CompareTag("CameraTrigger"))
+                    {
+                        triggerExists = true;
+                        break;
+                    }
+                }
+
+                if (!triggerExists)
+                {
+                    CreateCameraTrigger(pos, neighborPos, triggerPos);
+                }
+            }
         }
     }
 }

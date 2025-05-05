@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using TMPro.Examples;
 using UnityEngine;
 
 public class CameraSwitchTrigger : MonoBehaviour
@@ -64,6 +62,6 @@ public class CameraSwitchTrigger : MonoBehaviour
             position = fixedPosition,
             isOrthographic = Camera.main.orthographic
         };
- //       GameStateManager.Instance.SaveGame();
+        //       GameStateManager.Instance.SaveGame();
     }
 }

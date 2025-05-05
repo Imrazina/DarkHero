@@ -38,6 +38,8 @@ public class GameStateManager : MonoBehaviour
         if (inventory != null)
         {
             CurrentState.totalPotions = inventory.potionCount;
+            CurrentState.damageBoostCount = inventory.damageBoostCount;
+            CurrentState.invincibilityCount = inventory.invincibilityCount;
             CurrentState.hasRune = inventory.hasRune;
             
             if (inventory.hasRune && !CurrentState.collectedItems.Contains("Rune_1"))
@@ -48,6 +50,13 @@ public class GameStateManager : MonoBehaviour
             {
                 CurrentState.collectedItems.Remove("Rune_1");
             }
+        }
+        
+        var tupikController = FindObjectOfType<TupikController>();
+        if (tupikController != null)
+        {
+            CurrentState.isExitPlankOpen = tupikController.openExit;
+            CurrentState.isEntrancePlankClosed = tupikController.closeEntrance;
         }
         
         var mainCamera = Camera.main;
@@ -82,12 +91,22 @@ public class GameStateManager : MonoBehaviour
                 statsManager.SetCoins(CurrentState.totalCoins);
             }
             
+            var tupikController = FindObjectOfType<TupikController>();
+            if (tupikController != null)
+            {
+                tupikController.openExit = CurrentState.isExitPlankOpen;
+                tupikController.closeEntrance = CurrentState.isEntrancePlankClosed;
+                tupikController.LoadPlanksState();
+            }
+            
             var inventory = FindObjectOfType<PlayerInventory>();
             if (inventory != null)
             {
                 inventory.potionCount = CurrentState.totalPotions;
+                inventory.damageBoostCount = CurrentState.damageBoostCount;
+                inventory.invincibilityCount = CurrentState.invincibilityCount;
                 inventory.hasRune = CurrentState.collectedItems.Contains("Rune_1");
-                inventory.UpdatePotionsUI();
+                inventory.UpdateAllUI(); 
             
                 if (inventory.runeIcon != null)
                     inventory.runeIcon.color = inventory.hasRune ? Color.white : Color.black;
@@ -112,6 +131,23 @@ public class GameStateManager : MonoBehaviour
             {
                 screenFade.FadeIn(0.5f);
             }
+            
+            var allLootItems = FindObjectsOfType<LootItem>(true); // true для поиска неактивных объектов
+            foreach (var loot in allLootItems)
+            {
+                if (CurrentState.collectedItems.Contains(loot.uniqueID))
+                {
+                    Destroy(loot.gameObject);
+                }
+            }
+            var allRunes = FindObjectsOfType<RunePickup>(true);
+            foreach (var rune in allRunes)
+            {
+                if (CurrentState.collectedItems.Contains(rune.uniqueID))
+                {
+                    Destroy(rune.gameObject);
+                }
+            }
         }
     }
 
@@ -129,6 +165,10 @@ public class GameStateManager : MonoBehaviour
             cameraState = new CameraState(), 
             lastCameraPosition = Vector3.zero,
             totalPotions = 0,
+            damageBoostCount = 0,
+            invincibilityCount = 0,
+            isExitPlankOpen = false,
+            isEntrancePlankClosed = false,
             fallStatus = 0
         };
     }
@@ -147,12 +187,6 @@ public class GameStateManager : MonoBehaviour
         if (inventory != null)
         {
             inventory.ResetInventory();
-        }
-        
-        var allRunes = FindObjectsOfType<RunePickup>(true); 
-        foreach (var rune in allRunes)
-        {
-            rune.SetRuneActive(true); 
         }
         
         if (Camera.main != null)

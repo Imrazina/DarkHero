@@ -267,7 +267,7 @@
       "choices": [
         {
           "text": "[Nod and leave]",
-          "nextId": "quest_start"
+          "nextId": "9c"
         },
         {
           "text": "'Rewards mean nothing to the dead.'",
@@ -281,11 +281,18 @@
       "returnNode": true
     },
     {
+      "id": "9c",
+      "name": "Samurai",
+      "text": "*Waves*",
+      "avatar": "ImageSamurai",
+      "nextId": "1"
+    },
+    {
       "id": "9a",
       "name": "Samurai",
       "text": "(But you take the potion anyway. The living still need it.)",
       "avatar": "ImageSamurai",
-      "nextId": "quest_start"
+      "nextId": "1"
     },
     {
       "id": "100",

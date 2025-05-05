@@ -1,5 +1,4 @@
 #if UNITY_EDITOR
-using UnityEditor;
 using UnityEngine;
 
 public class LootSetupEditor : MonoBehaviour
@@ -53,4 +52,5 @@ public class LootSetupEditor : MonoBehaviour
         Debug.Log("Loot setup complete!");
     }
 }
+
 #endif

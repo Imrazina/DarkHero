@@ -52,9 +52,29 @@ public class Character : MonoBehaviour
 
     private MovingPlatform currentPlatform;
     public UI_HealthDisplay healthUI;
+    
+    [Header("Power Ups")]
+    public int damageBoostAmount = 30;
+    public float damageBoostDuration = 30f;
+    private bool isDamageBoosted = false;
+
+    public float invincibilityDuration = 10f;
+    private bool isInvincible = false;
+    
+    [Header("Visual Effects")]
+    public Color damageBoostColor = new Color(1f, 0.5f, 0.5f); 
+    public Color invincibilityColor = new Color(0.5f, 0.5f, 1f); 
+    private Color defaultColor;
+    private SpriteRenderer characterRenderer;
 
     void Start()
     {
+        characterRenderer = GetComponentInChildren<SpriteRenderer>();
+        if (characterRenderer != null)
+        {
+            defaultColor = characterRenderer.color;
+        }
+        
         if (!GameStateManager.Instance.CurrentState.hasPlayedIntro || 
             GameStateManager.Instance.CurrentState.isPlayerDead)
         {
@@ -87,223 +107,343 @@ public class Character : MonoBehaviour
         healthUI.UpdateHearts(currentHealth);
     }
 
-void Update()
-{
-    if (!isDead)
+    void Update()
     {
+        if (!isDead)
+        {
         
-        GameStateManager.Instance.CurrentState.playerPosition = transform.position;
-    }
+            GameStateManager.Instance.CurrentState.playerPosition = transform.position;
+        }
     
-    if (isDead || isKnockedBack || isHealing) return;
+        if (isDead || isKnockedBack || isHealing) return;
 
-    float moveInput = Input.GetAxisRaw("Horizontal");
-    bool isRunning = Input.GetKey(KeyCode.LeftShift);
-    float moveSpeed = isRunning ? runSpeed : speed;
+        float moveInput = Input.GetAxisRaw("Horizontal");
+        bool isRunning = Input.GetKey(KeyCode.LeftShift);
+        float moveSpeed = isRunning ? runSpeed : speed;
 
-    if (Input.GetKeyDown(KeyCode.O) && !isDashing)
-    {
-        StartDashFromAnimation(); 
-    }
+        if (Input.GetKeyDown(KeyCode.O) && !isDashing)
+        {
+            StartDashFromAnimation(); 
+        }
     
-    if (isDashing) return;
+        if (isDashing) return;
 
-    // -------------------- Wall Slide --------------------
-    bool canWallSlide =
-        isTouchingWall &&
-        !isGrounded &&
-        moveInput != 0 &&
-        Mathf.Sign(moveInput) == -Mathf.Sign(wallNormal.x) &&
-        !isWallJumping &&
-        !justWallJumped;
+        // -------------------- Wall Slide --------------------
+        bool canWallSlide =
+            isTouchingWall &&
+            !isGrounded &&
+            moveInput != 0 &&
+            Mathf.Sign(moveInput) == -Mathf.Sign(wallNormal.x) &&
+            !isWallJumping &&
+            !justWallJumped;
 
-    if (canWallSlide)
-    {
-        if (!isWallSliding)
+        if (canWallSlide)
         {
-            isWallSliding = true;
-            SetAnimState(4);
-        }
+            if (!isWallSliding)
+            {
+                isWallSliding = true;
+                SetAnimState(4);
+            }
 
-        rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, wallSlideSpeed));
-        wallCoyoteTimer = wallCoyoteTime;
-    }
-    else
-    {
-        if (isWallSliding)
-            isWallSliding = false;
-
-        if (wallCoyoteTimer > 0)
-            wallCoyoteTimer -= Time.deltaTime;
-    }
-
-    // -------------------- Движение --------------------
-    if (!isWallSliding && !isWallJumping)
-    {
-        float adjustedSpeed = moveInput * moveSpeed;
-
-        if (currentPlatform != null && isGrounded)
-        {
-            adjustedSpeed += currentPlatform.PlatformVelocity.x;
-        }
-
-        rb.velocity = new Vector2(adjustedSpeed, rb.velocity.y);
-    }
-    else if (isWallJumping && wallJumpControlDelay > 0)
-    {
-        rb.velocity = new Vector2(
-            Mathf.Lerp(rb.velocity.x, moveInput * moveSpeed * 1.5f, Time.deltaTime * 10),
-            rb.velocity.y
-        );
-    }
-
-    // -------------------- Отражение спрайта --------------------
-    if (isTouchingWall)
-    {
-        if (wallNormal.x > 0)
-        {
-            spriteTransform.localScale = new Vector3(Mathf.Abs(spriteTransform.localScale.x), spriteTransform.localScale.y, spriteTransform.localScale.z);
-        }
-        else if (wallNormal.x < 0)
-        {
-            spriteTransform.localScale = new Vector3(-Mathf.Abs(spriteTransform.localScale.x), spriteTransform.localScale.y, spriteTransform.localScale.z);
-        }
-    }
-    else if (moveInput != 0)
-    {
-        spriteTransform.localScale = new Vector3(
-            Mathf.Abs(spriteTransform.localScale.x) * Mathf.Sign(moveInput),
-            spriteTransform.localScale.y,
-            spriteTransform.localScale.z
-        );
-    }
-
-    // -------------------- Анимации --------------------
-    if (!attackController.isAttacking && !isDashing)
-    {
-        if (isWallSliding && !isWallJumping && !justWallJumped)
-        {
-            SetAnimState(4); 
-        }
-        else if (isWallJumping || justWallJumped)
-        {
-            SetAnimState(3);
-        }
-        else if (!isGrounded && Mathf.Abs(rb.velocity.y) > 0.1f) // <-- добавил условие чтобы не мешать Idle в воздухе
-        {
-            SetAnimState(3);
-        }
-        else if (isGrounded && Mathf.Abs(moveInput) > 0.01f)
-        {
-            SetAnimState(isRunning ? 2 : 1); 
-        }
-        else if (isGrounded)
-        {
-            SetAnimState(0);
-        }
-    }
-
-    // -------------------- Прыжки --------------------
-    if (Input.GetKeyDown(KeyCode.Space))
-    {
-        Debug.Log($"[Jump Pressed] Grounded: {isGrounded}, Wall: {isTouchingWall}, WallNormal: {wallNormal}");
-
-        if (isGrounded)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
-            SetAnimState(3);
-            Debug.Log("[Jump] Прыжок с земли");
-            Invoke("DisableGrounded", 0.1f);
-        }
-        else if ((isTouchingWall || wallCoyoteTimer > 0f) && Mathf.Abs(wallNormal.x) > 0.1f)
-        {
-            Debug.Log("[WallJump Attempt] Условия выполнены. Начинаем прыжок от стены.");
-            WallJump();
+            rb.velocity = new Vector2(rb.velocity.x, Mathf.Max(rb.velocity.y, wallSlideSpeed));
+            wallCoyoteTimer = wallCoyoteTime;
         }
         else
         {
-            Debug.Log("[WallJump Attempt] Условия НЕ выполнены.");
+            if (isWallSliding)
+                isWallSliding = false;
+
+            if (wallCoyoteTimer > 0)
+                wallCoyoteTimer -= Time.deltaTime;
+        }
+
+        // -------------------- Движение --------------------
+        if (!isWallSliding && !isWallJumping)
+        {
+            float adjustedSpeed = moveInput * moveSpeed;
+
+            if (currentPlatform != null && isGrounded)
+            {
+                adjustedSpeed += currentPlatform.PlatformVelocity.x;
+            }
+
+            rb.velocity = new Vector2(adjustedSpeed, rb.velocity.y);
+        }
+        else if (isWallJumping && wallJumpControlDelay > 0)
+        {
+            rb.velocity = new Vector2(
+                Mathf.Lerp(rb.velocity.x, moveInput * moveSpeed * 1.5f, Time.deltaTime * 10),
+                rb.velocity.y
+            );
+        }
+
+        // -------------------- Отражение спрайта --------------------
+        if (isTouchingWall)
+        {
+            if (wallNormal.x > 0)
+            {
+                spriteTransform.localScale = new Vector3(Mathf.Abs(spriteTransform.localScale.x), spriteTransform.localScale.y, spriteTransform.localScale.z);
+            }
+            else if (wallNormal.x < 0)
+            {
+                spriteTransform.localScale = new Vector3(-Mathf.Abs(spriteTransform.localScale.x), spriteTransform.localScale.y, spriteTransform.localScale.z);
+            }
+        }
+        else if (moveInput != 0)
+        {
+            spriteTransform.localScale = new Vector3(
+                Mathf.Abs(spriteTransform.localScale.x) * Mathf.Sign(moveInput),
+                spriteTransform.localScale.y,
+                spriteTransform.localScale.z
+            );
+        }
+
+        // -------------------- Анимации --------------------
+        if (!attackController.isAttacking && !isDashing)
+        {
+            if (isWallSliding && !isWallJumping && !justWallJumped)
+            {
+                SetAnimState(4); 
+            }
+            else if (isWallJumping || justWallJumped)
+            {
+                SetAnimState(3);
+            }
+            else if (!isGrounded && Mathf.Abs(rb.velocity.y) > 0.1f) // <-- добавил условие чтобы не мешать Idle в воздухе
+            {
+                SetAnimState(3);
+            }
+            else if (isGrounded && Mathf.Abs(moveInput) > 0.01f)
+            {
+                SetAnimState(isRunning ? 2 : 1); 
+            }
+            else if (isGrounded)
+            {
+                SetAnimState(0);
+            }
+        }
+
+        // -------------------- Прыжки --------------------
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log($"[Jump Pressed] Grounded: {isGrounded}, Wall: {isTouchingWall}, WallNormal: {wallNormal}");
+
+            if (isGrounded)
+            {
+                rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+                SetAnimState(3);
+                Debug.Log("[Jump] Прыжок с земли");
+                Invoke("DisableGrounded", 0.1f);
+            }
+            else if ((isTouchingWall || wallCoyoteTimer > 0f) && Mathf.Abs(wallNormal.x) > 0.1f)
+            {
+                Debug.Log("[WallJump Attempt] Условия выполнены. Начинаем прыжок от стены.");
+                WallJump();
+            }
+            else
+            {
+                Debug.Log("[WallJump Attempt] Условия НЕ выполнены.");
+            }
+        }
+    
+        if (Input.GetKeyDown(KeyCode.Alpha1) && !isHealing)
+        {
+            TryUsePotion();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            TryUseDamageBoost();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            TryUseInvincibility();
+        }
+
+        if (wallStickTimer > 0)
+        {
+            wallStickTimer -= Time.deltaTime;
+        }
+        else
+        {
+            if (!justWallJumped) 
+                isTouchingWall = false;
         }
     }
-    
-    if (Input.GetKeyDown(KeyCode.Q) && !isHealing)
+
+    private void TryUsePotion()
     {
-        TryUsePotion();
+        var inventory = FindObjectOfType<PlayerInventory>();
+        if (inventory != null && inventory.UsePotion())
+        {
+            StartCoroutine(HealingProcess());
+        }
+        else if (inventory != null && inventory.potionCount <= 0)
+        {
+            Debug.Log("Нет зелий для использования!");
+        }
     }
 
-    if (wallStickTimer > 0)
+    private IEnumerator HealingProcess()
     {
-        wallStickTimer -= Time.deltaTime;
+        isHealing = true;
+    
+        animator.SetTrigger("Healing");
+    
+        yield return new WaitForSeconds(0.2f);
+    
+        currentHealth = Mathf.Min(currentHealth + potionHealAmount, maxHealth);
+    
+        if (healthUI != null)
+        {
+            healthUI.UpdateHearts(currentHealth);
+        }
+
+        yield return new WaitForSeconds(healingAnimationTime - 0.2f);
+    
+        isHealing = false;
+
+        Debug.Log("Использовано зелье! Восстановлено " + potionHealAmount + " HP");
     }
-    else
+
+    private void TryUseDamageBoost()
     {
-        if (!justWallJumped) 
+        var inventory = FindObjectOfType<PlayerInventory>();
+        if (inventory != null && inventory.UseDamageBoost())
+        {
+            ActivateDamageBoost(); 
+        }
+        else
+        {
+            Debug.Log("Нет бустов урона!");
+        }
+    }
+
+    private void ActivateDamageBoost()
+    {
+        if (isDamageBoosted) return;
+        animator.SetTrigger("Healing");
+        if (characterRenderer != null)
+        {
+            characterRenderer.color = damageBoostColor;
+        }
+        
+        StartCoroutine(FlashEffect(damageBoostDuration, damageBoostColor));
+        
+        isDamageBoosted = true;
+        Debug.Log($"Урон увеличен на {damageBoostAmount} единиц!");
+
+        if (attackController != null && attackController.hitbox != null)
+        {
+            attackController.hitbox.lightAttackDamage += damageBoostAmount;
+            attackController.hitbox.mediumAttackDamage += damageBoostAmount;
+            attackController.hitbox.heavyAttackDamage += damageBoostAmount;
+        }
+        
+        Invoke(nameof(ResetDamageBoost), damageBoostDuration);
+    }
+
+    private void ResetDamageBoost()
+    {
+        if (!isDamageBoosted) return;
+
+        if (attackController != null && attackController.hitbox != null)
+        {
+            attackController.hitbox.lightAttackDamage -= damageBoostAmount;
+            attackController.hitbox.mediumAttackDamage -= damageBoostAmount;
+            attackController.hitbox.heavyAttackDamage -= damageBoostAmount;
+        }
+
+        isDamageBoosted = false;
+        Debug.Log("Урон вернулся к исходному значению!");
+    }
+    
+    public void TryUseInvincibility()
+    {
+        var inventory = FindObjectOfType<PlayerInventory>();
+        if (inventory != null && inventory.UseInvincibility())
+        {
+            ActivateInvincibility(); 
+        }
+        else
+        {
+            Debug.Log("Нет предметов неуязвимости!");
+        }
+    }
+    public void ActivateInvincibility()
+    {
+        if (isInvincible) return;
+        animator.SetTrigger("Healing");
+        
+        if (characterRenderer != null)
+        {
+            characterRenderer.color = invincibilityColor;
+            StartCoroutine(FlashEffect(invincibilityDuration, invincibilityColor));
+        }
+    
+        isInvincible = true;
+        StartCoroutine(ResetInvincibility());
+    }
+
+    private IEnumerator ResetInvincibility()
+    {
+        yield return new WaitForSeconds(invincibilityDuration);
+        isInvincible = false;
+        Debug.Log("Неуязвимость закончилась!");
+    }
+
+    private IEnumerator FlashEffect(float duration, Color effectColor)
+    {
+        float elapsed = 0f;
+        float flashSpeed = 0.5f; 
+    
+        while (elapsed < duration)
+        {
+            if (characterRenderer != null)
+            {
+                characterRenderer.color = 
+                    Mathf.PingPong(elapsed * 10f, 1f) > 0.5f 
+                        ? effectColor 
+                        : defaultColor;
+            }
+        
+            elapsed += flashSpeed;
+            yield return new WaitForSeconds(flashSpeed);
+        }
+        
+        if (characterRenderer != null)
+        {
+            characterRenderer.color = defaultColor;
+        }
+    }
+    private void WallJump()
+    {
+        if ((isTouchingWall || wallCoyoteTimer > 0f) && !isGrounded)
+        {
+            isWallJumping = true;
+            justWallJumped = true;
+            isWallSliding = false;
             isTouchingWall = false;
-    }
-}
+            animator.SetInteger("State", 5);
 
-private void TryUsePotion()
-{
-    var inventory = FindObjectOfType<PlayerInventory>();
-     if (inventory != null && inventory.UsePotion())
+            float jumpDirection = Mathf.Sign(wallNormal.x) < 0 ? 1 : -1;
+            rb.velocity = Vector2.zero;
+            rb.velocity = new Vector2(jumpDirection * wallJumpHorizontalForce, wallJumpVerticalForce);
+
+            Debug.Log($"[WallJump] Направление прыжка: {jumpDirection}, Применённая скорость: {rb.velocity}");
+
+            StartCoroutine(ResetWallJump());
+            StartCoroutine(ClearJustWallJumped()); 
+        }
+    }
+
+    private IEnumerator ClearJustWallJumped()
     {
-        StartCoroutine(HealingProcess());
+        yield return new WaitForSeconds(0.25f); 
+        justWallJumped = false;
+        isWallJumping = false;
     }
-    else if (inventory != null && inventory.potionCount <= 0)
-    {
-        Debug.Log("Нет зелий для использования!");
-    }
-}
-
-private IEnumerator HealingProcess()
-{
-    isHealing = true;
-    
-    animator.SetTrigger("Healing");
-    
-    yield return new WaitForSeconds(0.2f);
-    
-    currentHealth = Mathf.Min(currentHealth + potionHealAmount, maxHealth);
-    
-    if (healthUI != null)
-    {
-        healthUI.UpdateHearts(currentHealth);
-    }
-
-    yield return new WaitForSeconds(healingAnimationTime - 0.2f);
-    
-    isHealing = false;
-
-    Debug.Log("Использовано зелье! Восстановлено " + potionHealAmount + " HP");
-}
-
-private void WallJump()
-{
-    if ((isTouchingWall || wallCoyoteTimer > 0f) && !isGrounded)
-    {
-        isWallJumping = true;
-        justWallJumped = true;
-        isWallSliding = false;
-        isTouchingWall = false;
-        animator.SetInteger("State", 5);
-
-        float jumpDirection = Mathf.Sign(wallNormal.x) < 0 ? 1 : -1;
-        rb.velocity = Vector2.zero;
-        rb.velocity = new Vector2(jumpDirection * wallJumpHorizontalForce, wallJumpVerticalForce);
-
-        Debug.Log($"[WallJump] Направление прыжка: {jumpDirection}, Применённая скорость: {rb.velocity}");
-
-        StartCoroutine(ResetWallJump());
-        StartCoroutine(ClearJustWallJumped()); 
-    }
-}
-
-private IEnumerator ClearJustWallJumped()
-{
-    yield return new WaitForSeconds(0.25f); 
-    justWallJumped = false;
-    isWallJumping = false;
-}
     private IEnumerator ResetWallJump()
     {
         yield return new WaitForSeconds(wallJumpControlDelay);
@@ -396,7 +536,7 @@ private IEnumerator ClearJustWallJumped()
 
     public void TakeDamage(int damage)
     {
-        if (isDead || isDashing || isKnockedBack || isHealing) return;
+        if (isDead || isDashing || isKnockedBack || isHealing || isInvincible) return;
 
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);

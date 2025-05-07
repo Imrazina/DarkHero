@@ -14,6 +14,7 @@ public class DialogueManager : MonoBehaviour
     public TextMeshProUGUI titleName;
     public GameObject imagePanda;
     public GameObject imageSamurai;
+    public GameObject imageBoss;
 
     [Header("Choice UI")] 
     public GameObject choicePanel;
@@ -71,6 +72,7 @@ public class DialogueManager : MonoBehaviour
         choicePanel.SetActive(false);
         imagePanda.SetActive(false);
         imageSamurai.SetActive(false);
+        imageBoss.SetActive(false);
     }
     
     private void CheckReferences()
@@ -151,13 +153,14 @@ public class DialogueManager : MonoBehaviour
     {
         isTyping = true;
         skipTyping = false;
-        
+    
         dialogueText.text = "";
         titleName.text = line.name ?? ""; 
 
         imagePanda.SetActive(line.avatar == "ImagePanda");
         imageSamurai.SetActive(line.avatar == "ImageSamurai");
-        
+        imageBoss.SetActive(line.avatar == "ImageBoss");
+    
         foreach (char letter in line.text.ToCharArray())
         {
             if (skipTyping)
@@ -170,19 +173,23 @@ public class DialogueManager : MonoBehaviour
         }
 
         isTyping = false;
-        
+    
         if (line.choices != null && line.choices.Count > 0)
         {
             isWaitingForChoice = true;
             yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.E)); 
             ShowChoices(line.choices);
         }
-        else if (!string.IsNullOrEmpty(line.text))
+        else
         {
             yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.E));
-            EndDialogue();
+            
+            if (string.IsNullOrEmpty(line.nextId) && dialogueQueue.Count == 0)
+            {
+                EndDialogue();
+            }
         }
-        
+    
         Debug.Log($"Showing line: {line.text}, avatar: {line.avatar}, name: {line.name}");
     }
 
@@ -200,6 +207,7 @@ public class DialogueManager : MonoBehaviour
         dialogueText.text = ""; 
         titleName.text = "Samurai"; 
         imagePanda.SetActive(false);
+        imageBoss.SetActive(false);
         imageSamurai.SetActive(true);
 
         choicePanel.SetActive(true);
@@ -297,6 +305,18 @@ public class DialogueManager : MonoBehaviour
             }
             return;
         }
+        
+        if (currentNPC is BossAI boss)
+        {
+            if (nextId == "correct_answer")
+            {
+                boss.riddleAnsweredCorrectly = true;
+            }
+            else if (nextId == "wrong_answer")
+            {
+                boss.riddleAnsweredCorrectly = false;
+            }
+        }
 
         if (!dialogueMap.ContainsKey(nextId))
         {
@@ -310,32 +330,59 @@ public class DialogueManager : MonoBehaviour
         choicePanel.SetActive(false);
         isWaitingForChoice = false;
 
-        dialogueQueue.Clear();
         dialogueQueue.Enqueue(dialogueMap[nextId]);
         DisplayNextSentence();
     }
 
     public void EndDialogue()
     {
+        Debug.Log($"[DIALOGUE_DEBUG] === Начало EndDialogue ===");
+        Debug.Log($"[DIALOGUE_DEBUG] currentNPC: {currentNPC} ({(currentNPC != null ? currentNPC.GetType().Name : "null")})");
+
         dialogueQueue.Clear();
         dialoguePanel.SetActive(false);
         bgImage.SetActive(false);
         choicePanel.SetActive(false);
         imagePanda.SetActive(false);
         imageSamurai.SetActive(false);
+        imageBoss.SetActive(false);
         titleName.text = "";
         dialogueText.text = "";
         
-        if (currentNPC != null && currentNPC is IDialogueCallback callback)
+        if (currentNPC != null)
         {
-            callback.OnDialogueEnd();
+            Debug.Log($"[DIALOGUE_DEBUG] Пытаемся вызвать OnDialogueEnd у currentNPC...");
+            if (currentNPC is IDialogueCallback callback)
+            {
+                Debug.Log($"[DIALOGUE_DEBUG] Вызов callback.OnDialogueEnd()");
+                callback.OnDialogueEnd();
+            }
+            else
+            {
+                Debug.LogWarning($"[DIALOGUE_DEBUG] currentNPC не реализует IDialogueCallback!");
+            }
         }
-        else 
+        else
         {
-            PandaNPC npcReference = FindObjectOfType<PandaNPC>();
-            if (npcReference != null) npcReference.OnDialogueEnd();
+            Debug.Log($"[DIALOGUE_DEBUG] currentNPC null, ищем PandaNPC...");
+            PandaNPC npcReference = FindObjectOfType<PandaNPC>(true); // Ищем даже неактивные
+            if (npcReference != null)
+            {
+                Debug.Log($"[DIALOGUE_DEBUG] Найден PandaNPC: {npcReference.gameObject.name}, isActive: {npcReference.isActiveAndEnabled}");
+                if (npcReference.isActiveAndEnabled)
+                {
+                    Debug.Log($"[DIALOGUE_DEBUG] Вызов OnDialogueEnd у PandaNPC");
+                    npcReference.OnDialogueEnd();
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[DIALOGUE_DEBUG] PandaNPC не найден на сцене!");
+            }
         }
+
         currentNPC = null;
+        Debug.Log($"[DIALOGUE_DEBUG] === Конец EndDialogue ===");
     }
     
     public void HideDialogueUI()
@@ -345,6 +392,7 @@ public class DialogueManager : MonoBehaviour
         choicePanel.SetActive(false);
         imagePanda.SetActive(false);
         imageSamurai.SetActive(false);
+        imageBoss.SetActive(false);
         titleName.text = "";
         dialogueText.text = "";
     }
@@ -357,6 +405,7 @@ public class DialogueManager : MonoBehaviour
         titleName.text = "";
         imagePanda.SetActive(false);
         imageSamurai.SetActive(false);
+        imageBoss.SetActive(false);
         choicePanel.SetActive(false);
     }
 

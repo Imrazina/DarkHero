@@ -55,7 +55,7 @@ public class Character : MonoBehaviour
     
     [Header("Power Ups")]
     public int damageBoostAmount = 30;
-    public float damageBoostDuration = 30f;
+    public float damageBoostDuration = 10f;
     private bool isDamageBoosted = false;
 
     public float invincibilityDuration = 10f;
@@ -66,7 +66,76 @@ public class Character : MonoBehaviour
     public Color invincibilityColor = new Color(0.5f, 0.5f, 1f); 
     private Color defaultColor;
     private SpriteRenderer characterRenderer;
+    
+    private bool isMovementLocked = false;
+    
+    [Header("Improved Ground Check")]
+    public float groundCheckDistance = 0.5f;
+    public float groundWidthCheck = 0.4f;
+    public float groundAngleThreshold = 30f;
+    public float groundStickForce = 5f;
+    public float gravityScale = 2f;
+    public float fallGravityMultiplier = 1.5f;
 
+    private bool wasGrounded;
+    private float originalGravityScale;
+    
+    [Header("Ground Check")]
+    public float groundCheckRadius = 0.2f;
+    public Vector2 groundCheckOffset = new Vector2(0, -0.5f);
+    public float wallCheckDistance = 0.5f;
+    public LayerMask whatIsGround;
+
+    private void UpdateGroundAndWallStatus()
+    {
+        bool wasGrounded = isGrounded;
+        isGrounded = false;
+    
+        Collider2D[] groundColliders = Physics2D.OverlapCircleAll(
+            (Vector2)transform.position + groundCheckOffset, 
+            groundCheckRadius, 
+            whatIsGround
+        );
+    
+        foreach (Collider2D col in groundColliders)
+        {
+            if (col.gameObject == gameObject) continue;
+        
+            Vector2 closestPoint = col.ClosestPoint(transform.position);
+            Vector2 groundNormal = (Vector2)transform.position - closestPoint;
+            float angle = Vector2.Angle(groundNormal, Vector2.up);
+        
+            if (angle < groundAngleThreshold)
+            {
+                isGrounded = true;
+                break;
+            }
+        }
+        
+        isTouchingWall = false;
+        if (!isGrounded)
+        {
+            float direction = spriteTransform.localScale.x > 0 ? 1 : -1;
+            RaycastHit2D wallHit = Physics2D.Raycast(
+                transform.position,
+                new Vector2(direction, 0),
+                wallCheckDistance,
+                whatIsGround
+            );
+
+            if (wallHit.collider != null)
+            {
+                float wallAngle = Vector2.Angle(wallHit.normal, Vector2.right);
+                if (wallAngle > 60f && wallHit.point.y < transform.position.y - 0.3f)
+                {
+                    isTouchingWall = true;
+                    wallNormal = wallHit.normal;
+                }
+            }
+        }
+    }
+
+    
     void Start()
     {
         characterRenderer = GetComponentInChildren<SpriteRenderer>();
@@ -104,6 +173,8 @@ public class Character : MonoBehaviour
             healthUI = FindObjectOfType<UI_HealthDisplay>();
         }
         
+        originalGravityScale = rb.gravityScale;
+        
         healthUI.UpdateHearts(currentHealth);
     }
 
@@ -115,7 +186,19 @@ public class Character : MonoBehaviour
             GameStateManager.Instance.CurrentState.playerPosition = transform.position;
         }
     
-        if (isDead || isKnockedBack || isHealing) return;
+        if (isDead || isKnockedBack || isHealing || isMovementLocked) return;
+        
+        CheckSurfaces();
+        
+        // Настраиваем гравитацию
+        if (rb.velocity.y < 0 && !isGrounded)
+        {
+            rb.gravityScale = originalGravityScale * fallGravityMultiplier;
+        }
+        else
+        {
+            rb.gravityScale = originalGravityScale;
+        }
 
         float moveInput = Input.GetAxisRaw("Horizontal");
         bool isRunning = Input.GetKey(KeyCode.LeftShift);
@@ -270,6 +353,8 @@ public class Character : MonoBehaviour
             if (!justWallJumped) 
                 isTouchingWall = false;
         }
+        
+        CheckGrounded();
     }
 
     private void TryUsePotion()
@@ -417,6 +502,32 @@ public class Character : MonoBehaviour
             characterRenderer.color = defaultColor;
         }
     }
+    
+    public void SetMovementLock(bool locked)
+    {
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            if (locked) 
+            {
+                rb.velocity = Vector2.zero;
+                rb.constraints = RigidbodyConstraints2D.FreezeAll;
+                SetAnimState(0); 
+            }
+            else 
+            {
+                rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+            }
+        }
+    
+        isMovementLocked = locked;
+    
+        if (attackController != null)
+        {
+            attackController.enabled = !locked;
+        }
+    }
+    
     private void WallJump()
     {
         if ((isTouchingWall || wallCoyoteTimer > 0f) && !isGrounded)
@@ -454,9 +565,9 @@ public class Character : MonoBehaviour
     {
         isGrounded = false;
     }
-    
 
-    void SetAnimState(int state)
+
+    public void SetAnimState(int state)
     {
         if (state == currentAnimState) return;
         currentAnimState = state;
@@ -513,24 +624,6 @@ public class Character : MonoBehaviour
             currentPlatform = null;
 
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y); 
-        }
-    }
-    
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        if (!isGrounded && collision.gameObject.CompareTag("Wall"))
-        {
-            foreach (ContactPoint2D contact in collision.contacts)
-            {
-                if (Mathf.Abs(contact.normal.x) > 0.5f)
-                {
-                    wallNormal = contact.normal;
-                    isTouchingWall = true;
-                    wallStickTimer = wallStickTime;
-                    wallCoyoteTimer = wallCoyoteTime;
-                    break;
-                }
-            }
         }
     }
 
@@ -595,5 +688,161 @@ public class Character : MonoBehaviour
     
         GetComponent<AttackController>().enabled = true;
         healthUI.UpdateHearts(currentHealth);
+    }
+    
+    private void CheckGrounded()
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(
+            (Vector2)transform.position + groundCheckOffset, 
+            groundCheckRadius, 
+            whatIsGround
+        );
+
+        isGrounded = false;
+        
+        foreach (Collider2D col in colliders)
+        {
+            if (col.gameObject == gameObject) continue;
+            
+            RaycastHit2D hit = Physics2D.Raycast(
+                transform.position,
+                Vector2.down,
+                groundCheckOffset.magnitude + groundCheckRadius,
+                whatIsGround
+            );
+            
+            if (hit.collider != null)
+            {
+                float surfaceAngle = Vector2.Angle(hit.normal, Vector2.up);
+                if (surfaceAngle < groundAngleThreshold)
+                {
+                    isGrounded = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    
+    private void CheckSurfaces()
+    {
+        wasGrounded = isGrounded;
+        isGrounded = false;
+        isTouchingWall = false;
+
+        // Проверка земли под ногами
+        RaycastHit2D centerHit = Physics2D.Raycast(
+            transform.position + new Vector3(0, -0.1f, 0),
+            Vector2.down,
+            groundCheckDistance,
+            whatIsGround
+        );
+
+        // Дополнительные проверки по бокам для тонких платформ
+        RaycastHit2D leftHit = Physics2D.Raycast(
+            transform.position + new Vector3(-groundWidthCheck, -0.1f, 0),
+            Vector2.down,
+            groundCheckDistance,
+            whatIsGround
+        );
+
+        RaycastHit2D rightHit = Physics2D.Raycast(
+            transform.position + new Vector3(groundWidthCheck, -0.1f, 0),
+            Vector2.down,
+            groundCheckDistance,
+            whatIsGround
+        );
+
+        // Проверяем все три луча
+        CheckHit(centerHit);
+        CheckHit(leftHit);
+        CheckHit(rightHit);
+
+        // "Прилипание" к земле
+        if (isGrounded && rb.velocity.y <= 0)
+        {
+            rb.AddForce(Vector2.down * groundStickForce);
+        }
+
+        // Проверка стен только если мы в воздухе
+        if (!isGrounded)
+        {
+            CheckWalls();
+        }
+    }
+
+    private void CheckHit(RaycastHit2D hit)
+    {
+        if (hit.collider != null)
+        {
+            float angle = Vector2.Angle(hit.normal, Vector2.up);
+            if (angle < groundAngleThreshold)
+            {
+                isGrounded = true;
+                // Дополнительная проверка чтобы тонкие платформы не считались стеной
+                if (hit.point.y < transform.position.y - 0.2f)
+                {
+                    isTouchingWall = false;
+                }
+            }
+        }
+    }
+
+    private void CheckWalls()
+    {
+        float direction = spriteTransform.localScale.x > 0 ? 1 : -1;
+        RaycastHit2D wallHit = Physics2D.Raycast(
+            transform.position,
+            new Vector2(direction, 0),
+            0.6f,
+            whatIsGround
+        );
+
+        if (wallHit.collider != null)
+        {
+            float angle = Vector2.Angle(wallHit.normal, Vector2.right);
+            if (angle > 60f) // Считаем только достаточно вертикальные поверхности
+            {
+                // Дополнительная проверка высоты чтобы пол не считался стеной
+                if (wallHit.point.y < transform.position.y - 0.3f)
+                {
+                    isTouchingWall = true;
+                    wallNormal = wallHit.normal;
+                }
+            }
+        }
+    }
+    
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (!isGrounded && collision.gameObject.CompareTag("Wall"))
+        {
+            foreach (ContactPoint2D contact in collision.contacts)
+            {
+                if (Mathf.Abs(contact.normal.x) > 0.5f)
+                {
+                    wallNormal = contact.normal;
+                    isTouchingWall = true;
+                    wallStickTimer = wallStickTime;
+                    wallCoyoteTimer = wallCoyoteTime;
+                    break;
+                }
+            }
+        }
+    }
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.green;
+        Vector3 center = transform.position + new Vector3(0, -0.1f, 0);
+        Gizmos.DrawLine(center, center + Vector3.down * groundCheckDistance);
+        Gizmos.DrawLine(center + new Vector3(-groundWidthCheck, 0, 0), 
+            center + new Vector3(-groundWidthCheck, -groundCheckDistance, 0));
+        Gizmos.DrawLine(center + new Vector3(groundWidthCheck, 0, 0), 
+            center + new Vector3(groundWidthCheck, -groundCheckDistance, 0));
+        
+        Gizmos.color = Color.blue;
+        float dir = spriteTransform != null ? spriteTransform.localScale.x : 1;
+        Gizmos.DrawLine(transform.position, 
+            transform.position + new Vector3(dir * 0.6f, 0, 0));
     }
 }

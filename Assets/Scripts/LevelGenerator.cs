@@ -60,6 +60,7 @@ public class LevelGenerator : MonoBehaviour
         {
             var info = startSegment.AddComponent<SegmentInfo>();
             info.directions = new[] { Direction.Right }; 
+            info.GridPosition = currentGridPos;
         }
 
         currentDirection = Direction.Right;
@@ -115,6 +116,7 @@ public class LevelGenerator : MonoBehaviour
 
         var info = segment.AddComponent<SegmentInfo>();
         info.directions = prefabDir.availableDirections;
+        info.GridPosition = gridPos;
 
         placedSegments[gridPos] = segment;
         occupiedPositions.Add(gridPos);
@@ -235,6 +237,7 @@ public class LevelGenerator : MonoBehaviour
 
         var info = segment.AddComponent<SegmentInfo>();
         info.directions = selected.availableDirections;
+        info.GridPosition = nextPos; 
 
         placedSegments[nextPos] = segment;
         occupiedPositions.Add(nextPos);
@@ -421,6 +424,100 @@ public class LevelGenerator : MonoBehaviour
                     CreateCameraTrigger(pos, neighborPos, triggerPos);
                 }
             }
+        }
+    }
+    public void SaveLevelState()
+    {
+        var levelState = GameStateManager.Instance.CurrentState.levelState;
+        levelState.segments.Clear();
+        levelState.currentGridPos = currentGridPos;
+        levelState.currentDirection = currentDirection;
+
+        foreach (var kvp in placedSegments)
+        {
+            var segment = kvp.Value.GetComponent<SegmentInfo>();
+            if (segment != null)
+            {
+                levelState.segments.Add(new SavedLevelSegment
+                {
+                    gridPosition = kvp.Key,
+                    availableDirections = segment.directions,
+                    prefabIndex = GetPrefabIndex(kvp.Value)
+                });
+                
+                var spawner = segment.GetComponentInChildren<LevelSegmentSpawner>();
+                if (spawner != null)
+                {
+                    spawner.SaveSpawnedObjects();
+                }
+            }
+        }
+    }
+
+    public void LoadLevelState()
+    {
+        var levelState = GameStateManager.Instance.CurrentState.levelState;
+        if (levelState.segments.Count == 0) 
+        {
+            GenerateLevel();
+            return;
+        }
+
+        ClearExistingLevel();
+
+        currentGridPos = levelState.currentGridPos;
+        currentDirection = levelState.currentDirection;
+
+        foreach (var savedSegment in levelState.segments)
+        {
+            if (savedSegment.prefabIndex < 0 || savedSegment.prefabIndex >= levelPrefabs.Length)
+                continue;
+
+            var prefab = levelPrefabs[savedSegment.prefabIndex].prefab;
+            var position = CalculateWorldPosition(savedSegment.gridPosition);
+            var segment = Instantiate(prefab, position, Quaternion.identity, transform);
+
+            var info = segment.AddComponent<SegmentInfo>();
+            info.directions = savedSegment.availableDirections;
+            info.GridPosition = savedSegment.gridPosition;
+
+            placedSegments[savedSegment.gridPosition] = segment;
+            occupiedPositions.Add(savedSegment.gridPosition);
+        }
+
+        GenerateMissingCameraTriggers();
+    }
+
+    private int GetPrefabIndex(GameObject segment)
+    {
+        for (int i = 0; i < levelPrefabs.Length; i++)
+        {
+            if (segment.name.StartsWith(levelPrefabs[i].prefab.name))
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private void ClearExistingLevel()
+    {
+        foreach (var segment in placedSegments.Values)
+        {
+            if (segment != null)
+            {
+                Destroy(segment);
+            }
+        }
+
+        placedSegments.Clear();
+        occupiedPositions.Clear();
+        mainLinePositions.Clear();
+
+        var cameraTriggers = GameObject.FindGameObjectsWithTag("CameraTrigger");
+        foreach (var trigger in cameraTriggers)
+        {
+            Destroy(trigger);
         }
     }
 }

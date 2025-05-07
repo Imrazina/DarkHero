@@ -426,7 +426,7 @@ Transform:
   m_GameObject: {fileID: 2532823363064564212}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.6, y: -4.21, z: 0}
+  m_LocalPosition: {x: -4.53, y: -4.32, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -508,7 +508,6 @@ MonoBehaviour:
   - {fileID: 470166989733523207, guid: f9cca05d2a02a48be9c56aa4c673b8ed, type: 3}
   enemySpawnPoints:
   - {fileID: 6177234856617099886}
-  - {fileID: 8225063888733352351}
   lootPrefabs:
   - {fileID: 6382731063488089549, guid: 61aa655a507ea43708815a9c55e6d7e9, type: 3}
   - {fileID: 2455617839910223181, guid: 9938a46c41a624fa5895eb1e9db275dc, type: 3}
@@ -852,7 +851,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6177234856617099886}
-  - {fileID: 8225063888733352351}
   m_Father: {fileID: 5161617192928639644}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6536848371333865827
@@ -919,51 +917,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   worldType: 2
---- !u!1 &4201813737039228992
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8225063888733352351}
-  - component: {fileID: 3462874763413087721}
-  m_Layer: 0
-  m_Name: SP_02
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8225063888733352351
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4201813737039228992}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.06, y: -0.18, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2392202280916348456}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3462874763413087721
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4201813737039228992}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 906acaca1e005497d85f6424e8cdb2b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  worldType: 1
 --- !u!1 &4367473044998153415
 GameObject:
   m_ObjectHideFlags: 0

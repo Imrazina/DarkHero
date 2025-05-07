@@ -45,16 +45,19 @@ public class LootItem : MonoBehaviour
     {
         pickedUp = true;  
         GameStateManager.Instance.CurrentState.collectedItems.Add(uniqueID);
- 
+        
+   //     var savedLoot = GameStateManager.Instance.CurrentState.lootItems.Find(x => x.uniqueID == uniqueID);
+      //  if (savedLoot != null) savedLoot.isCollected = true;
+
         GameStateManager.Instance.CurrentState.totalCoins += value;
         StatsManager.Instance.AddCoins(value); 
-    
+
         if (pickupEffect)
             Instantiate(pickupEffect, transform.position, Quaternion.identity);
 
         if (pickupSound)
             AudioSource.PlayClipAtPoint(pickupSound, transform.position);
-    
+
         Destroy(gameObject);
     }
 }

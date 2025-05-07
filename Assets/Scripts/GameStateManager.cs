@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 public class GameStateManager : MonoBehaviour
@@ -69,6 +70,20 @@ public class GameStateManager : MonoBehaviour
             };
             Debug.Log($"Saved camera: {CurrentState.cameraState.position}");
         }
+        
+        var levelGenerator = FindObjectOfType<LevelGenerator>();
+        if (levelGenerator != null)
+        {
+            levelGenerator.SaveLevelState();
+        }
+        
+        var boss = FindObjectOfType<BossAI>();
+        if (boss != null)
+        {
+            CurrentState.isBossDead = boss.isDead;
+        }
+        
+
 
         string json = JsonUtility.ToJson(CurrentState, true);
         File.WriteAllText(saveFilePath, json);
@@ -132,7 +147,7 @@ public class GameStateManager : MonoBehaviour
                 screenFade.FadeIn(0.5f);
             }
             
-            var allLootItems = FindObjectsOfType<LootItem>(true); // true для поиска неактивных объектов
+            var allLootItems = FindObjectsOfType<LootItem>(true); 
             foreach (var loot in allLootItems)
             {
                 if (CurrentState.collectedItems.Contains(loot.uniqueID))
@@ -140,6 +155,7 @@ public class GameStateManager : MonoBehaviour
                     Destroy(loot.gameObject);
                 }
             }
+            
             var allRunes = FindObjectsOfType<RunePickup>(true);
             foreach (var rune in allRunes)
             {
@@ -147,6 +163,18 @@ public class GameStateManager : MonoBehaviour
                 {
                     Destroy(rune.gameObject);
                 }
+            }
+            
+            var levelGenerator = FindObjectOfType<LevelGenerator>();
+            if (levelGenerator != null)
+            {
+                levelGenerator.LoadLevelState();
+            }
+            
+            var boss = FindObjectOfType<BossAI>();
+            if (boss != null && CurrentState.isBossDead)
+            {
+                boss.Die(); 
             }
         }
     }
@@ -169,7 +197,13 @@ public class GameStateManager : MonoBehaviour
             invincibilityCount = 0,
             isExitPlankOpen = false,
             isEntrancePlankClosed = false,
-            fallStatus = 0
+            isBossDead = false,
+            levelState = new LevelState()
+            {
+                segments = new List<SavedLevelSegment>(),
+                spawnStates = new List<SegmentSpawnState>()
+            },
+            fallStatus = 0,
         };
     }
     

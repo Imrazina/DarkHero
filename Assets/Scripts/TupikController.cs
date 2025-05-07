@@ -42,27 +42,43 @@ public class TupikController : MonoBehaviour
         if (GameStateManager.Instance == null) return;
 
         var state = GameStateManager.Instance.CurrentState;
-        
-        if (state.isExitPlankOpen && exitPlank != null)
+        if (state.isBossDead)
         {
-            exitPlank.position = exitTargetPosition;
-            openExit = true;
-        }
+            if (state.isExitPlankOpen && exitPlank != null)
+            {
+                exitPlank.position = exitTargetPosition;
+                openExit = true;
+            }
 
-        if (state.isEntrancePlankClosed && entrancePlank != null)
+            if (state.isEntrancePlankClosed && entrancePlank != null)
+            {
+                entrancePlank.position = entranceTargetPosition;
+                closeEntrance = true;
+            }
+        }
+        else
         {
-            entrancePlank.position = entranceTargetPosition;
-            closeEntrance = true;
+            if (exitPlank != null) exitPlank.position = exitStartPosition;
+            if (entrancePlank != null) entrancePlank.position = entranceStartPosition;
+            openExit = false;
+            closeEntrance = false;
         }
     }
 
-    void SavePlanksState()
+    public void SavePlanksStateIfBossDead()
     {
         if (GameStateManager.Instance == null) return;
 
         var state = GameStateManager.Instance.CurrentState;
         state.isExitPlankOpen = openExit;
         state.isEntrancePlankClosed = closeEntrance;
+        
+        Character player = FindObjectOfType<Character>();
+        if (player != null)
+        {
+            state.playerPosition = player.transform.position;
+            state.lastCameraPosition = Camera.main.transform.position;
+        }
         
         GameStateManager.Instance.SaveGame();
     }
@@ -72,7 +88,6 @@ public class TupikController : MonoBehaviour
         if (closeEntrance) return;
         
         closeEntrance = true;
-        SavePlanksState();
     }
 
     public void OpenExit()
@@ -80,7 +95,6 @@ public class TupikController : MonoBehaviour
         if (openExit) return;
         
         openExit = true;
-        SavePlanksState();
     }
 
     void Update()

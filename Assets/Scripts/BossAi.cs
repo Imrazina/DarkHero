@@ -1,12 +1,12 @@
 using System.Collections;
 using UnityEngine;
 
-public class BossAI : MonoBehaviour
+public class BossAI : MonoBehaviour, IDialogueCallback
 {
     [Header("Health")]
     public int maxHealth = 500;
     private int currentHealth;
-    private bool isDead = false;
+    public bool isDead = false;
     public EnemyHealthSlider healthBar; 
 
     [Header("Movement")]
@@ -45,6 +45,14 @@ public class BossAI : MonoBehaviour
     private bool isHitAnimating = false;
     private bool isInAttackFrame = false;
     public TupikController tupik;
+    
+    [Header("Dialogue")]
+    public string dialogueFile = "BossDialogue";
+    public string startDialogueID = "boss_intro";
+    public bool dialogueCompleted = false;
+    public bool riddleAnsweredCorrectly = false;
+    public float dialogueTriggerDistance = 5f; 
+    private bool dialogueStarted = false;
 
     void Start()
     {
@@ -58,29 +66,107 @@ public class BossAI : MonoBehaviour
 
         if (attackHitbox != null)
             attackHitbox.enabled = false;
+        
+        if (GameStateManager.Instance != null && GameStateManager.Instance.CurrentState.isBossDead)
+        {
+            Die(); 
+            return;
+        }
+    }
+    
+    private IEnumerator StartBossEncounter()
+    {
+        rb.constraints = RigidbodyConstraints2D.FreezeAll;
+        animator.SetBool("Run", false); 
+        animator.SetTrigger("Idle"); 
+
+        Character player = FindObjectOfType<Character>();
+        if (player != null) 
+        {
+            player.SetMovementLock(true); 
+            player.SetAnimState(0);
+        }
+    
+        DialogueManager dialogueManager = FindObjectOfType<DialogueManager>();
+        if (dialogueManager != null)
+        {
+            dialogueManager.StartDialogue(dialogueFile, startDialogueID, this);
+        }
+        else
+        {
+            Debug.LogError("DialogueManager not found!");
+            if (player != null) player.SetMovementLock(false); 
+            StartFight();
+        }
+
+        yield return null;
+    }
+    
+    public void OnDialogueEnd()
+    {
+        Debug.Log($"[BOSS_DEBUG] === OnDialogueEnd ===");
+        Debug.Log($"[BOSS_DEBUG] riddleAnsweredCorrectly: {riddleAnsweredCorrectly}");
+
+        Character player = FindObjectOfType<Character>();
+        if (player != null) 
+        {
+            player.SetMovementLock(false);
+        }
+
+        dialogueCompleted = true;
+
+        if (!riddleAnsweredCorrectly)
+        {
+            Debug.Log($"[BOSS_DEBUG] Запуск боя!");
+            StartFight();
+        }
+        else
+        {
+            Debug.Log($"[BOSS_DEBUG] Босс умирает (правильный ответ)");
+            Die();
+        }
+    }
+    
+    private void StartFight()
+    {
+        dialogueCompleted = true;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        
+        isDead = false;
+        canAttack = true;
+        isAttacking = false;
     }
 
     void Update()
     {
-        if (isDead || target == null) return;
-
-        FlipIfNeeded();
-
-        float distance = Vector2.Distance(transform.position, target.position);
+        if (isDead || target == null) return; 
+    
+        if (!dialogueStarted && Vector2.Distance(transform.position, target.position) <= dialogueTriggerDistance)
+        {
+            dialogueStarted = true;
+            StartCoroutine(StartBossEncounter());
+            return; 
+        }
         
-        if (isAttacking) return;
+        if (dialogueCompleted) 
+        {
+            FlipIfNeeded();
+            float distance = Vector2.Distance(transform.position, target.position);
+        
+            if (isAttacking) return;
 
-        if (distance <= attackRange && canAttack)
-        {
-            StartCoroutine(AttackRoutine());
-        }
-        if (distance <= detectionRange && distance > attackRange && canAttack)
-        {
-            MoveTowardsPlayer();
-        }
-        else
-        {
-            StopMovement();
+            if (distance <= attackRange && canAttack)
+            {
+                StartCoroutine(AttackRoutine());
+            }
+            else if (distance <= detectionRange && distance > attackRange)
+            {
+                MoveTowardsPlayer();
+            }
+            else
+            {
+                StopMovement();
+            }
         }
     }
 
@@ -269,14 +355,24 @@ public class BossAI : MonoBehaviour
         isHitAnimating = false;
     }
 
-    private void Die()
+    public void Die()
     {
         if (isDead) return;
         isDead = true;
-
+        
+        Character player = FindObjectOfType<Character>();
+        if (player != null)
+        {
+            GameStateManager.Instance.CurrentState.playerPosition = player.transform.position;
+            Debug.Log($"[BOSS] Фиксируем позицию игрока перед сохранением: {player.transform.position}");
+        }
+        
+        GameStateManager.Instance.CurrentState.isBossDead = true;
+    
+        GameStateManager.Instance.SaveGame();
+        
         animator.SetTrigger("Death");
-        if (deathSound != null)
-            audioSource.PlayOneShot(deathSound);
+        if (deathSound != null) audioSource.PlayOneShot(deathSound);
 
         rb.velocity = Vector2.zero;
         rb.isKinematic = true;
@@ -285,10 +381,10 @@ public class BossAI : MonoBehaviour
         {
             col.enabled = false;
         }
-        
-
+    
         tupik.OpenExit();
-        //  Destroy(gameObject, 2f);
+        tupik.SavePlanksStateIfBossDead();
+        Destroy(gameObject, 2f);
     }
 
     private void Flip()

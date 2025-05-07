@@ -11,6 +11,7 @@ TagManager:
   - dialog
   - Wall
   - KillZone
+  - CameraTrigger
   layers:
   - Default
   - TransparentFX

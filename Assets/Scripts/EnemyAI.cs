@@ -18,13 +18,17 @@ public class EnemyAI : MonoBehaviour
     public int attackDamage = 10;
     public float attackCooldown = 1.5f;
     private bool canAttack = true;
+    public float attackWindupRange = 1.8f;
+    public float attackWindupTime = 0.3f;
+    public float attackDuration = 0.4f;
+    public float invulnerabilityDuration = 0.5f;
+
 
     [Header("Ground Check")] public Vector2 frontGroundCheck = new Vector2(0.5f, -0.5f);
     public Vector2 backGroundCheck = new Vector2(-0.5f, -0.5f);
     public float groundCheckDistance = 0.28f;
     public LayerMask groundLayer;
-
-
+    
     [Header("Wall Check")] public float wallCheckDistance = 0.6f;
 
     [Header("References")] private Animator animator;
@@ -33,9 +37,16 @@ public class EnemyAI : MonoBehaviour
     private bool isHitAnimating = false;
     private bool hasDealtDamage = false;
     private bool isAttacking = false;
+    
+    public int GetCurrentHealth() => currentHealth;
+    public bool IsDead() => isDead;
+    public string uniqueID; 
     private bool isAgro => Vector2.Distance(transform.position, target.position) <= detectionRange;
 
-
+    private bool isInvulnerable = false;
+    private float originalSpeed;
+    private Vector2 movementDirection;
+    
     void Start()
     {
         currentHealth = maxHealth;
@@ -47,15 +58,15 @@ public class EnemyAI : MonoBehaviour
         {
             rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         }
+        
+        originalSpeed = speed;
     }
 
     void Update()
     {
-        if (isDead || target == null)
-        {
-            animator.SetBool("Run", false);
-            return;
-        }
+        if (isDead || target == null) return;
+        
+        movementDirection = Vector2.Lerp(movementDirection, (target.position - transform.position).normalized, Time.deltaTime * 5f);
 
         float distanceToPlayer = Vector2.Distance(transform.position, target.position);
         Vector2 directionToPlayer = (target.position - transform.position).normalized;
@@ -95,6 +106,8 @@ public class EnemyAI : MonoBehaviour
 
     bool CanMoveTowards(Vector2 direction)
     {
+        if (target == null) return false;
+        
         Vector2 checkPos = (Vector2)transform.position +
                            (facingRight ? frontGroundCheck : backGroundCheck);
 
@@ -142,9 +155,11 @@ public class EnemyAI : MonoBehaviour
     }
 
     void MoveTowardsPlayer(Vector2 direction)
-    {
+    {  
+        if (target == null) return;
         animator.SetBool("Run", true);
-        rb.velocity = new Vector2(direction.x * speed, rb.velocity.y);
+        Vector2 targetVelocity = direction * speed;
+        rb.velocity = Vector2.Lerp(rb.velocity, targetVelocity, Time.deltaTime * 5f);
     }
 
     void Flip()
@@ -160,24 +175,41 @@ public class EnemyAI : MonoBehaviour
         canAttack = false;
         isAttacking = true;
         hasDealtDamage = false;
-
+        
+        float randomDelay = Random.Range(0.1f, 0.3f);
+        yield return new WaitForSeconds(randomDelay);
+        
         animator.SetTrigger("Charge");
-        rb.velocity = Vector2.zero;
-        rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+        speed = originalSpeed * 0.5f; 
 
-        float chargeDuration = 0.3f;
-        yield return new WaitForSeconds(chargeDuration);
+        yield return new WaitForSeconds(attackWindupTime);
+        
+        StartCoroutine(InvulnerabilityFrame());
+        
+        int attackType = Random.Range(0, 2);
+        animator.SetTrigger(attackType == 0 ? "Attack1" : "Attack2");
+        
+        rb.velocity = movementDirection * originalSpeed * 1.2f;
 
-        animator.SetTrigger("Attack");
         yield return new WaitForSeconds(0.1f);
         DealDamage();
 
-        float cooldownLeft = attackCooldown - chargeDuration;
-        yield return new WaitForSeconds(cooldownLeft);
+        yield return new WaitForSeconds(attackDuration);
+        
+        speed = originalSpeed;
+        rb.velocity = Vector2.zero;
+
+        yield return new WaitForSeconds(attackCooldown);
 
         canAttack = true;
-        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         isAttacking = false;
+    }
+    
+    IEnumerator InvulnerabilityFrame()
+    {
+        isInvulnerable = true;
+        yield return new WaitForSeconds(invulnerabilityDuration);
+        isInvulnerable = false;
     }
 
     public void DealDamage()
@@ -226,13 +258,11 @@ public class EnemyAI : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        if (isDead || isHitAnimating) return;
+        if (isDead || isHitAnimating || isInvulnerable) return;
 
         currentHealth -= damage;
         if (currentHealth <= 0)
         {
-            GameStateManager.Instance.CurrentState.pandaState = PandaDialogueState.AfterEnemyDefeated;
-            GameStateManager.Instance.SaveGame();
             Die();
         }
 
@@ -249,7 +279,7 @@ public class EnemyAI : MonoBehaviour
 
         Vector2 pushDir = (transform.position - target.position).normalized;
         pushDir.y = 0.2f;
-        rb.AddForce(pushDir * 40f, ForceMode2D.Impulse);
+        rb.AddForce(pushDir * 20f, ForceMode2D.Impulse);
 
         yield return new WaitForSeconds(0.3f);
 
@@ -257,7 +287,7 @@ public class EnemyAI : MonoBehaviour
     }
 
 
-    void Die()
+    public void Die()
     {
         if (isDead) return;
 
@@ -284,6 +314,29 @@ public class EnemyAI : MonoBehaviour
             col.enabled = false;
         }
 
+        if (!GameStateManager.Instance.CurrentState.collectedItems.Contains(uniqueID))
+        {
+            GameStateManager.Instance.CurrentState.collectedItems.Add(uniqueID);
+        }
+        
+        GameStateManager.Instance.CurrentState.pandaState = PandaDialogueState.AfterEnemyDefeated;
+        GameStateManager.Instance.SaveGame();
+
         Destroy(gameObject, 2f);
+    }
+    
+    public void SetHealth(int value)
+    {
+        currentHealth = value;
+        if (currentHealth <= 0)
+        {
+            Die(); 
+        }
+    }
+    
+    void OnTargetDeath()
+    {
+        target = null;
+        Patrol();
     }
 }

@@ -18,13 +18,12 @@ public class EnemyController : MonoBehaviour
         if (isDead) 
         {
             Debug.Log("Enemy is dead, no damage taken.");
-            return; // Если враг уже мёртв, ничего не делать
-        } // Если враг уже мёртв, ничего не делать
+            return; 
+        } 
 
         currentHealth -= damage;
         Debug.Log($"Enemy took {damage} damage from {attackType}. Current health: {currentHealth}");
-
-        // Выбор анимации реакции на удар
+        
         switch (attackType)
         {
             case "LightAttack":

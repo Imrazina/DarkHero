@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering.UI;
 
-public class PandaNPC : MonoBehaviour{
+public class PandaNPC : MonoBehaviour, IDialogueCallback{
     public DialogueManager dialogueManager;
     private bool isPlayerNear = false;
     private bool canStartDialogue = true;
@@ -74,7 +74,7 @@ public class PandaNPC : MonoBehaviour{
 
     public void OnDialogueEnd()
     {
-        Debug.Log("Dialogue end");
+        Debug.Log($"[PANDA_DEBUG] === PandaNPC.OnDialogueEnd ===");
         if (GameStateManager.Instance.CurrentState.pandaState == PandaDialogueState.AfterEnemyDefeated && !rewardGiven)
         {
             var inventory = FindObjectOfType<PlayerInventory>();

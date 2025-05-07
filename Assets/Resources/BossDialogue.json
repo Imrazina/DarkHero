@@ -1,0 +1,56 @@
+{
+  "dialogues": [
+    {
+      "id": "boss_intro",
+      "name": "Necromancer",
+      "text": "Another 'hero' steps into my domain. Tell me, do you truly believe you’re different from the rest?",
+      "avatar": "ImageBoss",
+      "choices": [
+        {
+          "text": "I’m not looking for a fight. Just let me through.",
+          "nextId": "go_to_riddle"
+        },
+        {
+          "text": "I won’t be another name on your list.",
+          "nextId": "go_to_riddle"
+        },
+        {
+          "text": "[Grip your sword, silent]",
+          "nextId": "go_to_riddle"
+        }
+      ]
+    },
+    {
+      "id": "go_to_riddle",
+      "name": "Necromancer",
+      "text": "Clever words or steel won’t save you here. Answer this: *'I speak without a mouth, hear without ears—no body, yet the wind gives me life.'* What am I?",
+      "avatar": "ImageBoss",
+      "choices": [
+        {
+          "text": "An echo.",
+          "nextId": "correct_answer"
+        },
+        {
+          "text": "A shadow.",
+          "nextId": "wrong_answer"
+        },
+        {
+          "text": "A whisper.",
+          "nextId": "wrong_answer"
+        }
+      ]
+    },
+    {
+      "id": "correct_answer",
+      "name": "Necromancer",
+      "text": "Hmph. Sharp enough. *She dissolves into shimmering light.*",
+      "avatar": "ImageBoss"
+    },
+    {
+      "id": "wrong_answer",
+      "name": "Necromancer",
+      "text": "Fool. *Her blade ignites with neon fire.* Let’s see how you fare in battle.",
+      "avatar": "ImageBoss"
+    }
+  ]
+}

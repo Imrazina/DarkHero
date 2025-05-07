@@ -11,12 +11,48 @@ public class CameraState
 
 
 [System.Serializable]
-public struct SavedLevelSegment
+public class SavedLevelSegment
 {
     public int prefabIndex;
-    public Direction entryDirection;
+    public Vector2Int gridPosition;
+    public Direction[] availableDirections;
 }
 
+[System.Serializable]
+public class LevelState
+{
+    public List<SavedLevelSegment> segments = new List<SavedLevelSegment>();
+    public Vector2Int currentGridPos;
+    public Direction currentDirection;
+    public List<SegmentSpawnState> spawnStates = new List<SegmentSpawnState>();
+}
+
+[System.Serializable]
+public class SpawnedEnemyState
+{
+    public int spawnPointIndex; // Индекс точки спавна
+    public string prefabName;   // Имя префаба
+    public WorldType worldType; // Тип мира
+    public string uniqueID;     // Уникальный ID
+}
+
+[System.Serializable]
+public class SpawnedLootState
+{
+    public int spawnPointIndex; 
+    public string prefabName;  
+    public WorldType worldType; 
+    public string uniqueID;   
+    public bool isCollected;   
+}
+
+[System.Serializable]
+public class SegmentSpawnState
+{
+    public Vector2Int segmentPosition;
+    public List<SpawnedEnemyState> enemies = new List<SpawnedEnemyState>();
+    public List<SpawnedLootState> loot = new List<SpawnedLootState>();
+}
 
 [System.Serializable]
 public class GameState
@@ -42,7 +78,8 @@ public class GameState
     public Vector3 lastCameraPosition;
     
     public List<SavedLevelSegment> levelSegments = new();
-    
+    public LevelState levelState = new LevelState();
+
     public string currentDialogueId = ""; 
     public string currentDialogueFile = "";
     
@@ -50,4 +87,6 @@ public class GameState
     
     public bool isExitPlankOpen = false;
     public bool isEntrancePlankClosed = false;
+    
+    public bool isBossDead = false;
 }

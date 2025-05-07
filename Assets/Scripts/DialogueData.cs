@@ -13,6 +13,7 @@ public class DialogueLine
     public string name;
     public string text;
     public string avatar;
+    public string nextId;
     public List<DialogueChoice> choices;
 }
 

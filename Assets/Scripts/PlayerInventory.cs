@@ -87,7 +87,7 @@ public class PlayerInventory : MonoBehaviour
         if (runeIcon != null)
             runeIcon.color = Color.black;
 
-        UpdatePotionsUI();
+        UpdateAllUI();
     }
 
     public void UpdatePotionsUI()
@@ -169,4 +169,5 @@ public class PlayerInventory : MonoBehaviour
         }
         return false;
     }
+    
 }

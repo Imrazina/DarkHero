@@ -152,7 +152,16 @@ public class GameStateManager : MonoBehaviour
             {
                 if (CurrentState.collectedItems.Contains(loot.uniqueID))
                 {
-                    Destroy(loot.gameObject);
+                    loot.pickedUp = true;
+                    loot.gameObject.SetActive(false);
+                }
+                else
+                {
+                    loot.pickedUp = false;
+                    loot.gameObject.SetActive(true);
+                    var collider = loot.GetComponent<Collider2D>();
+                    if (collider != null)
+                        collider.enabled = true;
                 }
             }
             
@@ -161,7 +170,7 @@ public class GameStateManager : MonoBehaviour
             {
                 if (CurrentState.collectedItems.Contains(rune.uniqueID))
                 {
-                    Destroy(rune.gameObject);
+                    rune.gameObject.SetActive(false);
                 }
             }
             
@@ -225,12 +234,33 @@ public class GameStateManager : MonoBehaviour
         
         Debug.Log($"Rune reset: In collectedItems? {CurrentState.collectedItems.Contains("Rune_1")}");
         
-     //   var levelGenerator = FindObjectOfType<LevelGenerator>();
-    //    if (levelGenerator != null)
-     //   {
-     //       levelGenerator.ClearExistingLevel();
-     //       levelGenerator.GenerateLevel(); 
-   //    }
+        var levelGenerator = FindObjectOfType<LevelGenerator>();
+        if (levelGenerator != null)
+        {
+            levelGenerator.ClearExistingLevel();
+            levelGenerator.GenerateLevel(); 
+        } 
+        
+        var allEnemies = FindObjectsOfType<EnemyAI>(true); 
+        foreach (var enemy in allEnemies)
+        {
+            enemy.gameObject.SetActive(true);
+            enemy.ResetEnemy(); 
+        }
+       
+        var boss = FindObjectOfType<BossAI>(true);
+       if (boss != null && !CurrentState.isBossDead)
+       {
+           boss.gameObject.SetActive(true);
+           boss.ResetBoss();
+       }
+       
+       var allLoot = FindObjectsOfType<LootItem>(true);
+       foreach (var loot in allLoot)
+       {
+           loot.gameObject.SetActive(true);
+           loot.ResetLoot();
+       }
         
         var player = FindObjectOfType<Character>();
         if (player != null)
@@ -242,6 +272,12 @@ public class GameStateManager : MonoBehaviour
         if (inventory != null)
         {
             inventory.ResetInventory();
+        }
+        
+        var statsManager = FindObjectOfType<StatsManager>();
+        if (statsManager != null)
+        {
+            statsManager.SetCoins(0);  
         }
         
         if (Camera.main != null)

@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class ShopSystem : MonoBehaviour
 {
-    public int potionPrice = 1;
-    public int damageBoostPrice = 2;
-    public int invincibilityPrice = 3;
+    public int potionPrice = 40;
+    public int damageBoostPrice = 50;
+    public int invincibilityPrice = 60;
     public PlayerInventory playerInventory;
     
     [Header("Sound Effects")]

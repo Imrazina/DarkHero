@@ -49,18 +49,33 @@ public class EnemyAI : MonoBehaviour
     public bool useChargeBeforeAttack = true;
     public bool useInvulnerabilityDuringAttack = true;
     
+    [Header("Combat Timing")]
+    public float postAttackVulnerabilityDuration = 0.6f;
+    private bool canReactToDamage = true;
+    
     public int GetCurrentHealth() => currentHealth;
     public bool IsDead() => isDead;
     public string uniqueID; 
     private bool isAgro => Vector2.Distance(transform.position, target.position) <= detectionRange;
 
-
+    public bool isStaticEnemy = false;
+    
     void Start()
     {
         currentHealth = maxHealth;
         animator = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
         target = GameObject.FindGameObjectWithTag("Player")?.transform;
+        
+        if (!string.IsNullOrEmpty(uniqueID))
+        {
+            if (GameStateManager.Instance.CurrentState.collectedItems.Contains(uniqueID))
+            {
+                isDead = true;
+                gameObject.SetActive(false);
+                return;
+            }
+        }
 
         if (rb != null)
         {
@@ -76,7 +91,7 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
-        if (isDead || target == null)
+        if (isDead || target == null || isHitAnimating || isAttacking)
         {
             animator.SetBool("Run", false);
             return;
@@ -187,37 +202,36 @@ public class EnemyAI : MonoBehaviour
         canAttack = false;
         isAttacking = true;
         hasDealtDamage = false;
-
+        
         if (useChargeBeforeAttack)
         {
+            canReactToDamage = false;
             animator.SetTrigger("Charge");
             rb.velocity = Vector2.zero;
             rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+            yield return new WaitForSeconds(0.3f);
+        }
 
-            float chargeDuration = 0.3f;
-            yield return new WaitForSeconds(chargeDuration);
-        }
-        
         if (useInvulnerabilityDuringAttack)
-            StartCoroutine(InvulnerabilityFrame());
-        
-        yield return new WaitForSeconds(0.15f); 
-        
-        if (attackSound != null && audioSource != null)
-        {
-            audioSource.PlayOneShot(attackSound);
-        }
+            isInvulnerable = true;
 
         animator.SetTrigger("Attack");
-        yield return new WaitForSeconds(0.1f);
+        if (attackSound != null) audioSource.PlayOneShot(attackSound);
+        yield return new WaitForSeconds(0.5f); 
+    
         DealDamage();
-
-        float cooldownLeft = attackCooldown - (useChargeBeforeAttack ? 0.3f : 0f);
-        yield return new WaitForSeconds(cooldownLeft);
-
-        canAttack = true;
+        yield return new WaitForSeconds(0.2f); 
+        
+        isInvulnerable = false;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        canReactToDamage = true;
+    
+        float cooldownLeft = attackCooldown - (useChargeBeforeAttack ? 0.9f : 0f);
+        yield return new WaitForSeconds(cooldownLeft);
+        
+        canReactToDamage = false;
         isAttacking = false;
+        canAttack = true;
     }
     
     IEnumerator InvulnerabilityFrame()
@@ -233,18 +247,13 @@ public class EnemyAI : MonoBehaviour
             Vector2.Distance(transform.position, target.position) <= attackRange)
         {
             var playerAttack = target.GetComponent<AttackController>();
-            var playerCharacter = target.GetComponent<Character>();
+            var playerCharacter = target.GetComponentInParent<Character>();
 
             if (playerCharacter != null && !playerCharacter.isDead)
             {
                 if (playerAttack != null && playerAttack.IsBlockingTowards(transform.position))
                 {
                     Debug.Log("Атака заблокирована!");
-                    Vector2 pushDir = (transform.position - target.position).normalized;
-                    pushDir.y = 0.3f;
-
-                    rb.velocity = Vector2.zero;
-                    rb.AddForce(pushDir * 25f, ForceMode2D.Impulse);
                 }
                 else
                 {
@@ -273,34 +282,29 @@ public class EnemyAI : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        if (isDead || isHitAnimating || (isInvulnerable && useInvulnerabilityDuringAttack)) return;
-
-        currentHealth -= damage;
-        if (currentHealth <= 0)
+        if (isDead || !canReactToDamage) 
         {
-            Die();
+            Debug.Log($"[EnemyAI] REJECT HIT: Dead:{isDead} React:{canReactToDamage} Invul:{isInvulnerable}");
+            return;
         }
 
-        if (isAttacking) return;
+        currentHealth -= damage;
+        Debug.Log($"[EnemyAI] TOOK DAMAGE: {damage}, HP: {currentHealth}");
 
-        StartCoroutine(PlayHitAnimation());
+        if (currentHealth <= 0) Die();
+        else StartCoroutine(PlayHitAnimation());
     }
-
+    
     IEnumerator PlayHitAnimation()
     {
-        isHitAnimating = true;
-        isInvulnerable = true;
-
-        animator.SetTrigger("Hit");
-
-        Vector2 pushDir = (transform.position - target.position).normalized;
-        pushDir.y = 0.2f;
-        rb.AddForce(pushDir * 20f, ForceMode2D.Impulse);
-
-        yield return new WaitForSeconds(0.3f);
-
-        isHitAnimating = false;
-        isInvulnerable = false;
+        if (canReactToDamage) 
+        {
+            isHitAnimating = true;
+            animator.SetTrigger("Hit");
+        
+            yield return new WaitForSeconds(0.15f);
+            isHitAnimating = false;
+        }
     }
 
 
@@ -341,22 +345,57 @@ public class EnemyAI : MonoBehaviour
         GameStateManager.Instance.CurrentState.pandaState = PandaDialogueState.AfterEnemyDefeated;
         GameStateManager.Instance.SaveGame();
 
-        Destroy(gameObject, 2f);
+        StartCoroutine(DeactivateAfterDelay(1.5f));
     }
     
     private IEnumerator PlayDeathSoundsWithDelay()
     {
-        yield return new WaitForSeconds(1.5f); 
+        yield return new WaitForSeconds(1f); 
         if (deathSound != null){
             audioSource.PlayOneShot(deathSound);}
     }
     
-    public void SetHealth(int value)
+    private IEnumerator DeactivateAfterDelay(float delay)
     {
-        currentHealth = value;
-        if (currentHealth <= 0)
+        yield return new WaitForSeconds(delay);
+        gameObject.SetActive(false);
+    }
+    
+    public void ResetEnemy()
+    {
+        if (!gameObject.activeSelf)
+            gameObject.SetActive(true);
+
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
+        if (rb == null)
+            rb = GetComponent<Rigidbody2D>();
+
+        if (animator != null && animator.runtimeAnimatorController != null)
         {
-            Die(); 
+            animator.SetBool("Run", true);
+        }
+        else
+        {
+            Debug.LogWarning($"{name} has no valid Animator or AnimatorController!");
+        }
+
+        foreach (Collider2D col in GetComponentsInChildren<Collider2D>())
+        {
+            col.enabled = true;
+        }
+
+        isDead = false;
+        currentHealth = maxHealth;
+
+        if (rb != null)
+        {
+            rb.isKinematic = true;
+            rb.velocity = Vector2.zero;
+        }
+        else
+        {
+            Debug.LogWarning($"{name} has no Rigidbody2D!");
         }
     }
 }

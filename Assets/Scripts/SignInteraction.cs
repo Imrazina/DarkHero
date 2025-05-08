@@ -14,6 +14,7 @@ public class SignInteraction : MonoBehaviour
         if (other.CompareTag("Player")) 
         {
             infoPanel.SetActive(true); 
+            GameStateManager.Instance.SaveGame();
         }
     }
 

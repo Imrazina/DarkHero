@@ -17,7 +17,7 @@ public class Character : MonoBehaviour
     private Animator animator;
     private AttackController attackController;
 
-    public int maxHealth = 300;
+    public int maxHealth = 500;
     private int currentHealth;
     public bool isDead = false;
 
@@ -201,8 +201,7 @@ public class Character : MonoBehaviour
         if (isDead || isKnockedBack || isHealing || isMovementLocked) return;
         
         CheckSurfaces();
-        
-        // Настраиваем гравитацию
+
         if (rb.velocity.y < 0 && !isGrounded)
         {
             rb.gravityScale = originalGravityScale * fallGravityMultiplier;
@@ -230,7 +229,8 @@ public class Character : MonoBehaviour
             moveInput != 0 &&
             Mathf.Sign(moveInput) == -Mathf.Sign(wallNormal.x) &&
             !isWallJumping &&
-            !justWallJumped;
+            !justWallJumped &&
+            rb.velocity.y <= 0;
 
         if (canWallSlide)
         {
@@ -296,21 +296,21 @@ public class Character : MonoBehaviour
         // -------------------- Анимации --------------------
         if (!attackController.isAttacking && !isDashing)
         {
-            if (isWallSliding && !isWallJumping && !justWallJumped)
+            if (isWallSliding)
             {
-                SetAnimState(4); 
+                SetAnimState(4);
             }
             else if (isWallJumping || justWallJumped)
             {
                 SetAnimState(3);
             }
-            else if (!isGrounded && Mathf.Abs(rb.velocity.y) > 0.1f) // <-- добавил условие чтобы не мешать Idle в воздухе
+            else if (!isGrounded && Mathf.Abs(rb.velocity.y) > 0.1f)
             {
                 SetAnimState(3);
             }
             else if (isGrounded && Mathf.Abs(moveInput) > 0.01f)
             {
-                SetAnimState(isRunning ? 2 : 1); 
+                SetAnimState(isRunning ? 2 : 1);
             }
             else if (isGrounded)
             {
@@ -808,14 +808,33 @@ public class Character : MonoBehaviour
         if (wallHit.collider != null)
         {
             float angle = Vector2.Angle(wallHit.normal, Vector2.right);
-            if (angle > 60f) 
+            if (angle > 75f && wallHit.point.y < transform.position.y - 0.3f)
             {
-                if (wallHit.point.y < transform.position.y - 0.3f)
+                RaycastHit2D downwardHit = Physics2D.Raycast(
+                    transform.position + new Vector3(direction * 0.3f, 0.5f, 0),
+                    Vector2.down,
+                    1f,
+                    whatIsGround
+                );
+            
+                if (downwardHit.collider == null)
                 {
                     isTouchingWall = true;
                     wallNormal = wallHit.normal;
                 }
+                else
+                {
+                    isTouchingWall = false;
+                }
             }
+            else
+            {
+                isTouchingWall = false;
+            }
+        }
+        else
+        {
+            isTouchingWall = false;
         }
     }
     

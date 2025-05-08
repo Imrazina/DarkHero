@@ -244,6 +244,7 @@ MonoBehaviour:
   uniqueID: Coins_7
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 0}
+  lootSoundVolume: 1.5
 --- !u!114 &2123020151357086093
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1111,6 +1112,7 @@ MonoBehaviour:
   uniqueID: Coins_8
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 0}
+  lootSoundVolume: 1.5
 --- !u!114 &337975747202848124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1461,6 +1463,7 @@ MonoBehaviour:
   uniqueID: Coins_6
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 0}
+  lootSoundVolume: 1.5
 --- !u!114 &8274311899970410813
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2049,6 +2052,7 @@ MonoBehaviour:
   uniqueID: Coins_5
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 0}
+  lootSoundVolume: 1.5
 --- !u!114 &6316166048793699531
 MonoBehaviour:
   m_ObjectHideFlags: 0

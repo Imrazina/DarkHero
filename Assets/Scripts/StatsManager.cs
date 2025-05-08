@@ -46,4 +46,10 @@ public class StatsManager : MonoBehaviour
             coinsText.text = GameStateManager.Instance.CurrentState.totalCoins.ToString();
         }
     }
+    
+    public void ResetStats()
+    {
+        GameStateManager.Instance.CurrentState.totalCoins = 0;
+        UpdateUI();
+    }
 }

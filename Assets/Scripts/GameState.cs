@@ -89,4 +89,7 @@ public class GameState
     public bool isEntrancePlankClosed = false;
     
     public bool isBossDead = false;
+    
+    public int currentHealth = 500;
+    public int maxHealth = 500;
 }

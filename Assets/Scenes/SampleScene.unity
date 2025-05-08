@@ -588,6 +588,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 373550317}
     m_Modifications:
+    - target: {fileID: 2438813817535659907, guid: 61aa655a507ea43708815a9c55e6d7e9, type: 3}
+      propertyPath: isStaticLoot
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6382731063488089549, guid: 61aa655a507ea43708815a9c55e6d7e9, type: 3}
       propertyPath: m_Name
       value: Coins (4)
@@ -1222,6 +1226,8 @@ MonoBehaviour:
   swordSwing1: {fileID: 8300000, guid: 149f41f6c03f1417180070f40df36efc, type: 3}
   swordSwing2: {fileID: 8300000, guid: 149f41f6c03f1417180070f40df36efc, type: 3}
   blockSound: {fileID: 8300000, guid: d3766e54c0e0b415a95d5aad48fbfe12, type: 3}
+  soundVolume: 0.44
+  defendVolume: 0.1
 --- !u!1 &75177275
 GameObject:
   m_ObjectHideFlags: 0
@@ -8442,6 +8448,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1076585340}
     m_Modifications:
+    - target: {fileID: 144823283849002336, guid: bebf028b143a84b3ca9bb0a984f85ea2, type: 3}
+      propertyPath: isStaticLoot
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 628398225340752511, guid: bebf028b143a84b3ca9bb0a984f85ea2, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.51491684
@@ -8678,7 +8688,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 4
   m_Sprite: {fileID: 21300000, guid: d3a45f3de90e45341ae2ad9ec3e045d7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -8762,7 +8772,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 6
   m_Sprite: {fileID: -3287931882404190232, guid: 6cedb2a2b2fac4a46abb15e74d111a3a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -8846,7 +8856,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: ff204d887da51ac44b164a070f67cbf1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0.28235295}
   m_FlipX: 0
@@ -8955,9 +8965,11 @@ MonoBehaviour:
   lootType: 0
   value: 1
   uniqueID: Coins_5
+  pickedUp: 0
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 8300000, guid: 6ec8ca44fa6504902b3492c1e642aff9, type: 3}
   lootSoundVolume: 1.5
+  isStaticLoot: 1
 --- !u!61 &344504129
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -10877,7 +10889,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 60
+  m_text: 40
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
   m_sharedMaterial: {fileID: 2140032, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
@@ -11853,7 +11865,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 4
+  m_SortingOrder: 7
   m_Sprite: {fileID: 21300000, guid: d3a45f3de90e45341ae2ad9ec3e045d7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0.5686275}
   m_FlipX: 0
@@ -12184,6 +12196,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1386878608}
     m_Modifications:
+    - target: {fileID: 5318916207982081499, guid: 711cf2677ff85498580ab0bdd5843c9d, type: 3}
+      propertyPath: isStaticLoot
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7347557260794430301, guid: 711cf2677ff85498580ab0bdd5843c9d, type: 3}
       propertyPath: m_Name
       value: GoldDore
@@ -13043,8 +13059,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 61, y: -41}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: 30.5, y: -42}
+  m_SizeDelta: {x: 53.3575, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &505460986
 MonoBehaviour:
@@ -13066,7 +13082,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 100
+  m_text: 60
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
   m_sharedMaterial: {fileID: 2140032, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
@@ -13129,7 +13145,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: -4.294548, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -13513,7 +13529,9 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: 66e4e63788fee485892dc66a05642b47, type: 3}
   useChargeBeforeAttack: 1
   useInvulnerabilityDuringAttack: 1
+  postAttackVulnerabilityDuration: 0.6
   uniqueID: 1
+  isStaticEnemy: 1
 --- !u!50 &550263475
 Rigidbody2D:
   serializedVersion: 4
@@ -14422,7 +14440,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainMenuPanel: {fileID: 656012550}
   pausePanel: {fileID: 787127157}
-  settingsPanel: {fileID: 0}
   continueButton: {fileID: 1939785401}
   gameOverPanel: {fileID: 1087370847}
   restartGameButton: {fileID: 1712253581}
@@ -14919,7 +14936,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 6
   m_Sprite: {fileID: 21300000, guid: 85390185c5a1b744c9d5588109fe4326, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -14946,9 +14963,11 @@ MonoBehaviour:
   lootType: 0
   value: 1
   uniqueID: Coins_7
+  pickedUp: 0
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 8300000, guid: 6ec8ca44fa6504902b3492c1e642aff9, type: 3}
   lootSoundVolume: 1.5
+  isStaticLoot: 1
 --- !u!1 &654440978
 GameObject:
   m_ObjectHideFlags: 0
@@ -15210,9 +15229,11 @@ MonoBehaviour:
   lootType: 0
   value: 1
   uniqueID: Coins_2
+  pickedUp: 0
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 8300000, guid: 6ec8ca44fa6504902b3492c1e642aff9, type: 3}
   lootSoundVolume: 1.5
+  isStaticLoot: 1
 --- !u!61 &659218409
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -15668,7 +15689,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 7
   m_Sprite: {fileID: 476774127, guid: c6fd6f1dcd0da4b53a6ec1a526785880, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -17691,9 +17712,11 @@ MonoBehaviour:
   lootType: 1
   value: 10
   uniqueID: GoldDore_4
+  pickedUp: 0
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 8300000, guid: 6ec8ca44fa6504902b3492c1e642aff9, type: 3}
   lootSoundVolume: 1.5
+  isStaticLoot: 1
 --- !u!50 &816160202
 Rigidbody2D:
   serializedVersion: 4
@@ -17868,7 +17891,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 4
   m_Sprite: {fileID: 21300000, guid: 37f47a2729d33a942bf17507849e363d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -18602,7 +18625,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 5
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
@@ -19890,7 +19913,7 @@ RectTransform:
   - {fileID: 2128304482}
   - {fileID: 1712721650}
   - {fileID: 444323357}
-  m_Father: {fileID: 1390426639}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -26374,7 +26397,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: 7122d158d85eb52479df70eb16e59f92, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -33530,7 +33553,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: 18c3b6f7e632bbc45b1ac4cb4522ce78, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -35194,7 +35217,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 7
   m_Sprite: {fileID: 21300000, guid: 85390185c5a1b744c9d5588109fe4326, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -35221,9 +35244,11 @@ MonoBehaviour:
   lootType: 0
   value: 1
   uniqueID: Coins_6
+  pickedUp: 0
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 8300000, guid: 6ec8ca44fa6504902b3492c1e642aff9, type: 3}
   lootSoundVolume: 1.5
+  isStaticLoot: 1
 --- !u!1 &1087370847
 GameObject:
   m_ObjectHideFlags: 0
@@ -35357,8 +35382,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Don't forget to use T to shift between worlds \u2014 hidden paths may
-    await in later levels."
+  m_text: "Don't forget to use \"T\" to shift between worlds \u2014 hidden paths
+    may await in later levels."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
   m_sharedMaterial: {fileID: 2140032, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
@@ -35494,7 +35519,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 6
   m_Sprite: {fileID: 21300000, guid: 3bea5c3ade172ac47bef4262d8a1c0c7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -35536,9 +35561,11 @@ MonoBehaviour:
   lootType: 1
   value: 10
   uniqueID: GoldDore_5
+  pickedUp: 0
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 8300000, guid: 6ec8ca44fa6504902b3492c1e642aff9, type: 3}
   lootSoundVolume: 1.5
+  isStaticLoot: 1
 --- !u!61 &1102774595
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -35660,6 +35687,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 373550317}
     m_Modifications:
+    - target: {fileID: 2438813817535659907, guid: 61aa655a507ea43708815a9c55e6d7e9, type: 3}
+      propertyPath: isStaticLoot
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6382731063488089549, guid: 61aa655a507ea43708815a9c55e6d7e9, type: 3}
       propertyPath: m_Name
       value: Coins (3)
@@ -37034,9 +37065,11 @@ MonoBehaviour:
   lootType: 0
   value: 1
   uniqueID: Coins_3
+  pickedUp: 0
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 8300000, guid: 6ec8ca44fa6504902b3492c1e642aff9, type: 3}
   lootSoundVolume: 1.5
+  isStaticLoot: 1
 --- !u!61 &1224548090
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -37484,7 +37517,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 80
+  m_text: 50
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
   m_sharedMaterial: {fileID: 2140032, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
@@ -52775,6 +52808,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 687538340}
     m_Modifications:
+    - target: {fileID: 75734036960867360, guid: 9938a46c41a624fa5895eb1e9db275dc, type: 3}
+      propertyPath: isStaticLoot
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2455617839910223181, guid: 9938a46c41a624fa5895eb1e9db275dc, type: 3}
       propertyPath: m_Name
       value: Crystal
@@ -55197,7 +55234,6 @@ Transform:
   m_Children:
   - {fileID: 1442931979}
   - {fileID: 933616661}
-  - {fileID: 860943004}
   m_Father: {fileID: 102460823}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1400174346
@@ -55315,7 +55351,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 12, y: -39}
+  m_AnchoredPosition: {x: 12, y: -43}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1406283063
@@ -55338,11 +55374,15 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Healing - 1
+  m_text: 'Red keys for using potions.
+
+
+    Healing - 1
 
     Damage Boost - 2
 
-    Invincibility - 3'
+    Invincibility
+    - 3'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
   m_sharedMaterial: {fileID: 2140032, guid: dc36b3fdc14f47ebb36fd484a67e268a, type: 2}
@@ -55405,7 +55445,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -55.33219, y: -53.477486, z: -26.715866, w: 29.62944}
+  m_margin: {x: -55.33219, y: -85.35277, z: -26.715866, w: -8.620857}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -55698,6 +55738,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 373550317}
     m_Modifications:
+    - target: {fileID: 2438813817535659907, guid: 61aa655a507ea43708815a9c55e6d7e9, type: 3}
+      propertyPath: isStaticLoot
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6382731063488089549, guid: 61aa655a507ea43708815a9c55e6d7e9, type: 3}
       propertyPath: m_Name
       value: Coins (2)
@@ -56145,9 +56189,11 @@ MonoBehaviour:
   lootType: 1
   value: 10
   uniqueID: GoldDore_1
+  pickedUp: 0
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 8300000, guid: 6ec8ca44fa6504902b3492c1e642aff9, type: 3}
   lootSoundVolume: 1.5
+  isStaticLoot: 1
 --- !u!50 &1440116815
 Rigidbody2D:
   serializedVersion: 4
@@ -56484,9 +56530,11 @@ MonoBehaviour:
   lootType: 0
   value: 5
   uniqueID: GoldShape_1
+  pickedUp: 0
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 8300000, guid: 6ec8ca44fa6504902b3492c1e642aff9, type: 3}
   lootSoundVolume: 1.5
+  isStaticLoot: 1
 --- !u!1 &1479782216
 GameObject:
   m_ObjectHideFlags: 0
@@ -56849,8 +56897,8 @@ MonoBehaviour:
   - prefab: {fileID: 3699000307912845946, guid: 3086dde06215e4766b0d11765a0f6f20, type: 3}
     availableDirections: 03000000
   spawnPoint: {fileID: 800198238}
-  horizontalSegments: 2
-  maxVerticalDepth: 2
+  horizontalSegments: 3
+  maxVerticalDepth: 4
   segmentWidth: 18.5
   segmentHeight: 11.5
 --- !u!1 &1510299690
@@ -57377,9 +57425,11 @@ MonoBehaviour:
   lootType: 0
   value: 1
   uniqueID: Coins_4
+  pickedUp: 0
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 8300000, guid: 6ec8ca44fa6504902b3492c1e642aff9, type: 3}
   lootSoundVolume: 1.5
+  isStaticLoot: 1
 --- !u!61 &1535646105
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -59596,6 +59646,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 373550317}
     m_Modifications:
+    - target: {fileID: 2438813817535659907, guid: 61aa655a507ea43708815a9c55e6d7e9, type: 3}
+      propertyPath: isStaticLoot
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6382731063488089549, guid: 61aa655a507ea43708815a9c55e6d7e9, type: 3}
       propertyPath: m_Name
       value: Coins (6)
@@ -61549,9 +61603,11 @@ MonoBehaviour:
   lootType: 0
   value: 1
   uniqueID: Coins_1
+  pickedUp: 0
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 8300000, guid: 6ec8ca44fa6504902b3492c1e642aff9, type: 3}
   lootSoundVolume: 1.5
+  isStaticLoot: 1
 --- !u!1 &1642564403
 GameObject:
   m_ObjectHideFlags: 0
@@ -61917,7 +61973,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 4
   m_Sprite: {fileID: 21300000, guid: 0b430d85985f35642bed7186617bd06c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -62725,7 +62781,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: 18c3b6f7e632bbc45b1ac4cb4522ce78, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -63020,7 +63076,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 4
   m_Sprite: {fileID: 21300000, guid: 37f47a2729d33a942bf17507849e363d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -66171,9 +66227,11 @@ MonoBehaviour:
   lootType: 1
   value: 10
   uniqueID: GoldDore_2
+  pickedUp: 0
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 8300000, guid: 6ec8ca44fa6504902b3492c1e642aff9, type: 3}
   lootSoundVolume: 1.5
+  isStaticLoot: 1
 --- !u!1 &1844792816
 GameObject:
   m_ObjectHideFlags: 0
@@ -66544,7 +66602,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 5
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
@@ -68973,6 +69031,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 373550317}
     m_Modifications:
+    - target: {fileID: 2438813817535659907, guid: 61aa655a507ea43708815a9c55e6d7e9, type: 3}
+      propertyPath: isStaticLoot
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6382731063488089549, guid: 61aa655a507ea43708815a9c55e6d7e9, type: 3}
       propertyPath: m_Name
       value: Coins (5)
@@ -69398,6 +69460,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1386878608}
     m_Modifications:
+    - target: {fileID: 5318916207982081499, guid: 711cf2677ff85498580ab0bdd5843c9d, type: 3}
+      propertyPath: isStaticLoot
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7347557260794430301, guid: 711cf2677ff85498580ab0bdd5843c9d, type: 3}
       propertyPath: m_Name
       value: GoldDore (1)
@@ -69512,7 +69578,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Please use E to start a dialogue with the Panda.
+  m_text: 'Please use "E" to start a dialogue with the Panda.
 
 '
   m_isRightToLeft: 0
@@ -69933,7 +69999,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 5
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
@@ -71203,7 +71269,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 4
+  m_SortingOrder: 6
   m_Sprite: {fileID: 21300000, guid: 3bea5c3ade172ac47bef4262d8a1c0c7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -71230,9 +71296,11 @@ MonoBehaviour:
   lootType: 1
   value: 10
   uniqueID: GoldDore_3
+  pickedUp: 0
   pickupEffect: {fileID: 0}
   pickupSound: {fileID: 8300000, guid: 6ec8ca44fa6504902b3492c1e642aff9, type: 3}
   lootSoundVolume: 1.5
+  isStaticLoot: 1
 --- !u!1 &1994455819
 GameObject:
   m_ObjectHideFlags: 0
@@ -71513,6 +71581,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 373550317}
     m_Modifications:
+    - target: {fileID: 2438813817535659907, guid: 61aa655a507ea43708815a9c55e6d7e9, type: 3}
+      propertyPath: isStaticLoot
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6382731063488089549, guid: 61aa655a507ea43708815a9c55e6d7e9, type: 3}
       propertyPath: m_Name
       value: Coins
@@ -71835,9 +71907,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07717cf6cd7a74a669289ac2aba74d01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  potionPrice: 1
-  damageBoostPrice: 2
-  invincibilityPrice: 3
+  potionPrice: 40
+  damageBoostPrice: 50
+  invincibilityPrice: 60
   playerInventory: {fileID: 64506865}
   purchaseSound: {fileID: 8300000, guid: 6867fbb98519c40b68ccce10ec6653b5, type: 3}
   purchaseSoundVolume: 0.4
@@ -72624,7 +72696,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: 7087c15c1d4f4fe449890aa1917ae2e3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -72644,6 +72716,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 373550317}
     m_Modifications:
+    - target: {fileID: 2438813817535659907, guid: 61aa655a507ea43708815a9c55e6d7e9, type: 3}
+      propertyPath: isStaticLoot
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6382731063488089549, guid: 61aa655a507ea43708815a9c55e6d7e9, type: 3}
       propertyPath: m_Name
       value: Coins (1)
@@ -73142,6 +73218,10 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3994273207948340401, guid: 14cf78c336a08459392240202d07a160, type: 3}
+      propertyPath: isStaticEnemy
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3994273207948340401, guid: 14cf78c336a08459392240202d07a160, type: 3}
       propertyPath: backGroundCheck.x
       value: -1
       objectReference: {fileID: 0}
@@ -73559,7 +73639,7 @@ PrefabInstance:
       objectReference: {fileID: 685301792}
     - target: {fileID: 5684231982131695147, guid: 2efc2df0b109c4f0f973541a9ca9e0d2, type: 3}
       propertyPath: maxHealth
-      value: 400
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 5684231982131695147, guid: 2efc2df0b109c4f0f973541a9ca9e0d2, type: 3}
       propertyPath: chargeTime
@@ -73571,7 +73651,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5684231982131695147, guid: 2efc2df0b109c4f0f973541a9ca9e0d2, type: 3}
       propertyPath: attackDamage
-      value: 50
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 5684231982131695147, guid: 2efc2df0b109c4f0f973541a9ca9e0d2, type: 3}
       propertyPath: timeSlowScale
@@ -85957,6 +86037,7 @@ SceneRoots:
   - {fileID: 1121539347}
   - {fileID: 1134550191}
   - {fileID: 2072534053}
+  - {fileID: 860943004}
   - {fileID: 2010704771}
   - {fileID: 310020880}
   - {fileID: 1734184682}

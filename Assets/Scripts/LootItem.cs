@@ -6,15 +6,17 @@ public class LootItem : MonoBehaviour
     public LootType lootType;
 
     public int value = 1;  
-    public string uniqueID;  
+    public string uniqueID;
 
-    private bool pickedUp = false;  
+    public bool pickedUp = false;  
     
     public GameObject pickupEffect;
     public AudioClip pickupSound;
     
     [Header("Loot Sound Settings")]
     [Range(0, 2)] public float lootSoundVolume = 1.5f;
+    
+    public bool isStaticLoot = false;
 
     private void Start()
     {
@@ -25,8 +27,14 @@ public class LootItem : MonoBehaviour
 
         if (GameStateManager.Instance.CurrentState.collectedItems.Contains(uniqueID))
         {
-            Destroy(gameObject);
+            pickedUp = true;
+            gameObject.SetActive(false);
+            return;
         }
+
+        var collider = GetComponent<Collider2D>();
+        if (collider != null)
+            collider.enabled = true;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -51,18 +59,33 @@ public class LootItem : MonoBehaviour
     
     private void Collect()
     {
-        pickedUp = true;  
-        GameStateManager.Instance.CurrentState.collectedItems.Add(uniqueID);
-        
-   //     var savedLoot = GameStateManager.Instance.CurrentState.lootItems.Find(x => x.uniqueID == uniqueID);
-      //  if (savedLoot != null) savedLoot.isCollected = true;
+        if (pickedUp) return;
+        pickedUp = true;
 
+        if (!string.IsNullOrEmpty(uniqueID));
+        GameStateManager.Instance.CurrentState.collectedItems.Add(uniqueID);
+    
         GameStateManager.Instance.CurrentState.totalCoins += value;
-        StatsManager.Instance.AddCoins(value); 
+        StatsManager.Instance.AddCoins(value);
 
         if (pickupSound)
             AudioSource.PlayClipAtPoint(pickupSound, transform.position, lootSoundVolume);
 
-        Destroy(gameObject);
+        // Отключаем коллайдер перед скрытием
+        var collider = GetComponent<Collider2D>();
+        if (collider != null)
+            collider.enabled = false;
+
+        gameObject.SetActive(false); 
+    }
+    
+    public void ResetLoot()
+    {
+        pickedUp = false;
+        if (!gameObject.activeSelf)
+            gameObject.SetActive(true);
+        var collider = GetComponent<Collider2D>();
+        if (collider != null)
+            collider.enabled = true;
     }
 }

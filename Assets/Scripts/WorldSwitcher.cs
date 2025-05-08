@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 public class WorldSwitcher : MonoBehaviour
 {
@@ -35,22 +36,39 @@ public GameObject normalWorld;
     {
         if (worldSwitchSound != null && audioSource != null)
         {
-            audioSource.PlayOneShot(worldSwitchSound);
+            audioSource.PlayOneShot(worldSwitchSound, 0.4f);
         }
-        
+    
         GameStateManager.Instance.CurrentState.isInSpiritWorld = !GameStateManager.Instance.CurrentState.isInSpiritWorld;
         GameStateManager.Instance.CurrentState.playerPosition = player.position;
         SaveCameraState();
         UpdateWorldState();
-        
-        LevelSegmentSpawner[] spawners = FindObjectsOfType<LevelSegmentSpawner>();
-        foreach (var spawner in spawners)
-        {
-            spawner.ChangeBackground();
-        }
-        
+        RefreshAllSpawnedObjects();
+    
         FindObjectOfType<SubtitleManager>().ShowSubtitle(
             GameStateManager.Instance.CurrentState.isInSpiritWorld ? "WORLD OF SPIRITS" : "WORLD OF PEOPLE", 3f);
+    }
+
+    void RefreshAllSpawnedObjects()
+    {
+        bool isSpiritWorld = GameStateManager.Instance.CurrentState.isInSpiritWorld;
+
+        var allLoot = FindObjectsOfType<LootItem>(true).Where(l => !l.isStaticLoot);
+        foreach (var loot in allLoot)
+        {
+            if (loot.pickedUp || GameStateManager.Instance.CurrentState.collectedItems.Contains(loot.uniqueID))
+            {
+                loot.gameObject.SetActive(false);
+                continue;
+            }
+
+            var worldComponent = loot.GetComponent<WorldDependentObject>();
+            bool isInCorrectWorld = worldComponent == null || 
+                                    (isSpiritWorld && worldComponent.worldType == WorldType.SpiritWorld) ||
+                                    (!isSpiritWorld && worldComponent.worldType == WorldType.PeopleWorld);
+
+            loot.gameObject.SetActive(isInCorrectWorld);
+        }
     }
 
     void UpdateWorldState()

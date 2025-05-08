@@ -82,19 +82,12 @@ public class LevelGenerator : MonoBehaviour
 
     private void GenerateMainLine()
     {
-        for (int i = 0; i < horizontalSegments; i++)
+        for (int i = 0; i < horizontalSegments - 1; i++)
         {
             Vector2Int prevPos = currentGridPos;
-            if (!GenerateSegment(prevPos, currentDirection, isMainLine: true, mainLine: mainLinePositions))
+            if (!GenerateSegment(prevPos, Direction.Right, isMainLine: true, mainLine: mainLinePositions))
             {
-                // Попытка найти альтернативный префаб с выходом направо
-                var fallbackPrefab = FindFallbackMainLinePrefab(currentDirection);
-                if (fallbackPrefab != null)
-                {
-                    SpawnFallbackSegment(prevPos, fallbackPrefab);
-                    continue;
-                }
-                Debug.LogWarning($"Main line generation failed at step {i} from {prevPos}");
+                Debug.LogError($"Failed to generate main line segment at position {i}");
                 break;
             }
         }
@@ -137,23 +130,18 @@ public class LevelGenerator : MonoBehaviour
     
     private void FillDeadEnds()
     {
-        Vector2Int lastMainLinePos = mainLinePositions.Count > 0 ? mainLinePositions[mainLinePositions.Count - 1] : Vector2Int.zero;
-
         List<Vector2Int> positionsToCheck = new List<Vector2Int>(placedSegments.Keys);
 
         foreach (var pos in positionsToCheck)
         {
+            if (mainLinePositions.Contains(pos)) continue;
+
             foreach (Direction dir in System.Enum.GetValues(typeof(Direction)))
             {
                 if (!HasExitAtPosition(pos, dir)) continue;
 
                 Vector2Int neighborPos = pos + DirectionToOffset(dir);
                 if (occupiedPositions.Contains(neighborPos)) continue;
-                
-                if (mainLinePositions.Contains(pos))
-                {
-                    continue;
-                }
 
                 var deadEnd = GetDeadEndPrefab(dir);
                 if (deadEnd == null)
@@ -162,16 +150,22 @@ public class LevelGenerator : MonoBehaviour
                     continue;
                 }
 
-                Vector3 spawnPos = CalculateWorldPosition(neighborPos);
-                GameObject newSegment = Instantiate(deadEnd.prefab, spawnPos, Quaternion.identity, transform);
-
-                SegmentInfo newInfo = newSegment.AddComponent<SegmentInfo>();
-                newInfo.directions = new[] { GetOppositeDirection(dir) };
-
-                placedSegments[neighborPos] = newSegment;
-                occupiedPositions.Add(neighborPos);
+                SpawnDeadEndSegment(neighborPos, deadEnd, dir);
             }
         }
+    }
+
+    private void SpawnDeadEndSegment(Vector2Int pos, PrefabDirections prefab, Direction entryDir)
+    {
+        Vector3 spawnPos = CalculateWorldPosition(pos);
+        GameObject newSegment = Instantiate(prefab.prefab, spawnPos, Quaternion.identity, transform);
+
+        SegmentInfo newInfo = newSegment.AddComponent<SegmentInfo>();
+        newInfo.directions = new[] { GetOppositeDirection(entryDir) };
+        newInfo.GridPosition = pos;
+
+        placedSegments[pos] = newSegment;
+        occupiedPositions.Add(pos);
     }
 
     private PrefabDirections GetDeadEndPrefab(Direction entryDirection)
@@ -206,31 +200,33 @@ public class LevelGenerator : MonoBehaviour
 
     private bool GenerateSegment(Vector2Int fromPos, Direction direction, bool isMainLine, List<Vector2Int> mainLine = null)
     {
+        if (isMainLine)
+        {
+            direction = Direction.Right;
+        }
+        
+        if (isMainLine && mainLine != null && mainLine.Count >= horizontalSegments)
+        {
+            Debug.LogWarning("Main line already reached maximum length");
+            return false;
+        }
+
         Vector2Int nextPos = fromPos + DirectionToOffset(direction);
 
-        if (occupiedPositions.Contains(nextPos)) return false;
+        if (occupiedPositions.Contains(nextPos)) 
+        {
+            Debug.LogWarning($"Position {nextPos} already occupied");
+            return false;
+        }
 
         var validPrefabs = GetValidPrefabs(direction, isMainLine);
 
-        validPrefabs = validPrefabs.FindAll(prefab =>
+        if (validPrefabs.Count == 0)
         {
-            if (!System.Array.Exists(prefab.availableDirections, dir => dir == GetOppositeDirection(direction)))
-                return false;
-
-            foreach (var exitDir in prefab.availableDirections)
-            {
-                if (exitDir == GetOppositeDirection(direction)) continue;
-
-                Vector2Int targetPos = nextPos + DirectionToOffset(exitDir);
-                if (occupiedPositions.Contains(targetPos))
-                    return false;
-            }
-
-            return true;
-        });
-
-        if (validPrefabs.Count == 0) return false;
-
+            Debug.LogWarning($"No valid prefabs found for direction {direction} at {fromPos}");
+            return false;
+        }
+        
         var selected = validPrefabs[Random.Range(0, validPrefabs.Count)];
         var spawnPos = CalculateWorldPosition(nextPos);
 
@@ -238,29 +234,20 @@ public class LevelGenerator : MonoBehaviour
 
         var info = segment.AddComponent<SegmentInfo>();
         info.directions = selected.availableDirections;
-        info.GridPosition = nextPos; 
+        info.GridPosition = nextPos;
 
         placedSegments[nextPos] = segment;
         occupiedPositions.Add(nextPos);
-        
+    
         if (isMainLine && mainLine != null)
+        {
             mainLine.Add(nextPos);
+        }
 
         CreateCameraTrigger(fromPos, nextPos, spawnPos);
 
         currentGridPos = nextPos;
-
-        if (isMainLine)
-        {
-            currentDirection = Direction.Right;
-        }
-        else
-        {
-            var exits = GetAvailableExits(selected, direction);
-            currentDirection = exits.Count > 0 ? exits[Random.Range(0, exits.Count)] : direction;
-        }
-        Debug.Log($"[Segment] Placed segment at {nextPos} from {fromPos} going {direction}");
-
+        currentDirection = isMainLine ? Direction.Right : direction;
         return true;
     }
 
@@ -271,14 +258,15 @@ public class LevelGenerator : MonoBehaviour
 
         foreach (var prefabDir in levelPrefabs)
         {
-            if (System.Array.Exists(prefabDir.availableDirections, dir => dir == requiredEntry))
+            bool hasEntry = System.Array.Exists(prefabDir.availableDirections, dir => dir == requiredEntry);
+            if (!hasEntry) continue;
+
+            if (isMainLine && !System.Array.Exists(prefabDir.availableDirections, dir => dir == Direction.Right))
             {
-                if (isMainLine && !System.Array.Exists(prefabDir.availableDirections, dir => dir == Direction.Right))
-                {
-                    continue;
-                }
-                validPrefabs.Add(prefabDir);
+                continue;
             }
+
+            validPrefabs.Add(prefabDir);
         }
 
         return validPrefabs;
@@ -530,6 +518,20 @@ public class LevelGenerator : MonoBehaviour
         foreach (var trigger in cameraTriggers)
         {
             Destroy(trigger);
+        }
+
+        var allEnemies = FindObjectsOfType<EnemyAI>(true);
+        foreach (var enemy in allEnemies)
+        {
+            if (!enemy.isStaticEnemy)
+                Destroy(enemy.gameObject);
+        }
+
+        var allLoot = FindObjectsOfType<LootItem>(true);
+        foreach (var loot in allLoot)
+        {
+            if (!loot.isStaticLoot)
+                Destroy(loot.gameObject);
         }
     }
 }

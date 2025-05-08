@@ -743,13 +743,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54ee6f236fa1c487b8f877dd2f57ce14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 800
+  maxHealth: 300
   isDead: 0
   healthBar: {fileID: 8008087170151263623}
   speed: 5
   detectionRange: 6
   attackRange: 5
-  attackDamage: 103
+  attackDamage: 30
   attackCooldown: 2
   chargeTime: 1
   attackHitbox: {fileID: 2579760675777211316}

@@ -13,7 +13,6 @@ public class UIManager : MonoBehaviour
     [Header("Panels")]
     public GameObject mainMenuPanel;
     public GameObject pausePanel;
-    public GameObject settingsPanel;
 
     [Header("Buttons")]
     public Button continueButton;
@@ -52,7 +51,6 @@ public class UIManager : MonoBehaviour
             Debug.Log("Starting new game setup.");
             mainMenuPanel.SetActive(false);
             pausePanel.SetActive(false);
-            settingsPanel.SetActive(false);
             gameOverPanel.SetActive(false);
             Time.timeScale = 1f;
             isStartingNewGame = false; 
@@ -95,7 +93,6 @@ public class UIManager : MonoBehaviour
         Time.timeScale = 0f;
         mainMenuPanel.SetActive(true);
         pausePanel.SetActive(false);
-        settingsPanel.SetActive(false);
         gameOverPanel.SetActive(false);
     }
 
@@ -224,7 +221,6 @@ public class UIManager : MonoBehaviour
         gameOverPanel.SetActive(true);
         
         pausePanel.SetActive(false);
-        settingsPanel.SetActive(false);
         mainMenuPanel.SetActive(false);
         
         if (EventSystem.current != null)

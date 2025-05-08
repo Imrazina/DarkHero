@@ -412,12 +412,16 @@ public class BossAI : MonoBehaviour, IDialogueCallback
         {
             col.enabled = false;
         }
-    
-        
         
         tupik.OpenExit();
         tupik.SavePlanksStateIfBossDead();
-        Destroy(gameObject, 2f);
+        StartCoroutine(DeactivateAfterDelay(2f));
+    }
+    
+    private IEnumerator DeactivateAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        gameObject.SetActive(false);
     }
 
     private void Flip()
@@ -426,5 +430,48 @@ public class BossAI : MonoBehaviour, IDialogueCallback
         Vector3 scale = transform.localScale;
         scale.x *= -1;
         transform.localScale = scale;
+    }
+    
+    public void ResetBoss()
+    {
+        if (!gameObject.activeSelf)
+            gameObject.SetActive(true);
+
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
+        if (rb == null)
+            rb = GetComponent<Rigidbody2D>();
+
+        isDead = false;
+        currentHealth = maxHealth;
+
+        if (animator != null && animator.runtimeAnimatorController != null)
+        { 
+            animator.ResetTrigger("Death");
+            animator.Play("BossIdle");
+        }
+        else
+        {
+            Debug.LogWarning($"{name} has no Animator or AnimatorController!");
+        }
+
+        foreach (Collider2D col in GetComponentsInChildren<Collider2D>())
+        {
+            col.enabled = true;
+        }
+
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+            rb.velocity = Vector2.zero;
+        }
+        else
+        {
+            Debug.LogWarning($"{name} has no Rigidbody2D!");
+        }
+
+        dialogueStarted = false;
+        dialogueCompleted = false;
+        riddleAnsweredCorrectly = false;
     }
 }

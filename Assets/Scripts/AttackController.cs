@@ -21,6 +21,8 @@ public class AttackController : MonoBehaviour
     public AudioClip swordSwing1;
     public AudioClip swordSwing2;
     public AudioClip blockSound;
+    [Range(0, 1)] public float soundVolume = 1f;
+    [Range(0, 1)] public float defendVolume = 0.1f;
     private AudioSource audioSource;
 
     void Start()
@@ -179,7 +181,7 @@ public class AttackController : MonoBehaviour
         if (blockSound != null && audioSource != null)
         {
             audioSource.pitch = 1f;
-            audioSource.PlayOneShot(blockSound, 0.7f); 
+            audioSource.PlayOneShot(blockSound, defendVolume); 
         }
     }
     
@@ -209,6 +211,6 @@ public class AttackController : MonoBehaviour
         else clip = Random.value > 0.5f ? swordSwing1 : swordSwing2;
     
         audioSource.pitch = Random.Range(0.9f, 1.1f);
-        audioSource.PlayOneShot(clip);
+        audioSource.PlayOneShot(clip, soundVolume);
     }
 }

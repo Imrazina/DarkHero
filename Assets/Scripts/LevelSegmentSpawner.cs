@@ -28,6 +28,7 @@ public class LevelSegmentSpawner : MonoBehaviour
     void Start()
     {
         var segmentInfo = GetComponentInParent<SegmentInfo>();
+        segmentGridPosition = segmentInfo != null ? segmentInfo.GridPosition : Vector2Int.zero;
         if (segmentInfo == null)
         {
             Debug.LogError("SegmentInfo not found in parent objects!");
@@ -54,9 +55,16 @@ public class LevelSegmentSpawner : MonoBehaviour
     {
         var levelState = GameStateManager.Instance.CurrentState.levelState;
         var savedState = levelState.spawnStates.Find(s => s.segmentPosition == segmentGridPosition);
+    
         if (savedState == null) 
             return true;
-        
+
+        foreach (var lootState in savedState.loot)
+        {
+            if (lootState.isCollected || GameStateManager.Instance.CurrentState.collectedItems.Contains(lootState.uniqueID))
+                return false;
+        }
+    
         return savedState.enemies.Count == 0 && savedState.loot.Count == 0;
     }
 
@@ -158,8 +166,7 @@ public class LevelSegmentSpawner : MonoBehaviour
         spawnState.enemies.Clear();
         spawnState.loot.Clear();
     }
-
-    // Сохраняем врагов по их точкам спавна
+    
     for (int i = 0; i < enemySpawnPoints.Length; i++)
     {
         if (i >= spawnedEnemies.Count || spawnedEnemies[i] == null) continue;
@@ -169,14 +176,13 @@ public class LevelSegmentSpawner : MonoBehaviour
         
         spawnState.enemies.Add(new SpawnedEnemyState
         {
-            spawnPointIndex = i, // Сохраняем индекс точки спавна
+            spawnPointIndex = i, 
             prefabName = GetOriginalPrefabName(enemy),
             worldType = worldComponent != null ? worldComponent.worldType : WorldType.AlwaysActive,
             uniqueID = enemy.GetComponent<EnemyAI>()?.uniqueID ?? System.Guid.NewGuid().ToString()
         });
     }
 
-    // Сохраняем лут по точкам спавна
     for (int i = 0; i < lootSpawnPoints.Length; i++)
     {
         if (i >= spawnedLoot.Count || spawnedLoot[i] == null) continue;
@@ -187,7 +193,7 @@ public class LevelSegmentSpawner : MonoBehaviour
         
         spawnState.loot.Add(new SpawnedLootState
         {
-            spawnPointIndex = i, // Сохраняем индекс точки спавна
+            spawnPointIndex = i, 
             prefabName = GetOriginalPrefabName(loot),
             worldType = worldComponent != null ? worldComponent.worldType : WorldType.AlwaysActive,
             uniqueID = lootItem?.uniqueID ?? $"Loot_{lootIdCounter++}",
@@ -198,7 +204,6 @@ public class LevelSegmentSpawner : MonoBehaviour
 
     private string GetOriginalPrefabName(GameObject obj)
     {
-        // Убираем "(Clone)" и номер, если есть
         return obj.name.Split('(')[0].Trim();
     }
 
@@ -217,6 +222,9 @@ public class LevelSegmentSpawner : MonoBehaviour
     // Загружаем врагов
     foreach (var enemyState in spawnState.enemies)
     {
+        if (GameStateManager.Instance.CurrentState.collectedItems.Contains(enemyState.uniqueID))
+            continue;
+        
         if (enemyState.spawnPointIndex >= enemySpawnPoints.Length) continue;
         
         var spawnPoint = enemySpawnPoints[enemyState.spawnPointIndex];
@@ -245,29 +253,27 @@ public class LevelSegmentSpawner : MonoBehaviour
     // Загружаем лут
     foreach (var lootState in spawnState.loot)
     {
-        if (lootState.isCollected || lootState.spawnPointIndex >= lootSpawnPoints.Length) continue;
-        
+        if (lootState.spawnPointIndex >= lootSpawnPoints.Length) continue;
+        if (lootState.isCollected || GameStateManager.Instance.CurrentState.collectedItems.Contains(lootState.uniqueID))
+            continue;
+
         var spawnPoint = lootSpawnPoints[lootState.spawnPointIndex];
         var prefab = System.Array.Find(lootPrefabs, p => p.name == lootState.prefabName);
         if (prefab == null) continue;
-        
+    
         GameObject loot = Instantiate(prefab, spawnPoint.position, spawnPoint.rotation, transform);
         spawnedLoot.Add(loot);
-        
+    
         var worldComponent = loot.GetComponent<WorldDependentObject>();
         if (worldComponent == null)
-        {
             worldComponent = loot.AddComponent<WorldDependentObject>();
-        }
-        
+    
         worldComponent.worldType = lootState.worldType;
         worldComponent.UpdateVisibility(isSpiritWorld);
-        
+    
         var lootItem = loot.GetComponent<LootItem>();
         if (lootItem != null)
-        {
             lootItem.uniqueID = lootState.uniqueID;
-        }
     }
 }
 

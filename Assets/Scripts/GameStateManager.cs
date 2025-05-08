@@ -210,6 +210,27 @@ public class GameStateManager : MonoBehaviour
     public void FullReset()
     {
         ResetGame(); 
+        DeleteSaveFile();
+        
+        CurrentState.collectedItems.RemoveAll(id => id == "Rune_1");
+        CurrentState.hasRune = false;
+        
+        var runes = FindObjectsOfType<RunePickup>(true);
+        foreach (var rune in runes)
+        {
+            rune.gameObject.SetActive(true);
+            if (rune.pickupCollider != null) 
+                rune.pickupCollider.enabled = true;
+        }
+        
+        Debug.Log($"Rune reset: In collectedItems? {CurrentState.collectedItems.Contains("Rune_1")}");
+        
+     //   var levelGenerator = FindObjectOfType<LevelGenerator>();
+    //    if (levelGenerator != null)
+     //   {
+     //       levelGenerator.ClearExistingLevel();
+     //       levelGenerator.GenerateLevel(); 
+   //    }
         
         var player = FindObjectOfType<Character>();
         if (player != null)
@@ -227,5 +248,23 @@ public class GameStateManager : MonoBehaviour
         {
             Camera.main.transform.position = new Vector3(0.16f, 0.95f, -10); 
         }
+    }
+    
+    public void DeleteSaveFile()
+    {
+        if (File.Exists(saveFilePath))
+        {
+            File.Delete(saveFilePath);
+            Debug.Log("Файл сохранения удален: " + saveFilePath);
+        }
+        string backupPath = saveFilePath + ".bak";
+        if (File.Exists(backupPath))
+        {
+            File.Delete(backupPath);
+            Debug.Log("Резервный файл сохранения удален: " + backupPath);
+        }
+        CurrentState = new GameState();
+        PlayerPrefs.DeleteKey("GameSaved");
+        PlayerPrefs.Save();
     }
 }

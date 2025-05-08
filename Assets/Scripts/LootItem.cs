@@ -12,12 +12,20 @@ public class LootItem : MonoBehaviour
     
     public GameObject pickupEffect;
     public AudioClip pickupSound;
+    
+    [Header("Loot Sound Settings")]
+    [Range(0, 2)] public float lootSoundVolume = 1.5f;
 
     private void Start()
     {
+        if (string.IsNullOrEmpty(uniqueID))
+        {
+            uniqueID = $"ManualLoot_{transform.GetSiblingIndex()}_{transform.position.x}_{transform.position.y}";
+        }
+
         if (GameStateManager.Instance.CurrentState.collectedItems.Contains(uniqueID))
         {
-            Destroy(gameObject); 
+            Destroy(gameObject);
         }
     }
 
@@ -52,11 +60,8 @@ public class LootItem : MonoBehaviour
         GameStateManager.Instance.CurrentState.totalCoins += value;
         StatsManager.Instance.AddCoins(value); 
 
-        if (pickupEffect)
-            Instantiate(pickupEffect, transform.position, Quaternion.identity);
-
         if (pickupSound)
-            AudioSource.PlayClipAtPoint(pickupSound, transform.position);
+            AudioSource.PlayClipAtPoint(pickupSound, transform.position, lootSoundVolume);
 
         Destroy(gameObject);
     }

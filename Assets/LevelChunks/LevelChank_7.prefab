@@ -9848,7 +9848,7 @@ GameObject:
   - component: {fileID: 3905849021218869975}
   - component: {fileID: 268985320885003166}
   - component: {fileID: 3652258745141395000}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Platform9
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -10921,7 +10921,7 @@ GameObject:
   - component: {fileID: 1308173630962001516}
   - component: {fileID: 5407104689618746461}
   - component: {fileID: 8775698368753146105}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Platform9 (1)
   m_TagString: Ground
   m_Icon: {fileID: 0}

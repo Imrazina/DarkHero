@@ -19,18 +19,28 @@ public class PlayerInventory : MonoBehaviour
     public Image damageBoostIcon;
     public TMP_Text invincibilityText; 
     public Image invincibilityIcon;
+    
+    [Header("Sounds")]
+    public AudioClip potionIncreaseSound;
 
     private void Start()
     {
         potionCount = GameStateManager.Instance.CurrentState.totalPotions;
-
         hasRune = GameStateManager.Instance.CurrentState.collectedItems.Contains("Rune_1");
+        
         if (runeIcon != null)
+        {
             runeIcon.color = hasRune ? Color.white : Color.black;
+        }
+        else
+        {
+            Debug.LogError("Rune Icon не назначен в инспекторе!");
+        }
         
         damageBoostCount = GameStateManager.Instance.CurrentState.damageBoostCount;
         invincibilityCount = GameStateManager.Instance.CurrentState.invincibilityCount;
-    
+        Debug.Log($"Rune state: Active={gameObject.activeSelf}, Collected={GameStateManager.Instance.CurrentState.collectedItems.Contains("Rune_1")}");
+
         UpdateAllUI();
     }
     
@@ -45,8 +55,20 @@ public class PlayerInventory : MonoBehaviour
     public void PickUpRune()
     {
         hasRune = true;
+        if (potionIncreaseSound != null)
+            AudioSource.PlayClipAtPoint(potionIncreaseSound, Camera.main.transform.position);
+        
         if (runeIcon != null)
+        {
             runeIcon.color = Color.white;
+        }
+        else
+        {
+            Debug.LogError("Rune Icon is missing! Check inspector.");
+        }
+        
+        GameStateManager.Instance.CurrentState.hasRune = true;
+        GameStateManager.Instance.SaveGame();
     }
     public void AddPotion(int amount)
     {

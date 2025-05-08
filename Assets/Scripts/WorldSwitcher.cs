@@ -6,12 +6,21 @@ public class WorldSwitcher : MonoBehaviour
 public GameObject normalWorld;
     public GameObject spiritWorld;
     public Transform player;
+    
+    [Header("Sound Effects")]
+    public AudioClip worldSwitchSound;
+    private AudioSource audioSource;
 
     private void Start()
     {
-        // Загружаем состояние мира и камеры
         LoadWorldState();
         LoadCameraState();
+        
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
 
     private void Update()
@@ -24,6 +33,11 @@ public GameObject normalWorld;
 
     void SwitchWorld()
     {
+        if (worldSwitchSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(worldSwitchSound);
+        }
+        
         GameStateManager.Instance.CurrentState.isInSpiritWorld = !GameStateManager.Instance.CurrentState.isInSpiritWorld;
         GameStateManager.Instance.CurrentState.playerPosition = player.position;
         SaveCameraState();
@@ -44,15 +58,13 @@ public GameObject normalWorld;
         bool isSpiritWorld = GameStateManager.Instance.CurrentState.isInSpiritWorld;
         normalWorld.SetActive(!isSpiritWorld);
         spiritWorld.SetActive(isSpiritWorld);
-    
-        // Обновляем все WorldDependentObject на сцене
+        
         WorldDependentObject[] worldObjects = FindObjectsOfType<WorldDependentObject>(true);
         foreach (var obj in worldObjects)
         {
             obj.UpdateVisibility(isSpiritWorld);
         }
-    
-        // Обновляем спавнеры
+        
         LevelSegmentSpawner[] spawners = FindObjectsOfType<LevelSegmentSpawner>();
         foreach (var spawner in spawners)
         {

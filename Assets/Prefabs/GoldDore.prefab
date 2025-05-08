@@ -148,7 +148,7 @@ MonoBehaviour:
   value: 10
   uniqueID: 
   pickupEffect: {fileID: 0}
-  pickupSound: {fileID: 0}
+  pickupSound: {fileID: 8300000, guid: 6ec8ca44fa6504902b3492c1e642aff9, type: 3}
 --- !u!50 &4281884678036610253
 Rigidbody2D:
   serializedVersion: 4

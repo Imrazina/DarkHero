@@ -54,7 +54,10 @@ public class LevelSegmentSpawner : MonoBehaviour
     {
         var levelState = GameStateManager.Instance.CurrentState.levelState;
         var savedState = levelState.spawnStates.Find(s => s.segmentPosition == segmentGridPosition);
-        return savedState == null || (savedState.enemies.Count == 0 && savedState.loot.Count == 0);
+        if (savedState == null) 
+            return true;
+        
+        return savedState.enemies.Count == 0 && savedState.loot.Count == 0;
     }
 
     void SpawnEnemies()
@@ -191,16 +194,16 @@ public class LevelSegmentSpawner : MonoBehaviour
             isCollected = lootItem == null || GameStateManager.Instance.CurrentState.collectedItems.Contains(lootItem.uniqueID)
         });
     }
-}
+    }
 
-private string GetOriginalPrefabName(GameObject obj)
-{
-    // Убираем "(Clone)" и номер, если есть
-    return obj.name.Split('(')[0].Trim();
-}
+    private string GetOriginalPrefabName(GameObject obj)
+    {
+        // Убираем "(Clone)" и номер, если есть
+        return obj.name.Split('(')[0].Trim();
+    }
 
-private void LoadSpawnedObjects()
-{
+    private void LoadSpawnedObjects()
+    {
     var levelState = GameStateManager.Instance.CurrentState.levelState;
     var spawnState = levelState.spawnStates.Find(s => s.segmentPosition == segmentGridPosition);
     

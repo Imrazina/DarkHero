@@ -16,9 +16,21 @@ public class AttackController : MonoBehaviour
 
     private Dictionary<string, float> attackCooldowns = new Dictionary<string, float>();
     private Dictionary<string, float> lastAttackTime = new Dictionary<string, float>();
+    
+    [Header("Sound Effects")]
+    public AudioClip swordSwing1;
+    public AudioClip swordSwing2;
+    public AudioClip blockSound;
+    private AudioSource audioSource;
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+        
         if (hitbox == null) hitbox = GetComponentInChildren<HitboxController>(); 
         
         if (hitbox == null) Debug.LogError("HitboxController не найден! Назначь его в инспекторе.");
@@ -103,6 +115,7 @@ public class AttackController : MonoBehaviour
     IEnumerator PerformAttack(string attackType, float currentTime)
     {
         isAttacking = true;
+        PlaySwordSound();
         canCombo = false;
         currentAttack = attackType;
         lastAttackTime[attackType] = currentTime;
@@ -162,6 +175,12 @@ public class AttackController : MonoBehaviour
     void Block()
     {
         animator.SetBool("IsBlocking", true);
+        
+        if (blockSound != null && audioSource != null)
+        {
+            audioSource.pitch = 1f;
+            audioSource.PlayOneShot(blockSound, 0.7f); 
+        }
     }
     
     public bool IsBlocking()
@@ -178,5 +197,18 @@ public class AttackController : MonoBehaviour
         float facingDirection = transform.localScale.x > 0 ? 1 : -1;
         
         return (directionToAttacker.x * facingDirection) > 0;
+    }
+    
+    private void PlaySwordSound()
+    {
+        if (swordSwing1 == null && swordSwing2 == null) return;
+    
+        AudioClip clip;
+        if (swordSwing1 == null) clip = swordSwing2;
+        else if (swordSwing2 == null) clip = swordSwing1;
+        else clip = Random.value > 0.5f ? swordSwing1 : swordSwing2;
+    
+        audioSource.pitch = Random.Range(0.9f, 1.1f);
+        audioSource.PlayOneShot(clip);
     }
 }

@@ -88,6 +88,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   wallCheckDistance: 0.7
+  invulnerabilityDuration: 0.5
+  attackSound: {fileID: 8300000, guid: 7428549ae798b4f018921e778af45222, type: 3}
+  deathSound: {fileID: 8300000, guid: 66e4e63788fee485892dc66a05642b47, type: 3}
+  useChargeBeforeAttack: 0
+  useInvulnerabilityDuringAttack: 1
   uniqueID: 
 --- !u!1 &6890011536594127536
 GameObject:

@@ -32,6 +32,13 @@ public class DialogueManager : MonoBehaviour
     private Dictionary<string, DialogueLine> dialogueMap;
     private bool skipTyping = false;
     
+    [Header("Sound Effects")]
+    public AudioClip typingSound;
+    public float typingSoundDelay = 0.08f;
+    private AudioSource audioSource;
+    private float lastTypingSoundTime;
+    [Range(0, 2)] public float TypingSoundVolume = 0.9f;
+    
     private MonoBehaviour currentNPC;
 
     private void Awake()
@@ -43,7 +50,7 @@ public class DialogueManager : MonoBehaviour
 
         InitializeButtonsByPosition();
         FindTextComponents();
-
+        audioSource = gameObject.AddComponent<AudioSource>();
         // Проверяем ссылки после инициализации
         CheckReferences();
     }
@@ -160,6 +167,10 @@ public class DialogueManager : MonoBehaviour
         imagePanda.SetActive(line.avatar == "ImagePanda");
         imageSamurai.SetActive(line.avatar == "ImageSamurai");
         imageBoss.SetActive(line.avatar == "ImageBoss");
+        
+
+        float soundCooldown = 0.1f; 
+        float nextSoundTime = 0f;
     
         foreach (char letter in line.text.ToCharArray())
         {
@@ -169,6 +180,11 @@ public class DialogueManager : MonoBehaviour
                 break;
             }
             dialogueText.text += letter;
+            if (typingSound != null && Time.time > nextSoundTime)
+            {
+                audioSource.PlayOneShot(typingSound,TypingSoundVolume);
+                nextSoundTime = Time.time + soundCooldown;
+            }
             yield return new WaitForSeconds(0.05f);
         }
 

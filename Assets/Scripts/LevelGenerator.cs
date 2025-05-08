@@ -12,8 +12,8 @@ public class LevelGenerator : MonoBehaviour
 
     public PrefabDirections[] levelPrefabs;
     public Transform spawnPoint;
-    public int horizontalSegments = 7;
-    public int maxVerticalDepth = 10;
+    public int horizontalSegments = 2;
+    public int maxVerticalDepth = 2;
     public float segmentWidth = 18f;
     public float segmentHeight = 11f;
 
@@ -28,7 +28,7 @@ public class LevelGenerator : MonoBehaviour
         GenerateLevel();
     }
 
-    private void GenerateLevel()
+    public void GenerateLevel()
     {
         InitializeStartSegment();
         GenerateMainLine();
@@ -186,6 +186,7 @@ public class LevelGenerator : MonoBehaviour
     private void CheckAndGenerateBranch(Vector2Int startPos, Direction direction)
     {
         if (!HasExitAtPosition(startPos, direction)) return;
+        if (Mathf.Abs(startPos.x) >= horizontalSegments) return;
 
         currentGridPos = startPos;
         currentDirection = direction;
@@ -340,57 +341,68 @@ public class LevelGenerator : MonoBehaviour
         };
     }
 
-    private void CreateCameraTrigger(Vector2Int fromPos, Vector2Int toPos, Vector3 segmentWorldPos)
+ private void CreateCameraTrigger(Vector2Int fromPos, Vector2Int toPos, Vector3 segmentWorldPos)
+{
+    Vector3 fromWorldPos = CalculateWorldPosition(fromPos);
+    Vector3 toWorldPos = CalculateWorldPosition(toPos);
+    Vector3 triggerPos = (fromWorldPos + toWorldPos) / 2f;
+
+    Debug.Log($"[CameraTrigger] Creating trigger between {fromPos} -> {toPos}");
+
+    GameObject triggerObject = new GameObject("CameraSwitchTrigger");
+    triggerObject.transform.position = triggerPos;
+    triggerObject.transform.parent = transform;
+    triggerObject.tag = "CameraTrigger";
+
+    BoxCollider2D collider = triggerObject.AddComponent<BoxCollider2D>();
+    collider.isTrigger = true;
+
+    bool isHorizontalTransition = fromPos.x != toPos.x;
+
+    if (isHorizontalTransition)
     {
-        Vector3 fromWorldPos = CalculateWorldPosition(fromPos);
-        Vector3 toWorldPos = CalculateWorldPosition(toPos);
-        Vector3 triggerPos = (fromWorldPos + toWorldPos) / 2f;
-
-        Debug.Log($"[CameraTrigger] Creating trigger between {fromPos} -> {toPos}");
-
-        GameObject triggerObject = new GameObject("CameraSwitchTrigger");
-        triggerObject.transform.position = triggerPos;
-        triggerObject.transform.parent = transform;
-        triggerObject.tag = "CameraTrigger";
-
-        BoxCollider2D collider = triggerObject.AddComponent<BoxCollider2D>();
-        collider.isTrigger = true;
-
-        bool isHorizontalTransition = fromPos.x != toPos.x;
-
-        if (isHorizontalTransition)
-        {
-            collider.size = new Vector2(0.1f, segmentHeight);
-        }
-        else
-        {
-            collider.size = new Vector2(segmentWidth, 0.1f);
-        }
-
-        CameraSwitchTrigger switchTrigger = triggerObject.AddComponent<CameraSwitchTrigger>();
-
-        if (!placedSegments.TryGetValue(toPos, out GameObject nextSegment) ||
-            !placedSegments.TryGetValue(fromPos, out GameObject prevSegment))
-        {
-            Debug.LogWarning($"[CameraTrigger] Missing segment references at {fromPos} or {toPos}");
-            return;
-        }
-
-        Transform forwardTarget = nextSegment.transform.Find("CameraTarget_Center");
-        Transform backwardTarget = prevSegment.transform.Find("CameraTarget_Center");
-
-        if (forwardTarget == null || backwardTarget == null)
-        {
-            Debug.LogWarning($"[CameraTrigger] Missing CameraTarget_Center in segments at {fromPos} or {toPos}");
-        }
-        else
-        {
-            switchTrigger.cameraTargetForward = forwardTarget;
-            switchTrigger.cameraTargetBackward = backwardTarget;
-        }
-
-        Debug.Log($"[CameraTrigger] Trigger set with Forward: {forwardTarget?.name}, Backward: {backwardTarget?.name}");
+        collider.size = new Vector2(0.1f, segmentHeight);
     }
+    else
+    {
+        collider.size = new Vector2(segmentWidth, 0.1f);
+    }
+
+    CameraSwitchTrigger switchTrigger = triggerObject.AddComponent<CameraSwitchTrigger>();
+
+    if (!placedSegments.TryGetValue(toPos, out GameObject nextSegment) ||
+        !placedSegments.TryGetValue(fromPos, out GameObject prevSegment))
+    {
+        Debug.LogWarning($"[CameraTrigger] Missing segment references at {fromPos} or {toPos}");
+        return;
+    }
+
+    Transform forwardTarget = nextSegment.transform.Find("CameraTarget_Center");
+    Transform backwardTarget = prevSegment.transform.Find("CameraTarget_Center");
+
+    bool isRightOrUp = (toPos.x > fromPos.x) || (toPos.y > fromPos.y);
+    
+    if (isRightOrUp)
+    {
+        switchTrigger.cameraTargetForward = forwardTarget;
+        switchTrigger.cameraTargetBackward = backwardTarget;
+    }
+    else
+    {
+        switchTrigger.cameraTargetForward = backwardTarget;
+        switchTrigger.cameraTargetBackward = forwardTarget;
+    }
+
+    if (switchTrigger.cameraTargetForward == null || switchTrigger.cameraTargetBackward == null)
+    {
+        Debug.LogWarning($"[CameraTrigger] Missing CameraTarget_Center in segments at {fromPos} or {toPos}");
+    }
+    else
+    {
+        Debug.Log($"[CameraTrigger] Trigger set with Forward: {switchTrigger.cameraTargetForward.name}, " +
+                 $"Backward: {switchTrigger.cameraTargetBackward.name}");
+    }
+}
 
     
     private void GenerateMissingCameraTriggers()
@@ -500,7 +512,7 @@ public class LevelGenerator : MonoBehaviour
         return -1;
     }
 
-    private void ClearExistingLevel()
+    public void ClearExistingLevel()
     {
         foreach (var segment in placedSegments.Values)
         {

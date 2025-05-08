@@ -4299,7 +4299,7 @@ GameObject:
   - component: {fileID: 432277783270750371}
   - component: {fileID: 8136636526604133964}
   - component: {fileID: 3743354849907507507}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Platform9
   m_TagString: Ground
   m_Icon: {fileID: 0}

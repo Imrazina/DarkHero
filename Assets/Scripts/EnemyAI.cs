@@ -18,11 +18,6 @@ public class EnemyAI : MonoBehaviour
     public int attackDamage = 10;
     public float attackCooldown = 1.5f;
     private bool canAttack = true;
-    public float attackWindupRange = 1.8f;
-    public float attackWindupTime = 0.3f;
-    public float attackDuration = 0.4f;
-    public float invulnerabilityDuration = 0.5f;
-
 
     [Header("Ground Check")] public Vector2 frontGroundCheck = new Vector2(0.5f, -0.5f);
     public Vector2 backGroundCheck = new Vector2(-0.5f, -0.5f);
@@ -38,15 +33,28 @@ public class EnemyAI : MonoBehaviour
     private bool hasDealtDamage = false;
     private bool isAttacking = false;
     
+    [Header("Combat")]
+    public float invulnerabilityDuration = 0.5f;
+    
+    private bool isInvulnerable = false;
+    private float originalSpeed;
+    private Vector2 movementDirection;
+    
+    [Header("Sound Effects")]
+    public AudioClip attackSound;
+    public AudioClip deathSound;
+    private AudioSource audioSource;
+    
+    [Header("Combat Behavior Settings")]
+    public bool useChargeBeforeAttack = true;
+    public bool useInvulnerabilityDuringAttack = true;
+    
     public int GetCurrentHealth() => currentHealth;
     public bool IsDead() => isDead;
     public string uniqueID; 
     private bool isAgro => Vector2.Distance(transform.position, target.position) <= detectionRange;
 
-    private bool isInvulnerable = false;
-    private float originalSpeed;
-    private Vector2 movementDirection;
-    
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -59,14 +67,20 @@ public class EnemyAI : MonoBehaviour
             rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         }
         
-        originalSpeed = speed;
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
 
     void Update()
     {
-        if (isDead || target == null) return;
-        
-        movementDirection = Vector2.Lerp(movementDirection, (target.position - transform.position).normalized, Time.deltaTime * 5f);
+        if (isDead || target == null)
+        {
+            animator.SetBool("Run", false);
+            return;
+        }
 
         float distanceToPlayer = Vector2.Distance(transform.position, target.position);
         Vector2 directionToPlayer = (target.position - transform.position).normalized;
@@ -75,7 +89,9 @@ public class EnemyAI : MonoBehaviour
                           distanceToPlayer > minFollowDistance;
 
         bool shouldFaceRight = directionToPlayer.x > 0;
-        if (shouldFaceRight != facingRight && Time.time > lastFlipTime + flipCooldown)
+        float currentCooldown = isAgro ? 0f : flipCooldown;
+
+        if (shouldFaceRight != facingRight && Time.time > lastFlipTime + currentCooldown)
         {
             Flip();
             lastFlipTime = Time.time;
@@ -106,8 +122,6 @@ public class EnemyAI : MonoBehaviour
 
     bool CanMoveTowards(Vector2 direction)
     {
-        if (target == null) return false;
-        
         Vector2 checkPos = (Vector2)transform.position +
                            (facingRight ? frontGroundCheck : backGroundCheck);
 
@@ -155,11 +169,9 @@ public class EnemyAI : MonoBehaviour
     }
 
     void MoveTowardsPlayer(Vector2 direction)
-    {  
-        if (target == null) return;
+    {
         animator.SetBool("Run", true);
-        Vector2 targetVelocity = direction * speed;
-        rb.velocity = Vector2.Lerp(rb.velocity, targetVelocity, Time.deltaTime * 5f);
+        rb.velocity = new Vector2(direction.x * speed, rb.velocity.y);
     }
 
     void Flip()
@@ -175,33 +187,36 @@ public class EnemyAI : MonoBehaviour
         canAttack = false;
         isAttacking = true;
         hasDealtDamage = false;
-        
-        float randomDelay = Random.Range(0.1f, 0.3f);
-        yield return new WaitForSeconds(randomDelay);
-        
-        animator.SetTrigger("Charge");
-        speed = originalSpeed * 0.5f; 
 
-        yield return new WaitForSeconds(attackWindupTime);
-        
-        StartCoroutine(InvulnerabilityFrame());
-        
-        int attackType = Random.Range(0, 2);
-        animator.SetTrigger(attackType == 0 ? "Attack1" : "Attack2");
-        
-        rb.velocity = movementDirection * originalSpeed * 1.2f;
+        if (useChargeBeforeAttack)
+        {
+            animator.SetTrigger("Charge");
+            rb.velocity = Vector2.zero;
+            rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
 
+            float chargeDuration = 0.3f;
+            yield return new WaitForSeconds(chargeDuration);
+        }
+        
+        if (useInvulnerabilityDuringAttack)
+            StartCoroutine(InvulnerabilityFrame());
+        
+        yield return new WaitForSeconds(0.15f); 
+        
+        if (attackSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(attackSound);
+        }
+
+        animator.SetTrigger("Attack");
         yield return new WaitForSeconds(0.1f);
         DealDamage();
 
-        yield return new WaitForSeconds(attackDuration);
-        
-        speed = originalSpeed;
-        rb.velocity = Vector2.zero;
-
-        yield return new WaitForSeconds(attackCooldown);
+        float cooldownLeft = attackCooldown - (useChargeBeforeAttack ? 0.3f : 0f);
+        yield return new WaitForSeconds(cooldownLeft);
 
         canAttack = true;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         isAttacking = false;
     }
     
@@ -258,7 +273,7 @@ public class EnemyAI : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        if (isDead || isHitAnimating || isInvulnerable) return;
+        if (isDead || isHitAnimating || (isInvulnerable && useInvulnerabilityDuringAttack)) return;
 
         currentHealth -= damage;
         if (currentHealth <= 0)
@@ -266,8 +281,7 @@ public class EnemyAI : MonoBehaviour
             Die();
         }
 
-        AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
-        if (currentState.IsName("hitEnemy")) return;
+        if (isAttacking) return;
 
         StartCoroutine(PlayHitAnimation());
     }
@@ -275,6 +289,8 @@ public class EnemyAI : MonoBehaviour
     IEnumerator PlayHitAnimation()
     {
         isHitAnimating = true;
+        isInvulnerable = true;
+
         animator.SetTrigger("Hit");
 
         Vector2 pushDir = (transform.position - target.position).normalized;
@@ -284,6 +300,7 @@ public class EnemyAI : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
 
         isHitAnimating = false;
+        isInvulnerable = false;
     }
 
 
@@ -293,7 +310,7 @@ public class EnemyAI : MonoBehaviour
 
 
         isDead = true;
-
+        
         StopAllCoroutines();
 
         animator.ResetTrigger("Hit");
@@ -313,6 +330,8 @@ public class EnemyAI : MonoBehaviour
         {
             col.enabled = false;
         }
+        
+        StartCoroutine(PlayDeathSoundsWithDelay());
 
         if (!GameStateManager.Instance.CurrentState.collectedItems.Contains(uniqueID))
         {
@@ -325,6 +344,13 @@ public class EnemyAI : MonoBehaviour
         Destroy(gameObject, 2f);
     }
     
+    private IEnumerator PlayDeathSoundsWithDelay()
+    {
+        yield return new WaitForSeconds(1.5f); 
+        if (deathSound != null){
+            audioSource.PlayOneShot(deathSound);}
+    }
+    
     public void SetHealth(int value)
     {
         currentHealth = value;
@@ -332,11 +358,5 @@ public class EnemyAI : MonoBehaviour
         {
             Die(); 
         }
-    }
-    
-    void OnTargetDeath()
-    {
-        target = null;
-        Patrol();
     }
 }

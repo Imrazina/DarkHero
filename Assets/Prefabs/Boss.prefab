@@ -744,6 +744,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 800
+  isDead: 0
   healthBar: {fileID: 8008087170151263623}
   speed: 5
   detectionRange: 6
@@ -757,10 +758,17 @@ MonoBehaviour:
   chargeEffect: {fileID: 0}
   attackEffect: {fileID: 0}
   chargeSound: {fileID: 0}
-  attackSound: {fileID: 0}
+  attackSound: {fileID: 8300000, guid: 6f96bdcbc08474da9aca6c4d3d537a56, type: 3}
   hitSound: {fileID: 0}
-  deathSound: {fileID: 0}
+  deathSound: {fileID: 8300000, guid: 66e4e63788fee485892dc66a05642b47, type: 3}
   tupik: {fileID: 0}
+  dialogueFile: BossDialogue
+  startDialogueID: boss_intro
+  dialogueCompleted: 0
+  riddleAnsweredCorrectly: 0
+  dialogueTriggerDistance: 5
+  preFightSound: {fileID: 8300000, guid: 172065ae635ba4c9b8824c3427e62b30, type: 3}
+  bossLoopSound: {fileID: 0}
 --- !u!1 &9219670849072285298
 GameObject:
   m_ObjectHideFlags: 0

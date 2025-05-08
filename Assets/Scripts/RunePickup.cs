@@ -10,10 +10,11 @@ public class RunePickup : MonoBehaviour
 
     private void Start()
     {
-        if (GameStateManager.Instance.CurrentState.collectedItems.Contains(uniqueID))
-        {
-            gameObject.SetActive(false);
-        }
+        bool shouldBeActive = !GameStateManager.Instance.CurrentState.collectedItems.Contains(uniqueID);
+        gameObject.SetActive(shouldBeActive);
+    
+        if (pickupCollider != null) 
+            pickupCollider.enabled = shouldBeActive;
     }
 
     private void OnTriggerEnter2D(Collider2D other)

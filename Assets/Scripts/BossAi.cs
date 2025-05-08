@@ -53,6 +53,10 @@ public class BossAI : MonoBehaviour, IDialogueCallback
     public bool riddleAnsweredCorrectly = false;
     public float dialogueTriggerDistance = 5f; 
     private bool dialogueStarted = false;
+    
+    [Header("Boss Sounds")]
+    public AudioClip preFightSound; 
+    public AudioClip bossLoopSound;
 
     void Start()
     {
@@ -72,10 +76,25 @@ public class BossAI : MonoBehaviour, IDialogueCallback
             Die(); 
             return;
         }
+        
+        if (audioSource == null) 
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+            Debug.Log("AudioSource был добавлен автоматически");
+        }
     }
     
     private IEnumerator StartBossEncounter()
     {
+        CameraShake.Instance.Shake(2f, 0.2f);
+        
+        if (preFightSound != null)
+            audioSource.PlayOneShot(preFightSound);
+        
+        MusicController.Instance.SwitchToArenaMusic(1.5f);
+        
+        MusicController.Instance.PlayEventMusic(bossLoopSound, true);
+        
         rb.constraints = RigidbodyConstraints2D.FreezeAll;
         animator.SetBool("Run", false); 
         animator.SetTrigger("Idle"); 
@@ -206,6 +225,8 @@ public class BossAI : MonoBehaviour, IDialogueCallback
     {
         canAttack = false;
         isAttacking = true;
+     //   if (attackWindupSound != null)
+       //     audioSource.PlayOneShot(attackWindupSound);
         rb.velocity = Vector2.zero;
         rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
 
@@ -216,8 +237,10 @@ public class BossAI : MonoBehaviour, IDialogueCallback
         animator.SetTrigger("Attack");
 
         float attackAnimLength = animator.GetCurrentAnimatorStateInfo(0).length;
-        yield return new WaitForSeconds(attackAnimLength * 0.99f);
+        yield return new WaitForSeconds(attackAnimLength * 0.9f);
 
+        if (attackSound != null)
+            audioSource.PlayOneShot(attackSound, 0.8f);
         EnableHitbox(); 
         if (attackEffect != null) attackEffect.Play();
         if (attackSound != null) audioSource.PlayOneShot(attackSound);
@@ -360,6 +383,14 @@ public class BossAI : MonoBehaviour, IDialogueCallback
         if (isDead) return;
         isDead = true;
         
+        if (deathSound != null)
+            audioSource.PlayOneShot(deathSound);
+        
+        MusicController.Instance.SwitchToMainTheme(2f);
+        
+        MusicController.Instance.FadeOutEventMusic(2f);
+        MusicController.Instance.FadeInMainTheme(2f);
+        
         Character player = FindObjectOfType<Character>();
         if (player != null)
         {
@@ -382,6 +413,8 @@ public class BossAI : MonoBehaviour, IDialogueCallback
             col.enabled = false;
         }
     
+        
+        
         tupik.OpenExit();
         tupik.SavePlanksStateIfBossDead();
         Destroy(gameObject, 2f);

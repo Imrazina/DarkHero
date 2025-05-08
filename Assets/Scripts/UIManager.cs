@@ -215,35 +215,7 @@ public class UIManager : MonoBehaviour
         gameOverPanel.SetActive(false);
         gameOverPanel.SetActive(false);
     }
-
-    public void OpenSettings()
-    {
-        Debug.Log("OpenSettings()");
-        openedFromPause = pausePanel.activeSelf;
-
-        settingsPanel.SetActive(true);
-        mainMenuPanel.SetActive(false);
-        pausePanel.SetActive(false);
-        gameOverPanel.SetActive(false);
-    }
-
-    public void CloseSettings()
-    {
-        Debug.Log("CloseSettings()");
-        settingsPanel.SetActive(false);
-
-        if (openedFromPause)
-        {
-            Debug.Log("Возвращаюсь в паузу.");
-            pausePanel.SetActive(true);
-        }
-        else
-        {
-            Debug.Log("Возвращаюсь в главное меню.");
-            mainMenuPanel.SetActive(true);
-        }
-    }
-
+    
     public void ShowGameOver()
     {
         Debug.Log("ShowGameOver()");

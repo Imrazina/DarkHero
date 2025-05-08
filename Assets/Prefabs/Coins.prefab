@@ -147,4 +147,4 @@ MonoBehaviour:
   value: 1
   uniqueID: 
   pickupEffect: {fileID: 0}
-  pickupSound: {fileID: 0}
+  pickupSound: {fileID: 8300000, guid: 6ec8ca44fa6504902b3492c1e642aff9, type: 3}

@@ -85,6 +85,12 @@ public class Character : MonoBehaviour
     public Vector2 groundCheckOffset = new Vector2(0, -0.5f);
     public float wallCheckDistance = 0.5f;
     public LayerMask whatIsGround;
+    
+    [Header("Sound Effects")]
+    public AudioClip deathSound;
+    public AudioClip jumpSound;
+    private AudioSource audioSource;
+    [Range(0, 1)] public float soundVolume = 1f;
 
     private void UpdateGroundAndWallStatus()
     {
@@ -142,6 +148,12 @@ public class Character : MonoBehaviour
         if (characterRenderer != null)
         {
             defaultColor = characterRenderer.color;
+        }
+        
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
         }
         
         if (!GameStateManager.Instance.CurrentState.hasPlayedIntro || 
@@ -317,6 +329,7 @@ public class Character : MonoBehaviour
                 SetAnimState(3);
                 Debug.Log("[Jump] Прыжок с земли");
                 Invoke("DisableGrounded", 0.1f);
+                PlaySound(jumpSound);
             }
             else if ((isTouchingWall || wallCoyoteTimer > 0f) && Mathf.Abs(wallNormal.x) > 0.1f)
             {
@@ -651,6 +664,7 @@ public class Character : MonoBehaviour
     public void Die()
     {
         if (isDead) return;
+        PlaySound(deathSound);
         isDead = true;
 
         rb.velocity = Vector2.zero;
@@ -729,8 +743,7 @@ public class Character : MonoBehaviour
         wasGrounded = isGrounded;
         isGrounded = false;
         isTouchingWall = false;
-
-        // Проверка земли под ногами
+        
         RaycastHit2D centerHit = Physics2D.Raycast(
             transform.position + new Vector3(0, -0.1f, 0),
             Vector2.down,
@@ -738,7 +751,6 @@ public class Character : MonoBehaviour
             whatIsGround
         );
 
-        // Дополнительные проверки по бокам для тонких платформ
         RaycastHit2D leftHit = Physics2D.Raycast(
             transform.position + new Vector3(-groundWidthCheck, -0.1f, 0),
             Vector2.down,
@@ -753,18 +765,14 @@ public class Character : MonoBehaviour
             whatIsGround
         );
 
-        // Проверяем все три луча
         CheckHit(centerHit);
         CheckHit(leftHit);
         CheckHit(rightHit);
 
-        // "Прилипание" к земле
         if (isGrounded && rb.velocity.y <= 0)
         {
             rb.AddForce(Vector2.down * groundStickForce);
         }
-
-        // Проверка стен только если мы в воздухе
         if (!isGrounded)
         {
             CheckWalls();
@@ -779,7 +787,6 @@ public class Character : MonoBehaviour
             if (angle < groundAngleThreshold)
             {
                 isGrounded = true;
-                // Дополнительная проверка чтобы тонкие платформы не считались стеной
                 if (hit.point.y < transform.position.y - 0.2f)
                 {
                     isTouchingWall = false;
@@ -801,9 +808,8 @@ public class Character : MonoBehaviour
         if (wallHit.collider != null)
         {
             float angle = Vector2.Angle(wallHit.normal, Vector2.right);
-            if (angle > 60f) // Считаем только достаточно вертикальные поверхности
+            if (angle > 60f) 
             {
-                // Дополнительная проверка высоты чтобы пол не считался стеной
                 if (wallHit.point.y < transform.position.y - 0.3f)
                 {
                     isTouchingWall = true;
@@ -844,5 +850,14 @@ public class Character : MonoBehaviour
         float dir = spriteTransform != null ? spriteTransform.localScale.x : 1;
         Gizmos.DrawLine(transform.position, 
             transform.position + new Vector3(dir * 0.6f, 0, 0));
+    }
+    
+    private void PlaySound(AudioClip clip)
+    {
+        if (clip != null && audioSource != null)
+        {
+            audioSource.pitch = Random.Range(0.9f, 1.1f);
+            audioSource.PlayOneShot(clip, soundVolume);
+        }
     }
 }

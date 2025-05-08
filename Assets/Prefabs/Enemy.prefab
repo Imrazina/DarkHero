@@ -230,4 +230,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   wallCheckDistance: 0.7
+  attackWindupRange: 1.8
+  attackWindupTime: 0.3
+  attackDuration: 0.4
+  invulnerabilityDuration: 0.5
+  attackSound: {fileID: 8300000, guid: 5eccd21104c9b45d690c4b75b33e0d1b, type: 3}
+  deathSound: {fileID: 8300000, guid: 66e4e63788fee485892dc66a05642b47, type: 3}
   uniqueID: 

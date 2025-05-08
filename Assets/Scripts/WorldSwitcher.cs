@@ -69,6 +69,23 @@ public GameObject normalWorld;
 
             loot.gameObject.SetActive(isInCorrectWorld);
         }
+        
+        var allEnemies = FindObjectsOfType<EnemyAI>(true).Where(e => !e.isStaticEnemy);
+        foreach (var enemy in allEnemies)
+        {
+            if (enemy.IsDead() || GameStateManager.Instance.CurrentState.collectedItems.Contains(enemy.uniqueID))
+            {
+                enemy.gameObject.SetActive(false);
+                continue;
+            }
+
+            var worldComponent = enemy.GetComponent<WorldDependentObject>();
+            bool isInCorrectWorld = worldComponent == null || 
+                                    (isSpiritWorld && worldComponent.worldType == WorldType.SpiritWorld) ||
+                                    (!isSpiritWorld && worldComponent.worldType == WorldType.PeopleWorld);
+
+            enemy.gameObject.SetActive(isInCorrectWorld);
+        }
     }
 
     void UpdateWorldState()
@@ -119,6 +136,8 @@ public GameObject normalWorld;
         {
             player.position = GameStateManager.Instance.CurrentState.playerPosition;
         }
+
+        RefreshAllSpawnedObjects();
     }
     public void ResetWorlds()
     {

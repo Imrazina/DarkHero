@@ -40,6 +40,4 @@ public class RunePickup : MonoBehaviour
         FindObjectOfType<SubtitleManager>().ShowSubtitle("What was that..?", 3f);
         GameStateManager.Instance.SaveGame();
     }
-
-    
 }

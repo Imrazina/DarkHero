@@ -83,7 +83,15 @@ public class GameStateManager : MonoBehaviour
             CurrentState.isBossDead = boss.isDead;
         }
         
-
+        var allEnemies = FindObjectsOfType<EnemyAI>(true);
+        foreach (var enemy in allEnemies)
+        {
+            if (enemy.IsDead() && !string.IsNullOrEmpty(enemy.uniqueID) && 
+                !CurrentState.collectedItems.Contains(enemy.uniqueID))
+            {
+                CurrentState.collectedItems.Add(enemy.uniqueID);
+            }
+        }
 
         string json = JsonUtility.ToJson(CurrentState, true);
         File.WriteAllText(saveFilePath, json);
@@ -164,6 +172,21 @@ public class GameStateManager : MonoBehaviour
                         collider.enabled = true;
                 }
             }
+            var allEnemies = FindObjectsOfType<EnemyAI>(true);
+            foreach (var enemy in allEnemies)
+            {
+                if (CurrentState.collectedItems.Contains(enemy.uniqueID))
+                {
+                    enemy.gameObject.SetActive(false);
+                    enemy.isDead = true;
+                }
+                else
+                {
+                    enemy.gameObject.SetActive(true);
+                    enemy.isDead = false;
+                    enemy.ResetEnemy();
+                }
+            }
             
             var allRunes = FindObjectsOfType<RunePickup>(true);
             foreach (var rune in allRunes)
@@ -223,6 +246,7 @@ public class GameStateManager : MonoBehaviour
         
         CurrentState.collectedItems.RemoveAll(id => id == "Rune_1");
         CurrentState.hasRune = false;
+        CurrentState.collectedItems.Clear();
         
         var runes = FindObjectsOfType<RunePickup>(true);
         foreach (var rune in runes)
@@ -272,6 +296,7 @@ public class GameStateManager : MonoBehaviour
         if (inventory != null)
         {
             inventory.ResetInventory();
+            inventory.UpdateAllUI(); 
         }
         
         var statsManager = FindObjectOfType<StatsManager>();

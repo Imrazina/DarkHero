@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class LevelSegmentSpawner : MonoBehaviour
@@ -55,17 +56,16 @@ public class LevelSegmentSpawner : MonoBehaviour
     {
         var levelState = GameStateManager.Instance.CurrentState.levelState;
         var savedState = levelState.spawnStates.Find(s => s.segmentPosition == segmentGridPosition);
-    
+        
         if (savedState == null) 
             return true;
+        
+        bool hasDeadEnemies = savedState.enemies.Any(e => 
+            GameStateManager.Instance.CurrentState.collectedItems.Contains(e.uniqueID));
+        bool hasCollectedLoot = savedState.loot.Any(l => 
+            l.isCollected || GameStateManager.Instance.CurrentState.collectedItems.Contains(l.uniqueID));
 
-        foreach (var lootState in savedState.loot)
-        {
-            if (lootState.isCollected || GameStateManager.Instance.CurrentState.collectedItems.Contains(lootState.uniqueID))
-                return false;
-        }
-    
-        return savedState.enemies.Count == 0 && savedState.loot.Count == 0;
+        return !hasDeadEnemies && !hasCollectedLoot;
     }
 
     void SpawnEnemies()
@@ -209,46 +209,41 @@ public class LevelSegmentSpawner : MonoBehaviour
 
     private void LoadSpawnedObjects()
     {
-    var levelState = GameStateManager.Instance.CurrentState.levelState;
-    var spawnState = levelState.spawnStates.Find(s => s.segmentPosition == segmentGridPosition);
+        var levelState = GameStateManager.Instance.CurrentState.levelState;
+        var spawnState = levelState.spawnStates.Find(s => s.segmentPosition == segmentGridPosition);
     
-    if (spawnState == null) return;
+        if (spawnState == null) return;
 
-    spawnedEnemies.Clear();
-    spawnedLoot.Clear();
+        spawnedEnemies.Clear();
+        spawnedLoot.Clear();
     
-    bool isSpiritWorld = GameStateManager.Instance.CurrentState.isInSpiritWorld;
-
-    // Загружаем врагов
-    foreach (var enemyState in spawnState.enemies)
-    {
-        if (GameStateManager.Instance.CurrentState.collectedItems.Contains(enemyState.uniqueID))
-            continue;
-        
-        if (enemyState.spawnPointIndex >= enemySpawnPoints.Length) continue;
-        
-        var spawnPoint = enemySpawnPoints[enemyState.spawnPointIndex];
-        var prefab = System.Array.Find(enemyPrefabs, p => p.name == enemyState.prefabName);
-        if (prefab == null) continue;
-        
-        GameObject enemy = Instantiate(prefab, spawnPoint.position, spawnPoint.rotation, transform);
-        spawnedEnemies.Add(enemy);
-        
-        var worldComponent = enemy.GetComponent<WorldDependentObject>();
-        if (worldComponent == null)
+        bool isSpiritWorld = GameStateManager.Instance.CurrentState.isInSpiritWorld;
+        foreach (var enemyState in spawnState.enemies)
         {
-            worldComponent = enemy.AddComponent<WorldDependentObject>();
-        }
+            if (GameStateManager.Instance.CurrentState.collectedItems.Contains(enemyState.uniqueID))
+                continue;
+            
+            if (enemyState.spawnPointIndex >= enemySpawnPoints.Length) continue;
         
-        worldComponent.worldType = enemyState.worldType;
-        worldComponent.UpdateVisibility(isSpiritWorld);
+            var spawnPoint = enemySpawnPoints[enemyState.spawnPointIndex];
+            var prefab = System.Array.Find(enemyPrefabs, p => p.name == enemyState.prefabName);
+            if (prefab == null) continue;
         
-        var enemyComponent = enemy.GetComponent<EnemyAI>();
-        if (enemyComponent != null)
-        {
-            enemyComponent.uniqueID = enemyState.uniqueID;
+            GameObject enemy = Instantiate(prefab, spawnPoint.position, spawnPoint.rotation, transform);
+            spawnedEnemies.Add(enemy);
+        
+            var worldComponent = enemy.GetComponent<WorldDependentObject>();
+            if (worldComponent == null) worldComponent = enemy.AddComponent<WorldDependentObject>();
+        
+            worldComponent.worldType = enemyState.worldType;
+            worldComponent.UpdateVisibility(isSpiritWorld);
+        
+            var enemyComponent = enemy.GetComponent<EnemyAI>();
+            if (enemyComponent != null)
+            {
+                enemyComponent.uniqueID = enemyState.uniqueID;
+            }
         }
-    }
 
     // Загружаем лут
     foreach (var lootState in spawnState.loot)

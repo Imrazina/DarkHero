@@ -5,7 +5,7 @@ public class EnemyAI : MonoBehaviour
 {
     [Header("Health")] public int maxHealth = 100;
     private int currentHealth;
-    private bool isDead = false;
+    public bool isDead = false;
 
     [Header("Movement")] public float speed = 2f;
     public float detectionRange = 2f;
@@ -55,7 +55,16 @@ public class EnemyAI : MonoBehaviour
     
     public int GetCurrentHealth() => currentHealth;
     public bool IsDead() => isDead;
-    public string uniqueID; 
+    public string uniqueID {
+        get => _uniqueID;
+        set {
+            _uniqueID = value;
+            // Добавляем префикс для врагов
+            if (!_uniqueID.StartsWith("Enemy_")) 
+                _uniqueID = "Enemy_" + _uniqueID;
+        }
+    }
+    private string _uniqueID; 
     private bool isAgro => Vector2.Distance(transform.position, target.position) <= detectionRange;
 
     public bool isStaticEnemy = false;
@@ -76,6 +85,18 @@ public class EnemyAI : MonoBehaviour
                 return;
             }
         }
+        
+        if (string.IsNullOrEmpty(uniqueID))
+        {
+            uniqueID = $"Enemy_{transform.position.x}_{transform.position.y}_{Random.Range(1000, 9999)}";
+        }
+
+        if (GameStateManager.Instance.CurrentState.collectedItems.Contains(uniqueID))
+        {
+            isDead = true;
+            gameObject.SetActive(false);
+            return;
+        }
 
         if (rb != null)
         {
@@ -92,6 +113,12 @@ public class EnemyAI : MonoBehaviour
     void Update()
     {
         if (isDead || target == null || isHitAnimating || isAttacking)
+        {
+            animator.SetBool("Run", false);
+            return;
+        }
+        
+        if (isAttacking || isHitAnimating) 
         {
             animator.SetBool("Run", false);
             return;
@@ -202,34 +229,35 @@ public class EnemyAI : MonoBehaviour
         canAttack = false;
         isAttacking = true;
         hasDealtDamage = false;
-        
+    
         if (useChargeBeforeAttack)
         {
             canReactToDamage = false;
             animator.SetTrigger("Charge");
             rb.velocity = Vector2.zero;
             rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(0.3f); 
         }
 
         if (useInvulnerabilityDuringAttack)
             isInvulnerable = true;
-
+        
         animator.SetTrigger("Attack");
         if (attackSound != null) audioSource.PlayOneShot(attackSound);
-        yield return new WaitForSeconds(0.5f); 
-    
-        DealDamage();
-        yield return new WaitForSeconds(0.2f); 
         
+        yield return new WaitForSeconds(0.1f);
+        DealDamage();
+        
+        yield return new WaitForSeconds(0.4f);
+ 
         isInvulnerable = false;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         canReactToDamage = true;
-    
-        float cooldownLeft = attackCooldown - (useChargeBeforeAttack ? 0.9f : 0f);
-        yield return new WaitForSeconds(cooldownLeft);
         
-        canReactToDamage = false;
+        float totalAttackTime = (useChargeBeforeAttack ? 0.3f : 0f) + 0.3f + 0.4f;
+        float cooldownLeft = Mathf.Max(0, attackCooldown - totalAttackTime);
+        yield return new WaitForSeconds(cooldownLeft);
+  
         isAttacking = false;
         canAttack = true;
     }
@@ -243,26 +271,25 @@ public class EnemyAI : MonoBehaviour
 
     public void DealDamage()
     {
-        if (!hasDealtDamage && target != null &&
-            Vector2.Distance(transform.position, target.position) <= attackRange)
+        if (hasDealtDamage || target == null) return;
+    
+        float distance = Vector2.Distance(transform.position, target.position);
+        if (distance > attackRange * 1.2f) return; // +20% допуск
+    
+        var player = target.GetComponent<Character>();
+        if (player == null || player.isDead) return;
+    
+        var attackController = target.GetComponent<AttackController>();
+        if (attackController != null && attackController.IsBlockingTowards(transform.position))
         {
-            var playerAttack = target.GetComponent<AttackController>();
-            var playerCharacter = target.GetComponentInParent<Character>();
-
-            if (playerCharacter != null && !playerCharacter.isDead)
-            {
-                if (playerAttack != null && playerAttack.IsBlockingTowards(transform.position))
-                {
-                    Debug.Log("Атака заблокирована!");
-                }
-                else
-                {
-                    playerCharacter.TakeDamage(attackDamage);
-                }
-
-                hasDealtDamage = true;
-            }
+            Debug.Log("Атака заблокирована!");
         }
+        else
+        {
+            player.TakeDamage(attackDamage);
+        }
+
+        hasDealtDamage = true;
     }
 
     void DebugDrawRays()
@@ -343,7 +370,6 @@ public class EnemyAI : MonoBehaviour
         }
         
         GameStateManager.Instance.CurrentState.pandaState = PandaDialogueState.AfterEnemyDefeated;
-        GameStateManager.Instance.SaveGame();
 
         StartCoroutine(DeactivateAfterDelay(1.5f));
     }

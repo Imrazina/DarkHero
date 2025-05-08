@@ -6,7 +6,16 @@ public class LootItem : MonoBehaviour
     public LootType lootType;
 
     public int value = 1;  
-    public string uniqueID;
+    public string uniqueID {
+        get => _uniqueID;
+        set {
+            _uniqueID = value;
+            // Добавляем префикс для лута
+            if (!_uniqueID.StartsWith("Loot_")) 
+                _uniqueID = "Loot_" + _uniqueID;
+        }
+    }
+    private string _uniqueID;
 
     public bool pickedUp = false;  
     
@@ -22,7 +31,7 @@ public class LootItem : MonoBehaviour
     {
         if (string.IsNullOrEmpty(uniqueID))
         {
-            uniqueID = $"ManualLoot_{transform.GetSiblingIndex()}_{transform.position.x}_{transform.position.y}";
+            uniqueID = $"Loot_{transform.GetSiblingIndex()}_{transform.position.x}_{transform.position.y}_{Random.Range(1000, 9999)}";
         }
 
         if (GameStateManager.Instance.CurrentState.collectedItems.Contains(uniqueID))

@@ -26,6 +26,9 @@ public class UIManager : MonoBehaviour
     private bool isGamePaused = false;
     private bool openedFromPause = false;
     private static bool isStartingNewGame = false;
+    
+    [Header("UI Elements")]
+    public GameObject statsCanvas;
 
     private void Awake()
     {
@@ -94,6 +97,8 @@ public class UIManager : MonoBehaviour
         mainMenuPanel.SetActive(true);
         pausePanel.SetActive(false);
         gameOverPanel.SetActive(false);
+        if(statsCanvas != null)
+            statsCanvas.SetActive(false);
     }
 
     private void Update()
@@ -122,6 +127,9 @@ public class UIManager : MonoBehaviour
         mainMenuPanel.SetActive(false);
         gameOverPanel.SetActive(false);
         pausePanel.SetActive(false);
+        
+        if(statsCanvas != null)
+            statsCanvas.SetActive(true);
  
         StartCoroutine(StartGameAfterReset());
     }
@@ -159,6 +167,8 @@ public class UIManager : MonoBehaviour
         }
         
         mainMenuPanel.SetActive(false);
+        if(statsCanvas != null)
+            statsCanvas.SetActive(true);
         Time.timeScale = 1f;
     }
 
@@ -211,6 +221,9 @@ public class UIManager : MonoBehaviour
         pausePanel.SetActive(false);
         gameOverPanel.SetActive(false);
         gameOverPanel.SetActive(false);
+        
+        if(statsCanvas != null)
+            statsCanvas.SetActive(false);
     }
     
     public void ShowGameOver()

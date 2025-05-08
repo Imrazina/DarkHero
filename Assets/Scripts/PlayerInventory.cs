@@ -6,7 +6,7 @@ public class PlayerInventory : MonoBehaviour
 {
     public bool hasRune = false;
     
-    public SpriteRenderer runeIcon;
+    public Image runeIcon;
     
     public int potionCount = 0;
     public TMP_Text potionText; 
@@ -31,7 +31,7 @@ public class PlayerInventory : MonoBehaviour
         if (runeIcon != null)
         {
             runeIcon.color = hasRune ? Color.white : Color.black;
-        }
+        } 
         else
         {
             Debug.LogError("Rune Icon не назначен в инспекторе!");
@@ -83,9 +83,15 @@ public class PlayerInventory : MonoBehaviour
     {
         hasRune = false;
         potionCount = 0;
+        damageBoostCount = 0;
+        invincibilityCount = 0;
 
         if (runeIcon != null)
             runeIcon.color = Color.black;
+        
+        GameStateManager.Instance.CurrentState.totalPotions = potionCount;
+        GameStateManager.Instance.CurrentState.damageBoostCount = damageBoostCount;
+        GameStateManager.Instance.CurrentState.invincibilityCount = invincibilityCount;
 
         UpdateAllUI();
     }

@@ -74,13 +74,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  isDead: 0
   speed: 2
   detectionRange: 2
   minFollowDistance: 1
   flipCooldown: 3
   attackRange: 1.5
   attackDamage: 30
-  attackCooldown: 2
+  attackCooldown: 3
   frontGroundCheck: {x: 1, y: -0.6}
   backGroundCheck: {x: -1, y: -0.6}
   groundCheckDistance: 1
@@ -88,13 +89,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   wallCheckDistance: 0.7
-  invulnerabilityDuration: 0.2
+  invulnerabilityDuration: 0.3
   attackSound: {fileID: 8300000, guid: 7428549ae798b4f018921e778af45222, type: 3}
   deathSound: {fileID: 8300000, guid: 66e4e63788fee485892dc66a05642b47, type: 3}
   useChargeBeforeAttack: 0
   useInvulnerabilityDuringAttack: 1
-  postAttackVulnerabilityDuration: 2
-  uniqueID: 
+  postAttackVulnerabilityDuration: 0.6
   isStaticEnemy: 0
 --- !u!1 &6890011536594127536
 GameObject:

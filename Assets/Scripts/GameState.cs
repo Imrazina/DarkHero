@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 
 [System.Serializable]
@@ -30,10 +29,10 @@ public class LevelState
 [System.Serializable]
 public class SpawnedEnemyState
 {
-    public int spawnPointIndex; // Индекс точки спавна
-    public string prefabName;   // Имя префаба
-    public WorldType worldType; // Тип мира
-    public string uniqueID;     // Уникальный ID
+    public int spawnPointIndex; 
+    public string prefabName; 
+    public WorldType worldType;
+    public string uniqueID;
 }
 
 [System.Serializable]

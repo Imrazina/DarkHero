@@ -18,7 +18,7 @@ public class Character : MonoBehaviour
     private AttackController attackController;
 
     public int maxHealth = 500;
-    private int currentHealth;
+    public int currentHealth;
     public bool isDead = false;
 
     [Header("Wall Jump")]
@@ -28,8 +28,6 @@ public class Character : MonoBehaviour
     public float wallCoyoteTime = 0.2f;
     
     [Header("Knockback")]
-    public float knockbackForce = 10f;
-    public float knockbackDuration = 0.2f; 
     private bool isKnockedBack = false; 
     
     [Header("Healing")]
@@ -91,7 +89,7 @@ public class Character : MonoBehaviour
     public AudioClip jumpSound;
     private AudioSource audioSource;
     [Range(0, 1)] public float soundVolume = 1f;
-
+    public int CurrentHealth => currentHealth;
     private void UpdateGroundAndWallStatus()
     {
         bool wasGrounded = isGrounded;
@@ -166,7 +164,19 @@ public class Character : MonoBehaviour
             transform.position = GameStateManager.Instance.CurrentState.playerPosition;
         }
         
-        currentHealth = maxHealth;
+        if (!GameStateManager.Instance.CurrentState.hasPlayedIntro || 
+            GameStateManager.Instance.CurrentState.isPlayerDead)
+        {
+            currentHealth = maxHealth;
+            GameStateManager.Instance.CurrentState.currentHealth = maxHealth;
+            GameStateManager.Instance.CurrentState.maxHealth = maxHealth;
+        }
+        else
+        {
+            currentHealth = GameStateManager.Instance.CurrentState.currentHealth;
+            maxHealth = GameStateManager.Instance.CurrentState.maxHealth;
+        }
+        
         rb = GetComponent<Rigidbody2D>();
         attackController = GetComponent<AttackController>();
 
@@ -645,7 +655,7 @@ public class Character : MonoBehaviour
         if (isDead || isDashing || isKnockedBack || isHealing || isInvincible) return;
 
         currentHealth -= damage;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        currentHealth = Mathf.Max(0, currentHealth - damage);
 
         animator.SetTrigger("Hurt");
     
@@ -701,7 +711,15 @@ public class Character : MonoBehaviour
         }
     
         GetComponent<AttackController>().enabled = true;
-        healthUI.UpdateHearts(currentHealth);
+        if (GameStateManager.Instance != null)
+        {
+            GameStateManager.Instance.CurrentState.currentHealth = maxHealth;
+            GameStateManager.Instance.CurrentState.maxHealth = maxHealth;
+        }
+        if (healthUI != null)
+        {
+            healthUI.UpdateHearts(currentHealth);
+        }
     }
     
     private void CheckGrounded()

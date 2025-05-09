@@ -9,15 +9,31 @@ public class UI_HealthDisplay : MonoBehaviour
     public Image heart2;
     public Image heart3;
 
-    private int maxHealth = 500;
-
+    [SerializeField] private int maxHealth = 500;
+    private Character playerCharacter;
+    
+    private void Start()
+    {
+        if (GameStateManager.Instance != null)
+        {
+            UpdateHearts(GameStateManager.Instance.CurrentState.currentHealth);
+        }
+        else
+        {
+            var player = FindObjectOfType<Character>();
+            if (player != null) 
+                UpdateHearts(player.currentHealth);
+        }
+    }
+    
     public void UpdateHearts(int currentHealth)
     {
-        float normalized = Mathf.Clamp01(currentHealth / (float)maxHealth);
-        
-        UpdateHeart(heart1, normalized, 0f);
-        UpdateHeart(heart2, normalized, 1f / 3f);
-        UpdateHeart(heart3, normalized, 2f / 3f);
+        if (heart1 == null || heart2 == null || heart3 == null) return;
+    
+        float normalized = Mathf.Clamp01((float)currentHealth / maxHealth);
+        heart1.fillAmount = Mathf.Clamp01(normalized * 3f);
+        heart2.fillAmount = Mathf.Clamp01((normalized - 0.33f) * 3f);
+        heart3.fillAmount = Mathf.Clamp01((normalized - 0.66f) * 3f);
     }
 
     private void UpdateHeart(Image heart, float normalizedHealth, float heartStart)

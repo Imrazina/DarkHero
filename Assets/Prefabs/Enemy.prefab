@@ -223,7 +223,7 @@ MonoBehaviour:
   flipCooldown: 3
   attackRange: 1.5
   attackDamage: 10
-  attackCooldown: 1.5
+  attackCooldown: 3
   frontGroundCheck: {x: 1, y: -0.6}
   backGroundCheck: {x: -1, y: -0.6}
   groundCheckDistance: 1

@@ -1153,13 +1153,12 @@ MonoBehaviour:
   dashTime: 0.15
   jumpForce: 8.7
   maxHealth: 500
+  currentHealth: 0
   isDead: 0
   wallSlideSpeed: -1.5
   wallJumpHorizontalForce: 24
   wallJumpVerticalForce: 24
   wallCoyoteTime: 0.2
-  knockbackForce: 10
-  knockbackDuration: 0.3
   potionHealAmount: 200
   healingAnimationTime: 1
   wallStickTime: 1
@@ -18063,6 +18062,7 @@ MonoBehaviour:
   heart1: {fileID: 885367272}
   heart2: {fileID: 817077597}
   heart3: {fileID: 563226328}
+  maxHealth: 500
 --- !u!1 &833048822
 GameObject:
   m_ObjectHideFlags: 0

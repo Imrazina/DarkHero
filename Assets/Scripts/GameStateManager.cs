@@ -147,6 +147,11 @@ public class GameStateManager : MonoBehaviour
             if (player != null)
             {
                 player.Resurrect();
+                player.currentHealth = CurrentState.currentHealth;
+                
+                var healthUI = FindObjectOfType<UI_HealthDisplay>();
+                if (healthUI != null)
+                    healthUI.UpdateHearts(player.currentHealth);
             }
             
             var screenFade = FindObjectOfType<ScreenFade>();
@@ -235,6 +240,8 @@ public class GameStateManager : MonoBehaviour
             totalPotions = 0,
             damageBoostCount = 0,
             invincibilityCount = 0,
+            currentHealth = 500,
+            maxHealth = 500,
             isExitPlankOpen = false,
             isEntrancePlankClosed = false,
             isBossDead = false,
@@ -259,6 +266,9 @@ public class GameStateManager : MonoBehaviour
         CurrentState.isExitPlankOpen = false;
         CurrentState.isEntrancePlankClosed = false;
         CurrentState.isBossDead = false;
+        
+        CurrentState.currentHealth = 500;
+        CurrentState.maxHealth = 500;
         
         var runes = FindObjectsOfType<RunePickup>(true);
         foreach (var rune in runes)

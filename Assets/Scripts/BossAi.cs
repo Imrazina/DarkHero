@@ -444,15 +444,20 @@ public class BossAI : MonoBehaviour, IDialogueCallback
 
         isDead = false;
         currentHealth = maxHealth;
+        UpdateHealthUI();
+
+        dialogueStarted = false;
+        dialogueCompleted = false;
+        riddleAnsweredCorrectly = false;
+        canAttack = true;
+        isAttacking = false;
+        isHitAnimating = false;
+        isInAttackFrame = false;
 
         if (animator != null && animator.runtimeAnimatorController != null)
         { 
             animator.ResetTrigger("Death");
             animator.Play("BossIdle");
-        }
-        else
-        {
-            Debug.LogWarning($"{name} has no Animator or AnimatorController!");
         }
 
         foreach (Collider2D col in GetComponentsInChildren<Collider2D>())
@@ -464,14 +469,7 @@ public class BossAI : MonoBehaviour, IDialogueCallback
         {
             rb.isKinematic = false;
             rb.velocity = Vector2.zero;
+            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         }
-        else
-        {
-            Debug.LogWarning($"{name} has no Rigidbody2D!");
-        }
-
-        dialogueStarted = false;
-        dialogueCompleted = false;
-        riddleAnsweredCorrectly = false;
     }
 }

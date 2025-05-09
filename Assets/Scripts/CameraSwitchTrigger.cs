@@ -7,7 +7,8 @@ public class CameraSwitchTrigger : MonoBehaviour
     public Transform cameraTargetBackward;
 
     private Vector3 lastPlayerPosition;
-
+    
+    public float deadZone = 0.1f; 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (!other.CompareTag("Player")) return;
@@ -21,6 +22,8 @@ public class CameraSwitchTrigger : MonoBehaviour
 
         Vector3 currentPos = other.transform.position;
         Vector3 direction = currentPos - lastPlayerPosition;
+        
+        if (direction.magnitude < deadZone) return;
 
         Transform target;
 

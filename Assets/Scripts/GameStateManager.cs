@@ -208,6 +208,14 @@ public class GameStateManager : MonoBehaviour
             {
                 boss.Die(); 
             }
+            
+            if (!CurrentState.isBossDead)
+            {
+                if (boss != null)
+                {
+                    boss.ResetBoss();
+                }
+            }
         }
     }
 
@@ -248,6 +256,10 @@ public class GameStateManager : MonoBehaviour
         CurrentState.hasRune = false;
         CurrentState.collectedItems.Clear();
         
+        CurrentState.isExitPlankOpen = false;
+        CurrentState.isEntrancePlankClosed = false;
+        CurrentState.isBossDead = false;
+        
         var runes = FindObjectsOfType<RunePickup>(true);
         foreach (var rune in runes)
         {
@@ -271,7 +283,15 @@ public class GameStateManager : MonoBehaviour
             enemy.gameObject.SetActive(true);
             enemy.ResetEnemy(); 
         }
-       
+        
+        var tupikController = FindObjectOfType<TupikController>();
+        if (tupikController != null)
+        {
+            tupikController.openExit = false;
+            tupikController.closeEntrance = false;
+            tupikController.LoadPlanksState();
+        }
+        
         var boss = FindObjectOfType<BossAI>(true);
        if (boss != null && !CurrentState.isBossDead)
        {

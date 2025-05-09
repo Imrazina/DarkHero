@@ -42,26 +42,17 @@ public class TupikController : MonoBehaviour
         if (GameStateManager.Instance == null) return;
 
         var state = GameStateManager.Instance.CurrentState;
-        if (state.isBossDead)
-        {
-            if (state.isExitPlankOpen && exitPlank != null)
-            {
-                exitPlank.position = exitTargetPosition;
-                openExit = true;
-            }
+        openExit = state.isExitPlankOpen;
+        closeEntrance = state.isEntrancePlankClosed;
 
-            if (state.isEntrancePlankClosed && entrancePlank != null)
-            {
-                entrancePlank.position = entranceTargetPosition;
-                closeEntrance = true;
-            }
-        }
-        else
+        if (exitPlank != null)
         {
-            if (exitPlank != null) exitPlank.position = exitStartPosition;
-            if (entrancePlank != null) entrancePlank.position = entranceStartPosition;
-            openExit = false;
-            closeEntrance = false;
+            exitPlank.position = openExit ? exitTargetPosition : exitStartPosition;
+        }
+
+        if (entrancePlank != null)
+        {
+            entrancePlank.position = closeEntrance ? entranceTargetPosition : entranceStartPosition;
         }
     }
 
